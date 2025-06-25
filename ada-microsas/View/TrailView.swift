@@ -28,13 +28,13 @@ struct TrailView: View {
                 ForEach(Array(chunks.enumerated()), id: \.element.id)
                 {index, chunk in
                     if index == chunks.count - 1 {
-                        TrailPieceView(workouts: chunk.data, type: .top)
+                        TrailPieceView(workouts: chunk.data, type: .top, flipped: index % 2 == 0)
                     }
                     else if index == 0{
-                        TrailPieceView(workouts: chunk.data, type: .bottom)
+                        TrailPieceView(workouts: chunk.data, type: .bottom, flipped: index % 2 == 0)
                     }
                     else{
-                        TrailPieceView(workouts: chunk.data, type: .middle)
+                        TrailPieceView(workouts: chunk.data, type: .middle, flipped: index % 2 == 0)
                     }
                 }
             }
@@ -59,9 +59,10 @@ enum PieceType: String{
 struct TrailPieceView: View {
     let workouts: [Int]
     let type: PieceType
+    let flipped: Bool
     var body: some View {
         ZStack{
-            Rectangle().frame(width: 250, height: 150).foregroundColor(type == .middle ? .blue : .gray)
+            Image("trail_piece_" + type.rawValue).resizable().scaledToFill().scaleEffect(x: flipped ? -1 : 1, y: 1)
             HStack(spacing: 36){
                 ForEach(0..<workouts.count, id: \.self){
                     workout in
