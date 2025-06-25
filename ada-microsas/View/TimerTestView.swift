@@ -43,7 +43,7 @@ struct TimerTestView: View {
         case .paused:
             Text("Paused")
             Button{
-                timerViewModel.startTimer2()
+                timerViewModel.startTimer()
             }label:{
                 ZStack{
                     Circle()
