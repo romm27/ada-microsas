@@ -9,21 +9,32 @@ import SwiftUI
 
 struct TrailView: View {
     let trail: [Int]
+    var chunks: [ChunkedData<Int>] = []
+    
+    init(trail: [Int]){
+        self.trail = trail
+        
+        let workoutPerTrailPiece = 3
+        let steps = stride(from: 0, to: trail.count, by: workoutPerTrailPiece)
+        
+        for start in steps{
+            self.chunks.append(ChunkedData<Int>(data: Array(trail[start..<min(start+workoutPerTrailPiece, trail.count)])))
+        }
+    }
     
     var body: some View {
-        let trailCount = trail.count / workoutPerTrailPiece
         ScrollView{
             VStack(alignment: .leading, spacing: 0) {
-                ForEach(0..<trailCount, id: \.self) { trailPiece in
-                    let workouts: [Int] = [1, 2, 3]
-                    if trailPiece == trail[0]{
-                        TrailPieceView(workouts: workouts, type: .bottom)
+                ForEach(Array(chunks.enumerated()), id: \.element.id)
+                {index, chunk in
+                    if index == chunks.count - 1 {
+                        TrailPieceView(workouts: chunk.data, type: .top)
                     }
-                    else if trailPiece == trail[trailCount]{
-                        TrailPieceView(workouts: workouts, type: .top)
+                    else if index == 0{
+                        TrailPieceView(workouts: chunk.data, type: .bottom)
                     }
                     else{
-                        TrailPieceView(workouts: workouts, type: .middle)
+                        TrailPieceView(workouts: chunk.data, type: .middle)
                     }
                 }
             }
@@ -33,12 +44,20 @@ struct TrailView: View {
     }
 }
 
+
+struct ChunkedData<T>: Identifiable {
+    let id: UUID = UUID()
+    let data : [T]
+    
+}
+
+
 enum PieceType: String{
     case top, middle, bottom
 }
 
-let workoutPerTrailPiece: Int = 3
-struct TrailPieceView: View {    let workouts: [Int]
+struct TrailPieceView: View {
+    let workouts: [Int]
     let type: PieceType
     var body: some View {
         ZStack{
