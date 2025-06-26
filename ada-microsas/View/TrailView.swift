@@ -24,18 +24,22 @@ struct TrailView: View {
     
     var body: some View {
         ScrollView{
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: -48) {
                 ForEach(Array(chunks.enumerated()), id: \.element.id)
                 {index, chunk in
-                    if index == chunks.count - 1 {
-                        TrailPieceView(workouts: chunk.data, type: .top, flipped: index % 2 == 0)
+                    HStack{
+                        if index == chunks.count - 1 {
+                            TrailPieceView(workouts: chunk.data, type: .top, flipped: index % 2 == 0)
+                        }
+                        else if index == 0{
+                            TrailPieceView(workouts: chunk.data, type: .bottom, flipped: index % 2 == 0)
+                                .offset(x: 10)
+                        }
+                        else{
+                            TrailPieceView(workouts: chunk.data, type: .middle, flipped: index % 2 == 0)
+                        }
                     }
-                    else if index == 0{
-                        TrailPieceView(workouts: chunk.data, type: .bottom, flipped: index % 2 == 0)
-                    }
-                    else{
-                        TrailPieceView(workouts: chunk.data, type: .middle, flipped: index % 2 == 0)
-                    }
+                    .offset(x: 15 * (index % 2 != 0 ? 1 : -1))
                 }
             }
 
@@ -62,7 +66,11 @@ struct TrailPieceView: View {
     let flipped: Bool
     var body: some View {
         ZStack{
-            Image("trail_piece_" + type.rawValue).resizable().scaledToFill().scaleEffect(x: flipped ? -1 : 1, y: 1)
+            let trailPieceImage = "trail_piece_\(type.rawValue)"
+            ZStack{
+                Image(trailPieceImage).resizable().scaledToFill()
+                Image(trailPieceImage + "_color_mask").resizable().scaledToFill().foregroundColor(.red)
+            }.scaleEffect(x: flipped ? -1 : 1, y: 1)
             HStack(spacing: 36){
                 ForEach(0..<workouts.count, id: \.self){
                     workout in
@@ -71,6 +79,7 @@ struct TrailPieceView: View {
             }
         }
         .rotationEffect(Angle(degrees: 180))
+        .padding(.horizontal, 32)
     }
 }
 
