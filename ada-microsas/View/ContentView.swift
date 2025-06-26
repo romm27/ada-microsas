@@ -14,7 +14,7 @@ struct ContentView: View {
             ZStack {
                 Color.roxo
                     .ignoresSafeArea(edges: .all)
-                NavigationLink(destination: TrainerSheetView()){
+                NavigationLink(destination: TrilhaExemploAPAGAR()){
                     VStack{
                         Image("logo")
                             .resizable()

@@ -18,7 +18,7 @@ struct ada_microsasApp: App {
             //Injeta o ViewModel no ambiente do SwiftUI.
             //Agora, qualquer view filha pode acessar este ViewModel.
             ContentView()
-                .environmentObject(timerViewModel)
+                            .environmentObject(timerViewModel)
         }
     }
 }
