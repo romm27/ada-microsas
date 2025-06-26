@@ -16,12 +16,26 @@ class TimerViewModel: ObservableObject {
     
     @Published var timerStatus: TimerStatus = .paused //estado do timer
     @Published var currentTimer: Int = 0 //nosso controle do tempo
+    var maxTimer: Int = 0
+    
+    @Published var progress: Double = 0.0
+    
+    var formattedCurrentTimer: String {
+        let minutes = currentTimer / 60
+        let seconds = currentTimer % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+    
     private var timer: Timer? //o timer, em si
     
     
     //GETTERS
     func getCurrentTimer() -> Int {
         return currentTimer
+    }
+    
+    func getFormattedCurrentTimer() -> String {
+        return formattedCurrentTimer
     }
     
     func getTimerStatus() -> TimerStatus {
@@ -34,6 +48,7 @@ class TimerViewModel: ObservableObject {
     //Estabelece a configuração inicial da instância do timer
     func setTimerConfig(seconds: Int) {
         currentTimer = seconds
+        maxTimer = seconds
     }
     
     func startTimer() {
@@ -59,11 +74,15 @@ class TimerViewModel: ObservableObject {
             
         } else {
             print("Tempo em execução: \(self.currentTimer)")
+            print("Progresso: \(self.progress)")
+            print("Max: \(self.maxTimer)")
+
             self.currentTimer -= 1 //a execução do timer, de fato
+            self.progress = 1.0 - (Double(self.currentTimer) / Double(self.maxTimer)) //o progresso sendo atualizado
         }
     }
     
-    private func endTimer() {
+    func endTimer() {
         print("Tempo encerrado!")
         
         timerStatus = .paused

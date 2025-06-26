@@ -11,12 +11,12 @@ class PlanViewModel: ObservableObject {
     
     //A Planilha com todos os dias, populada manualmente com as infos dos treinos
     private var planPopulate: [Activity] = [
-        Activity(order: 1, seconds: 60 * 4, unlocked: true),
-        Activity(order: 2, seconds: 60 * 4),
-        Activity(order: 3, seconds: 60 * 4),
-        Activity(order: 4, seconds: 60 * 4),
-        Activity(order: 5, seconds: 60 * 4),
-        Activity(order: 6, seconds: 60 * 4)
+        Activity(order: 1, seconds: 60 * 40, unlocked: true),
+        Activity(order: 2, seconds: 60 * 40),
+        Activity(order: 3, seconds: 60 * 40),
+        Activity(order: 4, seconds: 60 * 40),
+        Activity(order: 5, seconds: 60 * 40),
+        Activity(order: 6, seconds: 60 * 40)
     ]
     
     //A planilha do Usuário - essa é a nossa "fonte de verdade"

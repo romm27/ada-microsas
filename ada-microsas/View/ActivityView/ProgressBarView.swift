@@ -8,18 +8,19 @@
 import SwiftUI
 
 struct ProgressBarView: View {
+    @Environment(\.dismiss) var dismiss
     
+    @EnvironmentObject var timerViewModel: TimerViewModel
 
-    
-    @Binding var progress: Float
-
+    // Define o tamanho total do arco (70% do círculo)
+    private let totalArc: CGFloat = 0.7
     
     var body: some View {
         ZStack{
             
             //circle gray
             Circle()
-                .trim(from: 0, to: 0.7)
+                .trim(from: 0, to: totalArc)
                 .stroke(style: StrokeStyle(lineWidth: 35.0, lineCap: .round, lineJoin: .round))
                 .opacity(0.25)
                 .foregroundStyle(Color.gray)
@@ -27,9 +28,9 @@ struct ProgressBarView: View {
             
             //circle green
             Circle()
-                .trim(from: 0.0, to: CGFloat(min(self.progress, 0.7)))
+//                .trim(from: 0.0, to: CGFloat(min(self.progress, 0.7)))
+                .trim(from: 0, to: CGFloat(timerViewModel.progress) * 0.7)
                 .stroke(style: StrokeStyle(lineWidth: 35.0, lineCap: .round, lineJoin: .round))
-            
                 .foregroundStyle(
                     LinearGradient(gradient: Gradient(colors: [Color.roxo, Color.verdeLima]),
                                    startPoint: .topLeading,
@@ -42,7 +43,13 @@ struct ProgressBarView: View {
            
             
             
-            Text("\(Int((self.progress / 0.7) * 100))%")
+//            Text("\(Int((self.progress / 0.7) * 100))%")
+//                .font(.system(size: 16))
+//                .fontWeight(.regular)
+//                .foregroundStyle(Color.primary)
+//                .offset(y: -150)
+            
+            Text("\(Int((timerViewModel.progress) * 100))%")
                 .font(.system(size: 16))
                 .fontWeight(.regular)
                 .foregroundStyle(Color.primary)
@@ -59,7 +66,7 @@ struct ProgressBarView: View {
                     .fontWeight(.semibold)
 
 
-                Text("00:03:40")
+                Text("\(timerViewModel.getFormattedCurrentTimer())")
                     .font(.system(size: 56))
                     .fontWeight(.semibold)
                 
@@ -71,4 +78,9 @@ struct ProgressBarView: View {
           
         }
     }
+}
+
+#Preview {
+    ProgressBarView()
+        .environmentObject(TimerViewModel())
 }
