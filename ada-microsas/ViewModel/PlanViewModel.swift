@@ -34,19 +34,55 @@ class PlanViewModel: ObservableObject {
         }
     }
     
-    @Published var userLevel: Int = 1
+    @Published var userLevel: Int = 1 {
+        didSet{
+            savePlan()
+        }
+    }
+    
+    // Nome do arquivo onde salvaremos os dados
+    private let saveKey = "userLevelData.json"
     
     init () {
         //Carrega a planilha sempre que abre o app
         loadPlan()
     }
     
+    // Função para obter o caminho do arquivo no diretório de documentos do app
+    private func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
+    
     func savePlan() {
-        //TODO: Lógica de Salvar no Celular
+        let fileURL = getDocumentsDirectory().appendingPathComponent(saveKey)
+        
+        do {
+            // Usamos JSONEncoder para converter nosso Int para o formato Data (JSON)
+            let data = try JSONEncoder().encode(userLevel)
+            // Escrevemos os dados no arquivo
+            try data.write(to: fileURL, options: [.atomicWrite, .completeFileProtection])
+            print("Level salvo com sucesso!")
+        } catch {
+            print("Não foi possível salvar os hábitos: \(error.localizedDescription)")
+        }
     }
     
     func loadPlan() {
-        //TODO: Lógica de Load no Celular
+        let fileURL = getDocumentsDirectory().appendingPathComponent(saveKey)
+        
+        do {
+            let data = try Data(contentsOf: fileURL)
+            // Usamos JSONDecoder para converter os dados do arquivo de volta para um Int
+            let decodedLevel = try JSONDecoder().decode(Int.self, from: data)
+            self.userLevel = decodedLevel
+            print("Level carregado com sucesso!")
+        } catch {
+            // Se der erro (ex: arquivo não existe na primeira vez),
+            // começamos no level.
+            print("Não foi possível carregar o level: \(error.localizedDescription). Começando no level 1.")
+            self.userLevel = 1
+        }
     }
     
 //    func markDayAsDone(at index: Int) {
