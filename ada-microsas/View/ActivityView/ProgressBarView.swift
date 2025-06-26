@@ -36,6 +36,7 @@ struct ProgressBarView: View {
                                    startPoint: .topLeading,
                                    endPoint: .bottomTrailing)
                 )
+                .animation(.interpolatingSpring, value: timerViewModel.progress)
               
             //degree starts at 12`o
                 .rotationEffect(Angle(degrees: 144))

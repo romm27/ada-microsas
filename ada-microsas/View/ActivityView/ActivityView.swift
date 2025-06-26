@@ -43,25 +43,13 @@ struct ActivityView: View {
             ProgressBarView()
                 .frame(width: 300, height: 300)
                 .padding(100)
-            
-            
-//            Button("Corre Aí"){
-//                withAnimation(.easeInOut(duration: 1.0)){
-//                    if (progressValue) < 0.7 {
-//                        self.progressValue += 0.1
-//                    } else {
-//                        progressValue -= 0.7
-//                        showCompletionAlert = true
-//                    }
-//                }
-//            }
-            
-            
-            .alert("Parabéns!", isPresented: $showCompletionAlert) {
-                Button("Ok") {}
-            } message: {
-                Text("Você concluiu a atividade!")
-            }
+                .alert("Parabéns!", isPresented: $timerViewModel.isFinished) {
+                    Button("Ok") {
+                        //fechar a view
+                    }
+                } message: {
+                    Text("Você concluiu a atividade!")
+                }
         }
         
         
@@ -72,7 +60,7 @@ struct ActivityView: View {
                 //vai existir uma Activity aqui, para setar o timer
                 //TODO: Mudar aqui para Activity.seconds
                     //a activity vai vir como Binding(eu acho?) da nossa TrilhaView > ModalView
-                timerViewModel.setTimerConfig(seconds: 10)
+                timerViewModel.setTimerConfig(seconds: 5)
                 timerViewModel.startTimer()
             }
     }

@@ -29,9 +29,11 @@ struct ButtonView: View {
         HStack{
             if state == .play{
                 Button(action: {
-                    //loigica do tempo
-                    timerViewModel.pauseTimer()
-                    state = .pause
+                    withAnimation {
+                        //loigica do tempo
+                        timerViewModel.pauseTimer()
+                        state = .pause
+                    }
                 }) {
                     Image(systemName: "pause.fill")
                         .font(.largeTitle)
@@ -80,8 +82,11 @@ struct ButtonView: View {
                     }
                     
                     Button("Encerrar", role: .destructive) {
-                        state = .stop
-                        showEndingAlert.toggle()
+                        withAnimation {
+                            state = .stop
+                            showEndingAlert.toggle()
+                            timerViewModel.endTimer()
+                        }
                         //logica de encerrar
                     }
                                         
@@ -96,7 +101,9 @@ struct ButtonView: View {
             } else if state == .stop {
             
                 Button(action: {
-                    state = .play
+                    withAnimation {
+                        state = .play
+                    }
                 }) {
                     //COMEÇA DE NOVO SO PARA TESTE!!
                     Text("Reiniciar Teste")
@@ -109,7 +116,9 @@ struct ButtonView: View {
         //alerta de encerramento antes de concluir atividade
         .alert("Colapso Temporal", isPresented: $showEndingAlert) {
             Button("Ok") {
-                timerViewModel.endTimer()
+                withAnimation {
+                    timerViewModel.endTimer()
+                }
             }
                 } message: {
                     Text("Sua máquina do tempo corrompeu.")

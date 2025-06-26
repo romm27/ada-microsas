@@ -19,6 +19,7 @@ class TimerViewModel: ObservableObject {
     var maxTimer: Int = 0
     
     @Published var progress: Double = 0.0
+    @Published var isFinished: Bool = false
     
     var formattedCurrentTimer: String {
         let minutes = currentTimer / 60
@@ -49,6 +50,7 @@ class TimerViewModel: ObservableObject {
     func setTimerConfig(seconds: Int) {
         currentTimer = seconds
         maxTimer = seconds
+        isFinished = false
     }
     
     func startTimer() {
@@ -85,6 +87,7 @@ class TimerViewModel: ObservableObject {
     func endTimer() {
         print("Tempo encerrado!")
         
+        isFinished = true
         timerStatus = .paused
         resetTimer()
     }
