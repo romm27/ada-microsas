@@ -1,15 +1,15 @@
-////
-////  PlanViewModel.swift
-////  ada-microsas
-////
-////  Created by Eduardo Bertol on 25/06/25.
-////
 //
-//import Foundation
+//  PlanViewModel.swift
+//  ada-microsas
 //
-//class PlanViewModel: ObservableObject {
-//    
-//    //A Planilha com todos os dias, populada manualmente com as infos dos treinos
+//  Created by Eduardo Bertol on 25/06/25.
+//
+
+import Foundation
+
+class PlanViewModel: ObservableObject {
+    
+    //A Planilha com todos os dias, populada manualmente com as infos dos treinos
 //    private var planPopulate: [ActivityModel] = [
 //        ActivityModel(order: 1, seconds: 60 * 4, unlocked: true),
 //        ActivityModel(order: 2, seconds: 60 * 4),
@@ -18,8 +18,8 @@
 //        ActivityModel(order: 5, seconds: 60 * 4),
 //        ActivityModel(order: 6, seconds: 60 * 4)
 //    ]
-//    
-//    //A planilha do Usuário - essa é a nossa "fonte de verdade"
+    
+    //A planilha do Usuário - essa é a nossa "fonte de verdade"
 //    @Published var userPlan: [ActivityModel] = [] {
 //        
 //        didSet {
@@ -27,26 +27,34 @@
 //            savePlan()
 //        }
 //    }
-//    
-//    init () {
-//        //Carrega a planilha sempre que abre o app
-//        loadPlan()
-//    }
-//    
-//    func savePlan() {
-//        //TODO: Lógica de Salvar no Celular
-//    }
-//    
-//    func loadPlan() {
-//        //TODO: Lógica de Load no Celular
-//    }
-//    
+    
+    @Published var userPlan: DataTrainingModel = DataTrainingModel(){
+        didSet{
+            savePlan()
+        }
+    }
+    
+    @Published var userLevel: Int = 1
+    
+    init () {
+        //Carrega a planilha sempre que abre o app
+        loadPlan()
+    }
+    
+    func savePlan() {
+        //TODO: Lógica de Salvar no Celular
+    }
+    
+    func loadPlan() {
+        //TODO: Lógica de Load no Celular
+    }
+    
 //    func markDayAsDone(at index: Int) {
 //        userPlan[index].unlocked = true
 //    }
-//    
-//    
-//    
-//    
-//    
-//}
+    
+    
+    
+    
+    
+}
