@@ -12,6 +12,7 @@ struct ada_microsasApp: App {
     
     //Cria uma única instância do ViewModel que viverá durante todo o ciclo de vida do app.
     @StateObject private var timerViewModel = TimerViewModel()
+    @StateObject private var planViewModel = PlanViewModel()
     
     var body: some Scene {
         WindowGroup {
@@ -19,6 +20,13 @@ struct ada_microsasApp: App {
             //Agora, qualquer view filha pode acessar este ViewModel.
             ContentView()
                 .environmentObject(timerViewModel)
+                .environmentObject(planViewModel)
         }
     }
+    
+}
+
+
+#Preview {
+    ContentView().environmentObject(TimerViewModel()).environmentObject(PlanViewModel())
 }
