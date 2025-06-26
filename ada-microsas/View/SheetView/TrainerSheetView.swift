@@ -11,7 +11,7 @@ struct TrainerSheetView: View {
     
     let dataTrainingModel = DataTrainingModel()
     
-    @State var currentIndex = 0
+    @State var currentIndex = 2
     
     
     var body: some View {
@@ -22,19 +22,19 @@ struct TrainerSheetView: View {
             
             
             
-            VStack(alignment: .leading, spacing: 40){
+            VStack(alignment: .leading, spacing: 16){
                 //imagem
                 Image("workout")
                     .resizable()
                     .scaledToFit( )
-                    .frame(width: 300)
+                    .frame(width: 200)
                 
                 
                 
                 
                 
                 //details
-                VStack(alignment: .leading, spacing: 32){
+                VStack(alignment: .leading, spacing: 12){
                     //warm-up
                     VStack(alignment: .leading, spacing: 4){
                         //titulo
@@ -43,7 +43,7 @@ struct TrainerSheetView: View {
                             .foregroundStyle(.roxo)
                         
                         //infos
-                        VStack(alignment: .leading){
+                        VStack(alignment: .leading, spacing: 5){
                             ForEach(dataTrainingModel.trainingList[currentIndex].warmingTraining, id: \.self) { warmingTraining in
                                 Text(warmingTraining)
                             }
@@ -62,7 +62,7 @@ struct TrainerSheetView: View {
                             .font(.headline)
                             .foregroundStyle(.roxo)
                         //infos
-                        VStack(alignment: .leading){
+                        VStack(alignment: .leading, spacing: 5){
                             ForEach(dataTrainingModel.trainingList[currentIndex].mainTraining, id: \.self) { mainTraining in
                                 Text(mainTraining)
                             }
@@ -78,7 +78,7 @@ struct TrainerSheetView: View {
                             .font(.headline)
                             .foregroundStyle(.roxo)
                         //infos
-                        VStack(alignment: .leading){
+                        VStack(alignment: .leading, spacing: 5){
                             ForEach(dataTrainingModel.trainingList[currentIndex].restTraining, id: \.self) { restTraining in
                                 Text(restTraining)
                             }
@@ -86,27 +86,56 @@ struct TrainerSheetView: View {
                         .font(.body)
                         .fontWeight(.light)
                     }
-                    
-                    
-                    
-                    
-//                    VStack(alignment: .leading){
-//                        //titulo
-//                        Text("Descanso (10 minutos)")
-//                            .font(.headline)
-//                            .foregroundStyle(.roxo)
-//                        //infos
-//                        VStack(alignment: .leading){
-//                            ForEach(dataTrainingModel.trainingList[currentIndex].restTraining, id: \.self) { restTraining in
-//                                Text(restTraining)
-//                            }
-//                        }
-//                        .font(.body)
-//                        .fontWeight(.light)
-//                    }
+
+                }
+                .padding(.horizontal, 32)
+                
+                //fazer rectangle com path
+                //objetivo
+                VStack(alignment: .leading){
+                    Text("Objetivo:")
+                        .font(.headline)
+                        .foregroundStyle(.roxo)
+
+                    Text(dataTrainingModel.trainingList[currentIndex].objectiveTraining)
+                        .font(Font.system(size: 14))
+                        .fontWeight(.light)
                 }
                 
+                
+                //botao
+                VStack{
+                    NavigationLink(destination: ActivityView()){
+                      
+                        HStack{
+                            Spacer()
+                            
+                            Text("Começar a Correr")
+                           
+                            
+                            Spacer()
+                        }
+                        .padding(.horizontal, 72)
+                        .padding(.vertical, 12)
+                        .background(.roxo)
+                        .foregroundStyle(.white)
+                        .font(.system(size: 16, weight: .semibold))
+                        .cornerRadius(8)
+                         
+                           
+                            
+                        
+                        
+                    }
+
+                    
+                    
+                }
+                
+                
             }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
         }
         
         
