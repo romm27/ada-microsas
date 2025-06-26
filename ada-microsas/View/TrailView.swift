@@ -10,6 +10,7 @@ import SwiftUI
 struct TrailView: View {
     let trail: [ActivityModel]
     let userLevel : Int
+    @ObservedObject var trailViewDataCenter: TrailViewDataCenter = .shared
     var chunks: [ChunkedData<ActivityModel>] = []
     var trailColors: [WorkoutColor] = [
         WorkoutColor(trailColor: .brancoGelo, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda),
@@ -17,8 +18,6 @@ struct TrailView: View {
         WorkoutColor(trailColor: .verdeLima, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda),
         WorkoutColor(trailColor: .roxo, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda)
     ]
-    
-    @State var showSheet: Bool = false
     
     init(trail: [ActivityModel], userLevel: Int){
         self.trail = trail
@@ -45,16 +44,16 @@ struct TrailView: View {
                             HStack{
                                 if index == chunks.count - 1 {
                                     TrailPieceView(workouts: chunk.data, type: .top, flipped: index % 2 == 0,
-                                                   displayColors: displayColor, showSheet: $showSheet)
+                                                   displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
                                 }
                                 else if index == 0{
                                     TrailPieceView(workouts: chunk.data, type: .bottom, flipped: index % 2 == 0,
-                                                   displayColors: displayColor, showSheet: $showSheet)
+                                                   displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
                                         .offset(x: 10)
                                 }
                                 else{
                                     TrailPieceView(workouts: chunk.data, type: .middle, flipped: index % 2 == 0,
-                                                   displayColors: displayColor, showSheet: $showSheet)
+                                                   displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
                                 }
                             }
                             .offset(x: 15 * (index % 2 != 0 ? 1 : -1))
@@ -65,11 +64,9 @@ struct TrailView: View {
                 .rotationEffect(Angle(degrees: 180))
             }
         }
-        .sheet(isPresented: $showSheet){
-            TrainerSheetView(currentIndex: userLevel)
-                .presentationDetents([
-                    withAnimation{.medium}
-                ])
+        .sheet(isPresented: $trailViewDataCenter.showSheet){
+            TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex)
+                .presentationDetents([.medium])
         }
     }
 }
@@ -102,6 +99,7 @@ struct TrailPieceView: View {
     let type: PieceType
     let flipped: Bool
     let displayColors: WorkoutColor
+    let pieceId: Int
     @Binding var showSheet: Bool
     
     func isUpWorkout(index: Int, totalWorkouts: Int, flipped: Bool) -> CGFloat{
@@ -138,6 +136,7 @@ struct TrailPieceView: View {
                     workout in
                     let index = flipped ?  workout : (workouts.count - workout - 1)
                     Button{
+                        TrailViewDataCenter.shared.selectedButtonIndex = (pieceId * 3) + workout
                         showSheet = true
                     } label:{
                         ZStack{
@@ -172,6 +171,13 @@ struct TrailPieceView: View {
         .rotationEffect(Angle(degrees: 180))
         .padding(.horizontal, 32)
     }
+}
+
+class TrailViewDataCenter: ObservableObject{
+    static let shared = TrailViewDataCenter()
+    
+    @Published var showSheet = false
+    @Published var selectedButtonIndex: Int = 0
 }
 
 struct WorkoutColor{
