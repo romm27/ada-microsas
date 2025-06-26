@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct TrailView: View {
-    let trail: [Int]
-    var chunks: [ChunkedData<Int>] = []
+    let trail: [ActivityModel]
+    let userLevel : Int
+    @ObservedObject var trailViewDataCenter: TrailViewDataCenter = .shared
+    var chunks: [ChunkedData<ActivityModel>] = []
     var trailColors: [WorkoutColor] = [
         WorkoutColor(trailColor: .brancoGelo, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda),
         WorkoutColor(trailColor: .rosa, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda),
@@ -17,46 +19,54 @@ struct TrailView: View {
         WorkoutColor(trailColor: .roxo, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda)
     ]
     
-    init(trail: [Int]){
+    init(trail: [ActivityModel], userLevel: Int){
         self.trail = trail
+        self.userLevel = userLevel
         
         let workoutPerTrailPiece = 3
         let steps = stride(from: 0, to: trail.count, by: workoutPerTrailPiece)
         
         for start in steps{
-            self.chunks.append(ChunkedData<Int>(data: Array(trail[start..<min(start+workoutPerTrailPiece, trail.count)])))
+            self.chunks.append(ChunkedData<ActivityModel>(data: Array(trail[start..<min(start+workoutPerTrailPiece, trail.count)])))
         }
     }
     
     var body: some View {
         ZStack{
             Rectangle().foregroundStyle(Color.cinzaEscuro)
-            ScrollView{
-                VStack(alignment: .leading, spacing: -48) {
-                    ForEach(Array(chunks.enumerated()), id: \.element.id)
-                    {index, chunk in
-                        let displayColor: WorkoutColor = self.trailColors[index % self.trailColors.count]
-                        HStack{
-                            if index == chunks.count - 1 {
-                                TrailPieceView(workouts: chunk.data, type: .top, flipped: index % 2 == 0,
-                                displayColors: displayColor)
+            VStack(){
+                //Image("logo")
+                ScrollView{
+                    VStack(alignment: .leading, spacing: -48) {
+                        ForEach(Array(chunks.enumerated()), id: \.element.id)
+                        {index, chunk in
+                            let displayColor: WorkoutColor = self.trailColors[index % self.trailColors.count]
+                            HStack{
+                                if index == chunks.count - 1 {
+                                    TrailPieceView(workouts: chunk.data, type: .top, flipped: index % 2 == 0,
+                                                   displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
+                                }
+                                else if index == 0{
+                                    TrailPieceView(workouts: chunk.data, type: .bottom, flipped: index % 2 == 0,
+                                                   displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
+                                        .offset(x: 10)
+                                }
+                                else{
+                                    TrailPieceView(workouts: chunk.data, type: .middle, flipped: index % 2 == 0,
+                                                   displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
+                                }
                             }
-                            else if index == 0{
-                                TrailPieceView(workouts: chunk.data, type: .bottom, flipped: index % 2 == 0,
-                                               displayColors: displayColor)
-                                    .offset(x: 10)
-                            }
-                            else{
-                                TrailPieceView(workouts: chunk.data, type: .middle, flipped: index % 2 == 0,
-                                               displayColors: displayColor)
-                            }
+                            .offset(x: 15 * (index % 2 != 0 ? 1 : -1))
                         }
-                        .offset(x: 15 * (index % 2 != 0 ? 1 : -1))
                     }
-                }
 
+                }
+                .rotationEffect(Angle(degrees: 180))
             }
-            .rotationEffect(Angle(degrees: 180))
+        }
+        .sheet(isPresented: $trailViewDataCenter.showSheet){
+            TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex)
+                .presentationDetents([.medium])
         }
     }
 }
@@ -85,10 +95,12 @@ enum PieceType {
 }
 
 struct TrailPieceView: View {
-    let workouts: [Int]
+    let workouts: [ActivityModel]
     let type: PieceType
     let flipped: Bool
     let displayColors: WorkoutColor
+    let pieceId: Int
+    @Binding var showSheet: Bool
     
     func isUpWorkout(index: Int, totalWorkouts: Int, flipped: Bool) -> CGFloat{
         if index == totalWorkouts - 1{
@@ -123,18 +135,23 @@ struct TrailPieceView: View {
                 ForEach(0..<workouts.count, id: \.self){
                     workout in
                     let index = flipped ?  workout : (workouts.count - workout - 1)
-                    ZStack{
-                        let circleSize = 56
-                        Circle()
-                            .foregroundStyle(displayColors.workoutBorderColor)
-                            .scaledToFit()
-                            .frame(height: CGFloat(circleSize))
-                        Circle()
-                            .foregroundStyle(displayColors.workoutColor)
-                            .scaledToFit()
-                            .frame(height: CGFloat(circleSize - 5 * 2))
-                        Text("\(workouts[index])")
-                            .foregroundStyle(.white)
+                    Button{
+                        TrailViewDataCenter.shared.selectedButtonIndex = (pieceId * 3) + workout
+                        showSheet = true
+                    } label:{
+                        ZStack{
+                            let circleSize = 56
+                            Circle()
+                                .foregroundStyle(displayColors.workoutBorderColor)
+                                .scaledToFit()
+                                .frame(height: CGFloat(circleSize))
+                            Circle()
+                                .foregroundStyle(displayColors.workoutColor)
+                                .scaledToFit()
+                                .frame(height: CGFloat(circleSize - 5 * 2))
+                            //Text("\(workouts[index])")
+                                .foregroundStyle(.white)
+                        }
                     }
                     .offset(x:40 * (flipped ? 1 : -1), y: 50) // General offset
                     .offset(y : -65 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)) // Move up node uo
@@ -156,6 +173,13 @@ struct TrailPieceView: View {
     }
 }
 
+class TrailViewDataCenter: ObservableObject{
+    static let shared = TrailViewDataCenter()
+    
+    @Published var showSheet = false
+    @Published var selectedButtonIndex: Int = 0
+}
+
 struct WorkoutColor{
     let trailColor: Color
     let workoutColor: Color
@@ -163,5 +187,5 @@ struct WorkoutColor{
 }
 
 #Preview {
-    TrailView(trail: Array(1...24))
+    TrailView(trail: PlanViewModel().userPlan.trainingList, userLevel: 1)
 }
