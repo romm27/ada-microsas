@@ -10,6 +10,7 @@ import SwiftUI
 struct TrailView: View {
     let trail: [Int]
     var chunks: [ChunkedData<Int>] = []
+    var trailColors: [Color] = [.brancoGelo, .rosa, .verdeLima, .roxo]
     
     init(trail: [Int]){
         self.trail = trail
@@ -23,28 +24,35 @@ struct TrailView: View {
     }
     
     var body: some View {
-        ScrollView{
-            VStack(alignment: .leading, spacing: -48) {
-                ForEach(Array(chunks.enumerated()), id: \.element.id)
-                {index, chunk in
-                    HStack{
-                        if index == chunks.count - 1 {
-                            TrailPieceView(workouts: chunk.data, type: .top, flipped: index % 2 == 0)
+        ZStack{
+            Rectangle().foregroundStyle(Color.cinzaEscuro)
+            ScrollView{
+                VStack(alignment: .leading, spacing: -48) {
+                    ForEach(Array(chunks.enumerated()), id: \.element.id)
+                    {index, chunk in
+                        let displayColor: Color = self.trailColors[index % self.trailColors.count]
+                        HStack{
+                            if index == chunks.count - 1 {
+                                TrailPieceView(workouts: chunk.data, type: .top, flipped: index % 2 == 0,
+                                displayColor: displayColor)
+                            }
+                            else if index == 0{
+                                TrailPieceView(workouts: chunk.data, type: .bottom, flipped: index % 2 == 0,
+                                               displayColor: displayColor)
+                                    .offset(x: 10)
+                            }
+                            else{
+                                TrailPieceView(workouts: chunk.data, type: .middle, flipped: index % 2 == 0,
+                                               displayColor: displayColor)
+                            }
                         }
-                        else if index == 0{
-                            TrailPieceView(workouts: chunk.data, type: .bottom, flipped: index % 2 == 0)
-                                .offset(x: 10)
-                        }
-                        else{
-                            TrailPieceView(workouts: chunk.data, type: .middle, flipped: index % 2 == 0)
-                        }
+                        .offset(x: 15 * (index % 2 != 0 ? 1 : -1))
                     }
-                    .offset(x: 15 * (index % 2 != 0 ? 1 : -1))
                 }
-            }
 
+            }
+            .rotationEffect(Angle(degrees: 180))
         }
-        .rotationEffect(Angle(degrees: 180))
     }
 }
 
@@ -75,12 +83,13 @@ struct TrailPieceView: View {
     let workouts: [Int]
     let type: PieceType
     let flipped: Bool
+    let displayColor: Color
     var body: some View {
         ZStack{
             let trailPieceImage = "TrailPiece\(type.displayName)"
             ZStack{
                 Image(trailPieceImage).resizable().scaledToFill()
-                Image(trailPieceImage + "ColorMask").resizable().scaledToFill().foregroundColor(.red)
+                Image(trailPieceImage + "ColorMask").resizable().scaledToFill().foregroundColor(displayColor)
             }.scaleEffect(x: flipped ? -1 : 1, y: 1)
             HStack(spacing: 36){
                 ForEach(0..<workouts.count, id: \.self){
