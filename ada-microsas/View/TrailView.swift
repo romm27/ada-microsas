@@ -90,15 +90,27 @@ struct TrailPieceView: View {
     let flipped: Bool
     let displayColors: WorkoutColor
     
-    func getWorkoutYModifier(index: Int, totalWorkouts: Int, flipped: Bool) -> Int{
-        
-        if index == 0 && !flipped || index == totalWorkouts-1 && flipped{
-            return -1
+    func isUpWorkout(index: Int, totalWorkouts: Int, flipped: Bool) -> CGFloat{
+        if index == totalWorkouts - 1{
+            return 1
         }
         else {
             return 0
         }
     }
+    
+    func isDownWorkout(index: Int, totalWorkouts: Int, flipped: Bool) -> CGFloat{
+        return isUpWorkout(index: index, totalWorkouts: totalWorkouts, flipped: flipped) == 0 ? 1 : 0
+    }
+    
+    func isTop() -> CGFloat{
+        return type == .top ? 1 : 0
+    }
+    
+    func isBottom() -> CGFloat{
+        return type == .bottom ? 1 : 0
+    }
+    
     
     var body: some View {
         ZStack{
@@ -110,8 +122,9 @@ struct TrailPieceView: View {
             HStack(spacing: 44){
                 ForEach(0..<workouts.count, id: \.self){
                     workout in
+                    let index = flipped ?  workout : (workouts.count - workout - 1)
                     ZStack{
-                        let circleSize = 55
+                        let circleSize = 56
                         Circle()
                             .foregroundStyle(displayColors.workoutBorderColor)
                             .scaledToFit()
@@ -120,11 +133,21 @@ struct TrailPieceView: View {
                             .foregroundStyle(displayColors.workoutColor)
                             .scaledToFit()
                             .frame(height: CGFloat(circleSize - 5 * 2))
-                        Text("\(workouts[workout])")
+                        Text("\(workouts[index])")
                             .foregroundStyle(.white)
                     }
-                    .offset(x:40 * (flipped ? 1 : -1), y: 50)
-                    .offset(y : CGFloat(65 * getWorkoutYModifier(index: workout, totalWorkouts: workouts.count, flipped: flipped)))
+                    .offset(x:40 * (flipped ? 1 : -1), y: 50) // General offset
+                    .offset(y : -65 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)) // Move up node uo
+                    .offset(x: 10 * isTop(), y: 10 * isTop()) //Fix top piece
+                    .offset( //Fix up node of top piece
+                    x: -5 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped) * isTop(),
+                    y : 9 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped) * isTop())
+                    .offset( // Fix up node nodes of Bottom piece
+                        y: -3 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)
+                    )
+                    .offset( //Fix down nodes of bottom piece
+                    x: 13 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped),
+                    y : 0)
                 }
             }
         }
