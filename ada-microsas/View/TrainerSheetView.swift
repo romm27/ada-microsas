@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct TrainerSheetView: View {
+    @Environment(\.dismiss) var dismiss
+    
+    @EnvironmentObject var timerViewModel: TimerViewModel
+    
     var body: some View {
-        
         
         NavigationStack{
             VStack(spacing: 40){
@@ -63,4 +66,5 @@ struct TrainerSheetView: View {
 
 #Preview {
     TrainerSheetView()
+        .environmentObject(TimerViewModel())
 }

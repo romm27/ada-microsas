@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ButtonView: View {
+    @Environment(\.dismiss) var dismiss
+    
+    @EnvironmentObject var timerViewModel: TimerViewModel
     
     
     enum PlayerState{
@@ -27,6 +30,7 @@ struct ButtonView: View {
             if state == .play{
                 Button(action: {
                     //loigica do tempo
+                    timerViewModel.pauseTimer()
                     state = .pause
                 }) {
                     Image(systemName: "pause.fill")
@@ -42,6 +46,7 @@ struct ButtonView: View {
             } else if state == .pause {
                 Button(action: {
                     //logica do tempo
+                    timerViewModel.startTimer()
                     state = .play
                     
                 }) {
@@ -103,7 +108,9 @@ struct ButtonView: View {
         
         //alerta de encerramento antes de concluir atividade
         .alert("Colapso Temporal", isPresented: $showEndingAlert) {
-            Button("Ok") {}
+            Button("Ok") {
+                timerViewModel.endTimer()
+            }
                 } message: {
                     Text("Sua máquina do tempo corrompeu.")
                 }
