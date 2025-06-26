@@ -1,28 +1,14 @@
-//
-//  AtividadeView.swift
-//  ada-microsas
-//
-//  Created by Carla Araujo on 25/06/25.
-//
-
 import SwiftUI
 
 struct ActivityView: View {
     @Environment(\.dismiss) var dismiss
     
     @EnvironmentObject var timerViewModel: TimerViewModel
-    
-    
-//    @State var progressValue: Double = 0.0
+    @EnvironmentObject var planViewModel: PlanViewModel
     
     @State var showCompletionAlert: Bool = false
     
-    
-    
     var body: some View {
-        
-        
-        
         VStack {
             Text("Você tá\namassando!")
                 .padding(.top, 84)
@@ -45,32 +31,25 @@ struct ActivityView: View {
                 .padding(100)
                 .alert("Parabéns!", isPresented: $timerViewModel.isFinished) {
                     Button("Ok") {
-                        //fechar a view
+                        dismiss()
                     }
                 } message: {
                     Text("Você concluiu a atividade!")
                 }
         }
         
-        
         Spacer()
             .navigationBarBackButtonHidden(true)
             .preferredColorScheme(.dark)
             .onAppear{
-                //vai existir uma Activity aqui, para setar o timer
-                //TODO: Mudar aqui para Activity.seconds
-                    //a activity vai vir como Binding(eu acho?) da nossa TrilhaView > ModalView
-                timerViewModel.setTimerConfig(seconds: 5)
+                timerViewModel.setTimerConfig(seconds: DataTrainingModel.shared.trainingList[planViewModel.userLevel].seconds)
                 timerViewModel.startTimer()
             }
     }
-    
-    
 }
-
-
 
 #Preview {
     ActivityView()
         .environmentObject(TimerViewModel())
+        .environmentObject(PlanViewModel())
 }

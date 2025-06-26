@@ -11,6 +11,8 @@ struct TrailView: View {
     let trail: [ActivityModel]
     let userLevel : Int
     @ObservedObject var trailViewDataCenter: TrailViewDataCenter = .shared
+    @State private var shouldNavigateToActivity = false
+
     var chunks: [ChunkedData<ActivityModel>] = []
     var trailColors: [WorkoutColor] = [
         WorkoutColor(trailColor: .brancoGelo, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda),
@@ -65,19 +67,19 @@ struct TrailView: View {
             }
         }
         .sheet(isPresented: $trailViewDataCenter.showSheet){
-            TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex)
+            TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex, shouldStartActivity: $shouldNavigateToActivity)
                 .presentationDetents([.medium])
+        }
+        .navigationDestination(isPresented: $shouldNavigateToActivity) {
+            ActivityView()
         }
     }
 }
 
-
 struct ChunkedData<T>: Identifiable {
     let id: UUID = UUID()
     let data : [T]
-    
 }
-
 
 enum PieceType {
     case top, middle, bottom
@@ -122,7 +124,6 @@ struct TrailPieceView: View {
     func isBottom() -> CGFloat{
         return type == .bottom ? 1 : 0
     }
-    
     
     var body: some View {
         ZStack{

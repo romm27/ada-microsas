@@ -82,11 +82,8 @@ struct ButtonView: View {
                     }
                     
                     Button("Encerrar", role: .destructive) {
-                        withAnimation {
-                            state = .stop
-                            showEndingAlert.toggle()
-                            timerViewModel.endTimer()
-                        }
+                        timerViewModel.endTimer()
+                        dismiss()
                         //logica de encerrar
                     }
                                         
