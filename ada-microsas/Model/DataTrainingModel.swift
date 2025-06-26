@@ -9,6 +9,8 @@ import Foundation
 
 struct DataTrainingModel{
     
+    static let shared = DataTrainingModel()
+    
     let trainingList: [ActivityModel] = [
         
         //treino 01

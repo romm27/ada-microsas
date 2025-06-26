@@ -27,12 +27,7 @@ class PlanViewModel: ObservableObject {
 //            savePlan()
 //        }
 //    }
-    
-    @Published var userPlan: DataTrainingModel = DataTrainingModel(){
-        didSet{
-            savePlan()
-        }
-    }
+
     
     @Published var userLevel: Int = 1 {
         didSet{

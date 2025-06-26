@@ -187,5 +187,5 @@ struct WorkoutColor{
 }
 
 #Preview {
-    TrailView(trail: PlanViewModel().userPlan.trainingList, userLevel: 1)
+    TrailView(trail: DataTrainingModel.shared.trainingList, userLevel: 1)
 }
