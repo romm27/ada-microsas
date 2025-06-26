@@ -29,7 +29,13 @@ struct ProgressBarView: View {
             Circle()
                 .trim(from: 0.0, to: CGFloat(min(self.progress, 0.7)))
                 .stroke(style: StrokeStyle(lineWidth: 35.0, lineCap: .round, lineJoin: .round))
-                .foregroundStyle(.green)
+            
+                .foregroundStyle(
+                    LinearGradient(gradient: Gradient(colors: [Color.roxo, Color.verdeLima]),
+                                   startPoint: .topLeading,
+                                   endPoint: .bottomTrailing)
+                )
+              
             //degree starts at 12`o
                 .rotationEffect(Angle(degrees: 144))
             
@@ -46,19 +52,18 @@ struct ProgressBarView: View {
             
             VStack(spacing: 20){
                 
-                Spacer()
+              Spacer()
                 
                 Text("Tempo")
                     .font(.system(size: 20))
                     .fontWeight(.semibold)
-                
-                Spacer()
-                
+
+
                 Text("00:03:40")
                     .font(.system(size: 56))
                     .fontWeight(.semibold)
                 
-                Spacer()
+           Spacer()
                 
                 ButtonView()
                 

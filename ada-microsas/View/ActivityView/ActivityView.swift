@@ -15,35 +15,72 @@ struct ActivityView: View {
  
     
     var body: some View {
-        ProgressBarView(progress: self.$progressValue)
-            .frame(width: 300, height: 300)
-        //setando valor inicial so de referencia
-            .padding(20.0).onAppear {
-                self.progressValue = 0.0
-            }
         
- 
-        Button("Increment"){
-            withAnimation(.easeInOut(duration: 1.0)){
-                if (progressValue) < 0.7 {
-                    self.progressValue += 0.1
-                } else {
-                    progressValue -= 0.7
-                    showCompletionAlert = true
+        
+        VStack {
+                
+                        Text("Você tá\namassando!")
+                .padding(.top, 84)
+                .padding(.bottom, 40)
+                .padding(.horizontal, 100)
+                .multilineTextAlignment(.center)
+                    }
+        
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .background(.roxo)
+                    .cornerRadius(20)
+                    .ignoresSafeArea(.all)
                     
+                    
+                   
+        
+        
+
+
+        Spacer()
+
+        
+        VStack{
+            ProgressBarView(progress: self.$progressValue)
+                .frame(width: 300, height: 300)
+            //setando valor inicial so de referencia
+                .padding(100).onAppear {
+                    self.progressValue = 0.0
+                }
+            
+     
+            Button("Corre Aí"){
+                withAnimation(.easeInOut(duration: 1.0)){
+                    if (progressValue) < 0.7 {
+                        self.progressValue += 0.1
+                    } else {
+                        progressValue -= 0.7
+                        showCompletionAlert = true
+                        
+                    }
                 }
             }
+                  
+                
+            .alert("Parabéns!", isPresented: $showCompletionAlert) {
+                Button("Ok") {}
+                } message: {
+                    Text("Você concluiu a atividade!")
+                }
         }
-              
+        
+        
+        Spacer()
             
-        .alert("Parabéns!", isPresented: $showCompletionAlert) {
-            Button("Ok") {}
-            } message: {
-                Text("Você concluiu a atividade!")
-            }
+            .navigationBarBackButtonHidden(true)
+            .preferredColorScheme(.dark)
         }
+    
        
     }
+
 
 
 #Preview {

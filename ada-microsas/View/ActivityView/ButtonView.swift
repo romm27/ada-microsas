@@ -32,8 +32,8 @@ struct ButtonView: View {
                     Image(systemName: "pause.fill")
                         .font(.largeTitle)
                         .padding(15)
-                        .background(Color(UIColor.systemGray5))
-                        .foregroundColor(.white)
+                        .background(.brancoGelo)
+                        .foregroundColor(.cinzaClaro)
                         .clipShape(Circle())
                         .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 4)
                 }
@@ -48,7 +48,7 @@ struct ButtonView: View {
                     Image(systemName: "play.fill")
                         .font(.largeTitle)
                         .padding(15)
-                        .background(Color(UIColor.systemGray5))
+                        .background(.cinzaClaro)
                         .foregroundColor(.white)
                         .clipShape(Circle())
                         .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 10)
@@ -63,7 +63,7 @@ struct ButtonView: View {
                     Image(systemName: "stop.fill")
                         .font(.largeTitle)
                         .padding(15)
-                        .background(Color(UIColor.systemGray5))
+                        .background(.cinzaClaro)
                         .foregroundColor(.white)
                         .clipShape(Circle())
                         .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 10)
@@ -79,8 +79,10 @@ struct ButtonView: View {
                         showEndingAlert.toggle()
                         //logica de encerrar
                     }
-                    
-                } message: {
+                                        
+                }
+                
+                message: {
                     Text("Se você encerrar agora, vai perder todo o seu progresso. Tem certeza?")
                     }
                 
@@ -105,6 +107,7 @@ struct ButtonView: View {
                 } message: {
                     Text("Sua máquina do tempo corrompeu.")
                 }
+                .preferredColorScheme(.dark)
 
     }
 }
