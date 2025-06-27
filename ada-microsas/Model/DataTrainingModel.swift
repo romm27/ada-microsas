@@ -28,7 +28,8 @@ struct DataTrainingModel{
                 "5 a 10 minutos de corrida leve",
                 "Alongamento leve focado em panturrilhas, quadríceps, posteriores de coxa e quadris"
             ],
-            objectiveTraining: "Resistência de velocidade e eficiência na corrida."
+            objectiveTraining: "Resistência de velocidade e eficiência na corrida.",
+            requiredLevel: 1
         ),
         
         // treino 02
@@ -46,7 +47,8 @@ struct DataTrainingModel{
                 "5 minutos de caminhada",
                 "Alongamento suave de panturrilhas e quadris"
             ],
-            objectiveTraining: "Aumentar a velocidade e a resistência em distâncias curtas."
+            objectiveTraining: "Aumentar a velocidade e a resistência em distâncias curtas.",
+            requiredLevel: 2
         ),
 
         // treino 03
@@ -61,7 +63,8 @@ struct DataTrainingModel{
                 "3 × 1 km em ritmo de prova de 10 km, com 3 minutos de descanso ativo (caminhada ou trote)"
             ],
             restTraining: ["5 minutos de trote leve", "Alongamento com foco em posteriores e quadríceps"],
-            objectiveTraining: "Melhorar a capacidade aeróbica e o ritmo sustentado."
+            objectiveTraining: "Melhorar a capacidade aeróbica e o ritmo sustentado.",
+            requiredLevel: 3
         ),
 
         // treino 04
@@ -79,7 +82,8 @@ struct DataTrainingModel{
                 "5 a 10 minutos de corrida leve",
                 "Alongamento leve focado em quadril, glúteos e panturrilhas"
             ],
-            objectiveTraining: "Desenvolver explosão e agilidade."
+            objectiveTraining: "Desenvolver explosão e agilidade.",
+            requiredLevel: 4
         ),
 
         // treino 05
@@ -97,7 +101,8 @@ struct DataTrainingModel{
                 "5 minutos de caminhada",
                 "Alongamento focado em quadríceps, posteriores e lombar"
             ],
-            objectiveTraining: "Aprimorar resistência aeróbica e controle do ritmo."
+            objectiveTraining: "Aprimorar resistência aeróbica e controle do ritmo.",
+            requiredLevel: 5
         ),
 
         // treino 06
@@ -115,7 +120,8 @@ struct DataTrainingModel{
                 "5 minutos de trote leve",
                 "Alongamentos com foco em relaxamento muscular geral"
             ],
-            objectiveTraining: "Melhorar variações de ritmo e adaptação cardiovascular."
+            objectiveTraining: "Melhorar variações de ritmo e adaptação cardiovascular.",
+            requiredLevel: 6
         ),
         
         
@@ -127,7 +133,7 @@ struct DataTrainingModel{
         //COPIAS PARA TESTE AAAAAAA
         //treino 01
         ActivityModel(
-            order: 01,
+            order: 07,
             seconds: 10,
             warmingTraining: [
                 "5 min de corrida leve",
@@ -140,12 +146,13 @@ struct DataTrainingModel{
                 "5 a 10 minutos de corrida leve",
                 "Alongamento leve focado em panturrilhas, quadríceps, posteriores de coxa e quadris"
             ],
-            objectiveTraining: "Resistência de velocidade e eficiência na corrida."
+            objectiveTraining: "Resistência de velocidade e eficiência na corrida.",
+            requiredLevel: 7
         ),
         
         // treino 02
         ActivityModel(
-            order: 02,
+            order: 08,
             seconds: 10,
             warmingTraining: [
                 "10 minutos de trote leve",
@@ -158,12 +165,13 @@ struct DataTrainingModel{
                 "5 minutos de caminhada",
                 "Alongamento suave de panturrilhas e quadris"
             ],
-            objectiveTraining: "Aumentar a velocidade e a resistência em distâncias curtas."
+            objectiveTraining: "Aumentar a velocidade e a resistência em distâncias curtas.",
+            requiredLevel: 8
         ),
 
         // treino 03
         ActivityModel(
-            order: 03,
+            order: 09,
             seconds: 10,
             warmingTraining: [
                 "5 minutos de corrida leve",
@@ -173,12 +181,13 @@ struct DataTrainingModel{
                 "3 × 1 km em ritmo de prova de 10 km, com 3 minutos de descanso ativo (caminhada ou trote)"
             ],
             restTraining: ["5 minutos de trote leve", "Alongamento com foco em posteriores e quadríceps"],
-            objectiveTraining: "Melhorar a capacidade aeróbica e o ritmo sustentado."
+            objectiveTraining: "Melhorar a capacidade aeróbica e o ritmo sustentado.",
+            requiredLevel: 9
         ),
 
         // treino 04
         ActivityModel(
-            order: 04,
+            order: 10,
             seconds: 10,
             warmingTraining: [
                 "8 minutos de corrida leve",
@@ -191,12 +200,13 @@ struct DataTrainingModel{
                 "5 a 10 minutos de corrida leve",
                 "Alongamento leve focado em quadril, glúteos e panturrilhas"
             ],
-            objectiveTraining: "Desenvolver explosão e agilidade."
+            objectiveTraining: "Desenvolver explosão e agilidade.",
+            requiredLevel: 10
         ),
 
         // treino 05
         ActivityModel(
-            order: 05,
+            order: 11,
             seconds: 10,
             warmingTraining: [
                 "5 minutos de trote leve",
@@ -209,12 +219,13 @@ struct DataTrainingModel{
                 "5 minutos de caminhada",
                 "Alongamento focado em quadríceps, posteriores e lombar"
             ],
-            objectiveTraining: "Aprimorar resistência aeróbica e controle do ritmo."
+            objectiveTraining: "Aprimorar resistência aeróbica e controle do ritmo.",
+            requiredLevel: 11
         ),
 
         // treino 06
         ActivityModel(
-            order: 06,
+            order: 12,
             seconds: 10,
             warmingTraining: [
                 "6 minutos de corrida leve",
@@ -227,11 +238,12 @@ struct DataTrainingModel{
                 "5 minutos de trote leve",
                 "Alongamentos com foco em relaxamento muscular geral"
             ],
-            objectiveTraining: "Melhorar variações de ritmo e adaptação cardiovascular."
+            objectiveTraining: "Melhorar variações de ritmo e adaptação cardiovascular.",
+            requiredLevel: 12
         ),
         //treino 01
         ActivityModel(
-            order: 01,
+            order: 13,
             seconds: 10,
             warmingTraining: [
                 "5 min de corrida leve",
@@ -244,12 +256,13 @@ struct DataTrainingModel{
                 "5 a 10 minutos de corrida leve",
                 "Alongamento leve focado em panturrilhas, quadríceps, posteriores de coxa e quadris"
             ],
-            objectiveTraining: "Resistência de velocidade e eficiência na corrida."
+            objectiveTraining: "Resistência de velocidade e eficiência na corrida.",
+            requiredLevel: 13
         ),
         
         // treino 02
         ActivityModel(
-            order: 02,
+            order: 14,
             seconds: 10,
             warmingTraining: [
                 "10 minutos de trote leve",
@@ -262,12 +275,13 @@ struct DataTrainingModel{
                 "5 minutos de caminhada",
                 "Alongamento suave de panturrilhas e quadris"
             ],
-            objectiveTraining: "Aumentar a velocidade e a resistência em distâncias curtas."
+            objectiveTraining: "Aumentar a velocidade e a resistência em distâncias curtas.",
+            requiredLevel: 14
         ),
 
         // treino 03
         ActivityModel(
-            order: 03,
+            order: 15,
             seconds: 10,
             warmingTraining: [
                 "5 minutos de corrida leve",
@@ -277,12 +291,13 @@ struct DataTrainingModel{
                 "3 × 1 km em ritmo de prova de 10 km, com 3 minutos de descanso ativo (caminhada ou trote)"
             ],
             restTraining: ["5 minutos de trote leve", "Alongamento com foco em posteriores e quadríceps"],
-            objectiveTraining: "Melhorar a capacidade aeróbica e o ritmo sustentado."
+            objectiveTraining: "Melhorar a capacidade aeróbica e o ritmo sustentado.",
+            requiredLevel: 15
         ),
 
         // treino 04
         ActivityModel(
-            order: 04,
+            order: 16,
             seconds: 10,
             warmingTraining: [
                 "8 minutos de corrida leve",
@@ -295,12 +310,13 @@ struct DataTrainingModel{
                 "5 a 10 minutos de corrida leve",
                 "Alongamento leve focado em quadril, glúteos e panturrilhas"
             ],
-            objectiveTraining: "Desenvolver explosão e agilidade."
+            objectiveTraining: "Desenvolver explosão e agilidade.",
+            requiredLevel: 16
         ),
 
         // treino 05
         ActivityModel(
-            order: 05,
+            order: 17,
             seconds: 10,
             warmingTraining: [
                 "5 minutos de trote leve",
@@ -313,12 +329,13 @@ struct DataTrainingModel{
                 "5 minutos de caminhada",
                 "Alongamento focado em quadríceps, posteriores e lombar"
             ],
-            objectiveTraining: "Aprimorar resistência aeróbica e controle do ritmo."
+            objectiveTraining: "Aprimorar resistência aeróbica e controle do ritmo.",
+            requiredLevel: 17
         ),
 
         // treino 06
         ActivityModel(
-            order: 06,
+            order: 18,
             seconds: 10,
             warmingTraining: [
                 "6 minutos de corrida leve",
@@ -331,11 +348,12 @@ struct DataTrainingModel{
                 "5 minutos de trote leve",
                 "Alongamentos com foco em relaxamento muscular geral"
             ],
-            objectiveTraining: "Melhorar variações de ritmo e adaptação cardiovascular."
+            objectiveTraining: "Melhorar variações de ritmo e adaptação cardiovascular.",
+            requiredLevel: 18
         ),
         //treino 01
         ActivityModel(
-            order: 01,
+            order: 19,
             seconds: 10,
             warmingTraining: [
                 "5 min de corrida leve",
@@ -348,12 +366,13 @@ struct DataTrainingModel{
                 "5 a 10 minutos de corrida leve",
                 "Alongamento leve focado em panturrilhas, quadríceps, posteriores de coxa e quadris"
             ],
-            objectiveTraining: "Resistência de velocidade e eficiência na corrida."
+            objectiveTraining: "Resistência de velocidade e eficiência na corrida.",
+            requiredLevel: 19
         ),
         
         // treino 02
         ActivityModel(
-            order: 02,
+            order: 20,
             seconds: 10,
             warmingTraining: [
                 "10 minutos de trote leve",
@@ -366,12 +385,13 @@ struct DataTrainingModel{
                 "5 minutos de caminhada",
                 "Alongamento suave de panturrilhas e quadris"
             ],
-            objectiveTraining: "Aumentar a velocidade e a resistência em distâncias curtas."
+            objectiveTraining: "Aumentar a velocidade e a resistência em distâncias curtas.",
+            requiredLevel: 20
         ),
 
         // treino 03
         ActivityModel(
-            order: 03,
+            order: 21,
             seconds: 10,
             warmingTraining: [
                 "5 minutos de corrida leve",
@@ -381,12 +401,13 @@ struct DataTrainingModel{
                 "3 × 1 km em ritmo de prova de 10 km, com 3 minutos de descanso ativo (caminhada ou trote)"
             ],
             restTraining: ["5 minutos de trote leve", "Alongamento com foco em posteriores e quadríceps"],
-            objectiveTraining: "Melhorar a capacidade aeróbica e o ritmo sustentado."
+            objectiveTraining: "Melhorar a capacidade aeróbica e o ritmo sustentado.",
+            requiredLevel: 21
         ),
 
         // treino 04
         ActivityModel(
-            order: 04,
+            order: 22,
             seconds: 10,
             warmingTraining: [
                 "8 minutos de corrida leve",
@@ -399,12 +420,13 @@ struct DataTrainingModel{
                 "5 a 10 minutos de corrida leve",
                 "Alongamento leve focado em quadril, glúteos e panturrilhas"
             ],
-            objectiveTraining: "Desenvolver explosão e agilidade."
+            objectiveTraining: "Desenvolver explosão e agilidade.",
+            requiredLevel: 22
         ),
 
         // treino 05
         ActivityModel(
-            order: 05,
+            order: 23,
             seconds: 10,
             warmingTraining: [
                 "5 minutos de trote leve",
@@ -417,12 +439,13 @@ struct DataTrainingModel{
                 "5 minutos de caminhada",
                 "Alongamento focado em quadríceps, posteriores e lombar"
             ],
-            objectiveTraining: "Aprimorar resistência aeróbica e controle do ritmo."
+            objectiveTraining: "Aprimorar resistência aeróbica e controle do ritmo.",
+            requiredLevel: 23
         ),
 
         // treino 06
         ActivityModel(
-            order: 06,
+            order: 24,
             seconds: 10,
             warmingTraining: [
                 "6 minutos de corrida leve",
@@ -435,7 +458,8 @@ struct DataTrainingModel{
                 "5 minutos de trote leve",
                 "Alongamentos com foco em relaxamento muscular geral"
             ],
-            objectiveTraining: "Melhorar variações de ritmo e adaptação cardiovascular."
+            objectiveTraining: "Melhorar variações de ritmo e adaptação cardiovascular.",
+            requiredLevel: 24
         )
 
      
