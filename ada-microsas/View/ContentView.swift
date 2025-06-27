@@ -22,7 +22,7 @@ struct ContentView: View {
             ZStack {
                 Color.roxo
                     .ignoresSafeArea(edges: .all)
-                NavigationLink(destination: TrailView()){
+                NavigationLink(destination: TrailView().environmentObject(planViewModel)){
                     VStack{
                         Image("logo")
                             .resizable()

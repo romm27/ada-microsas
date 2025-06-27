@@ -46,6 +46,7 @@ struct ActivityView: View {
                 .padding(100)
                 .alert("Parabéns!", isPresented: $timerViewModel.isFinished) {
                     Button("Ok") {
+                        planViewModel.userLevel += 1 //DISCUTIR SE É O MELHOR LUGAR
                         dismiss()
                     }
                 } message: {

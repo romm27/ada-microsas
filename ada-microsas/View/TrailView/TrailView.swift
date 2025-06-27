@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TrailView: View {
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var planViewModel: PlanViewModel
     let trail: [ActivityModel] = DataTrainingModel.shared.trainingList
     @ObservedObject var trailViewDataCenter: TrailViewDataCenter = .shared
     @State private var shouldNavigateToActivity = false
@@ -33,7 +35,6 @@ struct TrailView: View {
         ZStack{
             Rectangle().foregroundStyle(Color.cinzaEscuro)
             VStack(){
-                //Image("logo")
                 ScrollView{
                     VStack(alignment: .leading, spacing: -48) {
                         ForEach(Array(chunks.enumerated()), id: \.element.id)
@@ -43,23 +44,34 @@ struct TrailView: View {
                                 if index == chunks.count - 1 {
                                     TrailPieceView(workouts: chunk.data, type: .top, flipped: index % 2 == 0,
                                                    displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
+                                    .environmentObject(planViewModel)
                                 }
                                 else if index == 0{
                                     TrailPieceView(workouts: chunk.data, type: .bottom, flipped: index % 2 == 0,
                                                    displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
+                                    .environmentObject(planViewModel)
                                         .offset(x: 10)
                                 }
                                 else{
                                     TrailPieceView(workouts: chunk.data, type: .middle, flipped: index % 2 == 0,
                                                    displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
+                                    .environmentObject(planViewModel)
                                 }
                             }
                             .offset(x: 15 * (index % 2 != 0 ? 1 : -1))
+                            .padding(.vertical, -13)
                         }
+                        Image("LogoLight")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(height: 32)
+                            .rotationEffect(Angle(degrees: 180))
+                            .padding(.vertical, 76)
+                            .padding(.horizontal, 64)
                     }
-
                 }
                 .rotationEffect(Angle(degrees: 180))
+                .padding(.vertical, 32)
             }
         }
         .sheet(isPresented: $trailViewDataCenter.showSheet){
@@ -67,7 +79,7 @@ struct TrailView: View {
                 .presentationDetents([.medium])
         }
         .navigationDestination(isPresented: $shouldNavigateToActivity) {
-            ActivityView()
+            ActivityView().environmentObject(planViewModel)
         }
         .navigationBarBackButtonHidden(true)
     }
@@ -93,6 +105,8 @@ enum PieceType {
 }
 
 struct TrailPieceView: View {
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var planViewModel: PlanViewModel
     let workouts: [ActivityModel]
     let type: PieceType
     let flipped: Bool
@@ -125,15 +139,23 @@ struct TrailPieceView: View {
         ZStack{
             let trailPieceImage = "TrailPiece\(type.displayName)"
             ZStack{
-                Image(trailPieceImage).resizable().scaledToFill()
-                Image(trailPieceImage + "ColorMask").resizable().scaledToFill().foregroundColor(displayColors.trailColor)
+                Image(trailPieceImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 200)
+                Image(trailPieceImage + "ColorMask")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 200)
+                    .foregroundColor(displayColors.trailColor)
             }.scaleEffect(x: flipped ? -1 : 1, y: 1)
             HStack(spacing: 44){
                 ForEach(0..<workouts.count, id: \.self){
                     workout in
                     let index = flipped ?  workout : (workouts.count - workout - 1)
+                    let globalIndex = (pieceId * 3) + index
                     Button{
-                        TrailViewDataCenter.shared.selectedButtonIndex = (pieceId * 3) + workout
+                        TrailViewDataCenter.shared.selectedButtonIndex = globalIndex
                         showSheet = true
                     } label:{
                         ZStack{
@@ -146,9 +168,14 @@ struct TrailPieceView: View {
                                 .foregroundStyle(displayColors.workoutColor)
                                 .scaledToFit()
                                 .frame(height: CGFloat(circleSize - 5 * 2))
-                            //Text("\(workouts[index])")
-//                            Image(systemName: (pieceId * 3) + workout)
-//                                .foregroundStyle(.white)
+                            if (globalIndex) > planViewModel.userLevel - 1{
+                                Image(systemName: "lock.fill")
+                                    .foregroundStyle(Color.white)
+                            }
+                            else if globalIndex == planViewModel.userLevel - 1{
+                                Image(systemName: "figure.walk")
+                                    .foregroundStyle(Color.white)
+                            }
                         }
                     }
                     .offset(x:40 * (flipped ? 1 : -1), y: 50) // General offset
@@ -186,5 +213,5 @@ struct WorkoutColor{
 }
 
 #Preview {
-    TrailView()
+    TrailView().environmentObject(PlanViewModel())
 }

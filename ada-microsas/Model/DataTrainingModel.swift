@@ -34,7 +34,7 @@ struct DataTrainingModel{
         // treino 02
         ActivityModel(
             order: 02,
-            seconds: 10,
+            seconds: 15,
             warmingTraining: [
                 "10 minutos de trote leve",
                 "5 minutos de mobilidade (círculos de tornozelo, rotação de joelhos e quadril)"
