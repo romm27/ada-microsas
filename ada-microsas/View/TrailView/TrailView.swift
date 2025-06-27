@@ -7,6 +7,15 @@
 
 import SwiftUI
 
+//
+//  TrailView.swift
+//  ada-microsas
+//
+//  Created by Giovanni Galarda Strasser on 25/06/25.
+//
+
+import SwiftUI
+
 struct TrailView: View {
     let trail: [ActivityModel]
     let userLevel : Int
@@ -73,9 +82,9 @@ struct TrailView: View {
         .navigationDestination(isPresented: $shouldNavigateToActivity) {
             ActivityView()
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
-
 struct ChunkedData<T>: Identifiable {
     let id: UUID = UUID()
     let data : [T]
@@ -151,6 +160,7 @@ struct TrailPieceView: View {
                                 .scaledToFit()
                                 .frame(height: CGFloat(circleSize - 5 * 2))
                             //Text("\(workouts[index])")
+                            Image(systemName: "lock.filled")
                                 .foregroundStyle(.white)
                         }
                     }
