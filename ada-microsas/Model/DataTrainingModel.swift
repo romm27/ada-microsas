@@ -54,7 +54,7 @@ struct DataTrainingModel{
         // treino 03
         ActivityModel(
             order: 03,
-            seconds: 10,
+            seconds: 20,
             warmingTraining: [
                 "5 minutos de corrida leve",
                 "5 minutos de alongamentos dinâmicos (skiping, polichinelos, avanço com rotação)"
@@ -70,7 +70,7 @@ struct DataTrainingModel{
         // treino 04
         ActivityModel(
             order: 04,
-            seconds: 10,
+            seconds: 25,
             warmingTraining: [
                 "8 minutos de corrida leve",
                 "2 minutos de exercícios de mobilidade articular"
@@ -89,7 +89,7 @@ struct DataTrainingModel{
         // treino 05
         ActivityModel(
             order: 05,
-            seconds: 10,
+            seconds: 30,
             warmingTraining: [
                 "5 minutos de trote leve",
                 "5 minutos de aquecimento dinâmico com foco em amplitude de movimento"
@@ -108,7 +108,7 @@ struct DataTrainingModel{
         // treino 06
         ActivityModel(
             order: 06,
-            seconds: 10,
+            seconds: 35,
             warmingTraining: [
                 "6 minutos de corrida leve",
                 "4 minutos de exercícios de técnica de corrida (joelho alto, calcanhar no glúteo, passadas curtas)"
@@ -134,7 +134,7 @@ struct DataTrainingModel{
         //treino 01
         ActivityModel(
             order: 07,
-            seconds: 10,
+            seconds: 40,
             warmingTraining: [
                 "5 min de corrida leve",
                 "5 min de alongamentos (balanços de perna, círculos com o quadril)"
@@ -153,7 +153,7 @@ struct DataTrainingModel{
         // treino 02
         ActivityModel(
             order: 08,
-            seconds: 10,
+            seconds: 45,
             warmingTraining: [
                 "10 minutos de trote leve",
                 "5 minutos de mobilidade (círculos de tornozelo, rotação de joelhos e quadril)"
@@ -172,7 +172,7 @@ struct DataTrainingModel{
         // treino 03
         ActivityModel(
             order: 09,
-            seconds: 10,
+            seconds: 50,
             warmingTraining: [
                 "5 minutos de corrida leve",
                 "5 minutos de alongamentos dinâmicos (skiping, polichinelos, avanço com rotação)"
@@ -188,7 +188,7 @@ struct DataTrainingModel{
         // treino 04
         ActivityModel(
             order: 10,
-            seconds: 10,
+            seconds: 55,
             warmingTraining: [
                 "8 minutos de corrida leve",
                 "2 minutos de exercícios de mobilidade articular"
@@ -207,7 +207,7 @@ struct DataTrainingModel{
         // treino 05
         ActivityModel(
             order: 11,
-            seconds: 10,
+            seconds: 60,
             warmingTraining: [
                 "5 minutos de trote leve",
                 "5 minutos de aquecimento dinâmico com foco em amplitude de movimento"
@@ -226,7 +226,7 @@ struct DataTrainingModel{
         // treino 06
         ActivityModel(
             order: 12,
-            seconds: 10,
+            seconds: 65,
             warmingTraining: [
                 "6 minutos de corrida leve",
                 "4 minutos de exercícios de técnica de corrida (joelho alto, calcanhar no glúteo, passadas curtas)"
@@ -244,7 +244,7 @@ struct DataTrainingModel{
         //treino 01
         ActivityModel(
             order: 13,
-            seconds: 10,
+            seconds: 70,
             warmingTraining: [
                 "5 min de corrida leve",
                 "5 min de alongamentos (balanços de perna, círculos com o quadril)"
@@ -263,7 +263,7 @@ struct DataTrainingModel{
         // treino 02
         ActivityModel(
             order: 14,
-            seconds: 10,
+            seconds: 80,
             warmingTraining: [
                 "10 minutos de trote leve",
                 "5 minutos de mobilidade (círculos de tornozelo, rotação de joelhos e quadril)"
@@ -282,7 +282,7 @@ struct DataTrainingModel{
         // treino 03
         ActivityModel(
             order: 15,
-            seconds: 10,
+            seconds: 85,
             warmingTraining: [
                 "5 minutos de corrida leve",
                 "5 minutos de alongamentos dinâmicos (skiping, polichinelos, avanço com rotação)"
@@ -298,7 +298,7 @@ struct DataTrainingModel{
         // treino 04
         ActivityModel(
             order: 16,
-            seconds: 10,
+            seconds: 90,
             warmingTraining: [
                 "8 minutos de corrida leve",
                 "2 minutos de exercícios de mobilidade articular"
@@ -317,7 +317,7 @@ struct DataTrainingModel{
         // treino 05
         ActivityModel(
             order: 17,
-            seconds: 10,
+            seconds: 100,
             warmingTraining: [
                 "5 minutos de trote leve",
                 "5 minutos de aquecimento dinâmico com foco em amplitude de movimento"
@@ -336,7 +336,7 @@ struct DataTrainingModel{
         // treino 06
         ActivityModel(
             order: 18,
-            seconds: 10,
+            seconds: 110,
             warmingTraining: [
                 "6 minutos de corrida leve",
                 "4 minutos de exercícios de técnica de corrida (joelho alto, calcanhar no glúteo, passadas curtas)"
@@ -354,7 +354,7 @@ struct DataTrainingModel{
         //treino 01
         ActivityModel(
             order: 19,
-            seconds: 10,
+            seconds: 120,
             warmingTraining: [
                 "5 min de corrida leve",
                 "5 min de alongamentos (balanços de perna, círculos com o quadril)"
@@ -373,7 +373,7 @@ struct DataTrainingModel{
         // treino 02
         ActivityModel(
             order: 20,
-            seconds: 10,
+            seconds: 130,
             warmingTraining: [
                 "10 minutos de trote leve",
                 "5 minutos de mobilidade (círculos de tornozelo, rotação de joelhos e quadril)"
@@ -392,7 +392,7 @@ struct DataTrainingModel{
         // treino 03
         ActivityModel(
             order: 21,
-            seconds: 10,
+            seconds: 140,
             warmingTraining: [
                 "5 minutos de corrida leve",
                 "5 minutos de alongamentos dinâmicos (skiping, polichinelos, avanço com rotação)"
@@ -408,7 +408,7 @@ struct DataTrainingModel{
         // treino 04
         ActivityModel(
             order: 22,
-            seconds: 10,
+            seconds: 150,
             warmingTraining: [
                 "8 minutos de corrida leve",
                 "2 minutos de exercícios de mobilidade articular"
@@ -427,7 +427,7 @@ struct DataTrainingModel{
         // treino 05
         ActivityModel(
             order: 23,
-            seconds: 10,
+            seconds: 160,
             warmingTraining: [
                 "5 minutos de trote leve",
                 "5 minutos de aquecimento dinâmico com foco em amplitude de movimento"
@@ -446,7 +446,7 @@ struct DataTrainingModel{
         // treino 06
         ActivityModel(
             order: 24,
-            seconds: 10,
+            seconds: 170,
             warmingTraining: [
                 "6 minutos de corrida leve",
                 "4 minutos de exercícios de técnica de corrida (joelho alto, calcanhar no glúteo, passadas curtas)"
