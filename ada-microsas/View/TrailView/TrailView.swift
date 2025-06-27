@@ -16,10 +16,10 @@ struct TrailView: View {
 
     var chunks: [ChunkedData<ActivityModel>] = []
     var trailColors: [WorkoutColor] = [
-        WorkoutColor(trailColor: .brancoGelo, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda),
+        WorkoutColor(trailColor: .azul, workoutColor: .azulBotao, workoutBorderColor: .azulBotaoBorda),
         WorkoutColor(trailColor: .rosa, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda),
-        WorkoutColor(trailColor: .verdeLima, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda),
-        WorkoutColor(trailColor: .roxo, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda)
+        WorkoutColor(trailColor: .verdeLima, workoutColor: .verdeLimaBotao, workoutBorderColor: .verdeLimaBotaoBorda),
+        WorkoutColor(trailColor: .roxo, workoutColor: .roxoBotao, workoutBorderColor: .roxoBotaoBorda)
     ]
     
     init(){
@@ -65,7 +65,7 @@ struct TrailView: View {
                             .scaledToFill()
                             .frame(height: 32)
                             .rotationEffect(Angle(degrees: 180))
-                            .padding(.vertical, 76)
+                            .padding(.vertical, 96)
                             .padding(.horizontal, 64)
                     }
                 }
@@ -170,10 +170,12 @@ struct TrailPieceView: View {
                             if (globalIndex) > planViewModel.userLevel - 1{
                                 Image(systemName: "lock.fill")
                                     .foregroundStyle(Color.white)
+                                    .bold()
                             }
                             else if globalIndex == planViewModel.userLevel - 1{
                                 Image(systemName: "figure.walk")
                                     .foregroundStyle(Color.white)
+                                    .bold()
                             }
                         }
                     }
@@ -184,11 +186,12 @@ struct TrailPieceView: View {
                     x: -5 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped) * isTop(),
                     y : 9 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped) * isTop())
                     .offset( // Fix up node nodes of Bottom piece
-                        y: -3 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)
+                        y: 3 * isBottom() * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)
                     )
                     .offset( //Fix down nodes of bottom piece
-                    x: 13 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped),
-                    y : 0)
+                    x: 11 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped),
+                    y : -3 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped))
+                    .offset(x: 7 * (globalIndex == 0 ? 1 : 0)) //fix first workout
                 }
             }
         }
