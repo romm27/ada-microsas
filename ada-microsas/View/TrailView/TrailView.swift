@@ -70,7 +70,10 @@ struct TrailView: View {
                     }
                 }
                 .rotationEffect(Angle(degrees: 180))
-                .padding(.vertical, 32)
+                //aqui modifica a parte cinza de cima, caso precise
+//                .padding(.vertical, 48)
+                .padding(.top, 48)
+                .padding(.bottom, 32)
             }
         }
         .overlay {
@@ -160,7 +163,9 @@ struct TrailPieceView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 200)
                     .foregroundColor(displayColors.trailColor)
-            }.scaleEffect(x: flipped ? -1 : 1, y: 1)
+            }
+            .scaleEffect(x: flipped ? -1 : 1, y: 1)
+            
             HStack(spacing: 44){
                 ForEach(0..<workouts.count, id: \.self){
                     workout in
@@ -176,19 +181,32 @@ struct TrailPieceView: View {
                                 .foregroundStyle(displayColors.workoutBorderColor)
                                 .scaledToFit()
                                 .frame(height: CGFloat(circleSize))
+                                .shadow(color: .black.opacity(0.35), radius: 5, x: 0, y: 4)
                             Circle()
                                 .foregroundStyle(displayColors.workoutColor)
                                 .scaledToFit()
                                 .frame(height: CGFloat(circleSize - 5 * 2))
+                            
+                            
+                            //se eu nao fiz ainda
                             if (globalIndex) > planViewModel.userLevel{
                                 Image(systemName: "lock.fill")
                                     .foregroundStyle(Color.white)
                                     .bold()
                             }
+                            //se eu to nesse nível
                             else if globalIndex == planViewModel.userLevel{
-                                Image(systemName: "figure.walk")
-                                    .foregroundStyle(Color.white)
-                                    .bold()
+                                Circle()
+                                    .scaledToFit()
+                                    .frame(height: CGFloat(circleSize - 5 * 2))
+                                    .overlay {
+                                        Image("AvatarCareca")
+                                            .resizable()
+                                    }
+                            }
+                            //se eu ja fiz
+                            else if globalIndex == planViewModel.userLevel{
+                                //nao acontece nada como o botao
                             }
                         }
                     }

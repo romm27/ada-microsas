@@ -96,6 +96,7 @@ class TimerViewModel: ObservableObject {
         print("Timer resetado!")
         
         currentTimer = 0
+        maxTimer = 0
     }
     
 }
