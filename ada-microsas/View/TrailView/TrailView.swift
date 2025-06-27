@@ -71,8 +71,11 @@ struct TrailView: View {
                 }
                 .rotationEffect(Angle(degrees: 180))
                 .padding(.vertical, 32)
+                
             }
+            
         }
+        
         .overlay {
             if trailViewDataCenter.showSheet { //
                 Color.black.opacity(0.6)
@@ -206,7 +209,9 @@ struct TrailPieceView: View {
                         y : -3 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped))
                     .offset(x: 7 * (globalIndex == 0 ? 1 : 0)) //fix first workout
                 }
+                
             }
+           
         }
         .rotationEffect(Angle(degrees: 180))
         .padding(.horizontal, 32)
