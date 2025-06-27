@@ -12,6 +12,8 @@ struct ContentView: View {
     
     @EnvironmentObject var planViewModel: PlanViewModel
     
+    @State private var showSplash = true
+    
     init(){
         
     }
@@ -20,20 +22,27 @@ struct ContentView: View {
         
         NavigationStack{
             ZStack {
-                Color.roxo
-                    .ignoresSafeArea(edges: .all)
-                NavigationLink(destination: TrailView().environmentObject(planViewModel)){
-                    VStack{
-                        Image("logo")
-                            .resizable()
-                            .scaledToFit( )
-                            .frame(width: 225)
-                    }
-                 
-                }
-                .navigationBarBackButtonHidden()
-             
+                
+                if showSplash{
+                    SplashScreenView()
+                        .transition(.opacity)
                     
+                } else {
+
+                    
+                    TrailView()
+                        .environmentObject(planViewModel)
+                        .transition(.opacity)
+                    
+                }
+      
+            }
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    withAnimation{
+                        self.showSplash = false
+                    }
+                }
             }
         }
     }
