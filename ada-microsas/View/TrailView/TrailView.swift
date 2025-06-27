@@ -59,7 +59,6 @@ struct TrailView: View {
                                 }
                             }
                             .offset(x: 15 * (index % 2 != 0 ? 1 : -1))
-                            .padding(.vertical, -13)
                         }
                         Image("LogoLight")
                             .resizable()
@@ -195,6 +194,9 @@ struct TrailPieceView: View {
         }
         .rotationEffect(Angle(degrees: 180))
         .padding(.horizontal, 32)
+        .padding(.vertical, -13)
+        .padding(.vertical, -10 * isBottom())
+        .padding(.vertical, 8 * isTop())
     }
 }
 
