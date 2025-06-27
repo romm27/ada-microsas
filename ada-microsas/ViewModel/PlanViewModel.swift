@@ -29,7 +29,8 @@ class PlanViewModel: ObservableObject {
 //    }
 
     
-    @Published var userLevel: Int = 1 {
+    @Published var userLevel: Int = 0 { //Começa em 0 por causa do array, ao mostrar para o jogador adicione + 1.
+        //Por exemplo o workout do userLevel 0 é igual ao PRIMEIRO workout(1) para o jogador.
         didSet{
             savePlan()
         }
@@ -76,7 +77,7 @@ class PlanViewModel: ObservableObject {
             // Se der erro (ex: arquivo não existe na primeira vez),
             // começamos no level.
             print("Não foi possível carregar o level: \(error.localizedDescription). Começando no level 1.")
-            self.userLevel = 1
+            self.userLevel = 0
         }
     }
     

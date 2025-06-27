@@ -167,12 +167,12 @@ struct TrailPieceView: View {
                                 .foregroundStyle(displayColors.workoutColor)
                                 .scaledToFit()
                                 .frame(height: CGFloat(circleSize - 5 * 2))
-                            if (globalIndex) > planViewModel.userLevel - 1{
+                            if (globalIndex) > planViewModel.userLevel{
                                 Image(systemName: "lock.fill")
                                     .foregroundStyle(Color.white)
                                     .bold()
                             }
-                            else if globalIndex == planViewModel.userLevel - 1{
+                            else if globalIndex == planViewModel.userLevel{
                                 Image(systemName: "figure.walk")
                                     .foregroundStyle(Color.white)
                                     .bold()
