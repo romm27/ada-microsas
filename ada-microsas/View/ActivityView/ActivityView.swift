@@ -11,6 +11,7 @@ struct ActivityView: View {
     @Environment(\.dismiss) var dismiss
     
     @EnvironmentObject var timerViewModel: TimerViewModel
+    @EnvironmentObject var planViewModel: PlanViewModel
     
     
 //    @State var progressValue: Double = 0.0
@@ -45,7 +46,8 @@ struct ActivityView: View {
                 .padding(100)
                 .alert("Parabéns!", isPresented: $timerViewModel.isFinished) {
                     Button("Ok") {
-                        //fechar a view
+                        planViewModel.userLevel += 1 //DISCUTIR SE É O MELHOR LUGAR
+                        dismiss()
                     }
                 } message: {
                     Text("Você concluiu a atividade!")
@@ -60,7 +62,8 @@ struct ActivityView: View {
                 //vai existir uma Activity aqui, para setar o timer
                 //TODO: Mudar aqui para Activity.seconds
                     //a activity vai vir como Binding(eu acho?) da nossa TrilhaView > ModalView
-                timerViewModel.setTimerConfig(seconds: 5)
+                //timerViewModel.setTimerConfig(seconds: 5)
+                timerViewModel.setTimerConfig(seconds: DataTrainingModel.shared.trainingList[planViewModel.userLevel].seconds) //Colocado
                 timerViewModel.startTimer()
             }
     }
@@ -73,4 +76,5 @@ struct ActivityView: View {
 #Preview {
     ActivityView()
         .environmentObject(TimerViewModel())
+        .environmentObject(PlanViewModel())
 }

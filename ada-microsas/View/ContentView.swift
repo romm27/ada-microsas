@@ -8,13 +8,21 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.dismiss) var dismiss
+    
+    @EnvironmentObject var planViewModel: PlanViewModel
+    
+    init(){
+        
+    }
     
     var body: some View {
+        
         NavigationStack{
             ZStack {
                 Color.roxo
                     .ignoresSafeArea(edges: .all)
-                NavigationLink(destination: TrilhaExemploAPAGAR()){
+                NavigationLink(destination: TrailView().environmentObject(planViewModel)){
                     VStack{
                         Image("logo")
                             .resizable()
@@ -23,6 +31,7 @@ struct ContentView: View {
                     }
                  
                 }
+                .navigationBarBackButtonHidden()
              
                     
             }
@@ -32,5 +41,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .environmentObject(TimerViewModel())
+        .environmentObject(TimerViewModel()).environmentObject(PlanViewModel())
 }
