@@ -13,7 +13,7 @@ struct TrailView: View {
     let trail: [ActivityModel] = DataTrainingModel.shared.trainingList
     @ObservedObject var trailViewDataCenter: TrailViewDataCenter = .shared
     @State private var shouldNavigateToActivity = false
-
+    
     var chunks: [ChunkedData<ActivityModel>] = []
     var trailColors: [WorkoutColor] = [
         WorkoutColor(trailColor: .azul, workoutColor: .azulBotao, workoutBorderColor: .azulBotaoBorda),
@@ -50,7 +50,7 @@ struct TrailView: View {
                                     TrailPieceView(workouts: chunk.data, type: .bottom, flipped: index % 2 == 0,
                                                    displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
                                     .environmentObject(planViewModel)
-                                        .offset(x: 10)
+                                    .offset(x: 10)
                                 }
                                 else{
                                     TrailPieceView(workouts: chunk.data, type: .middle, flipped: index % 2 == 0,
@@ -73,6 +73,19 @@ struct TrailView: View {
                 .padding(.vertical, 32)
             }
         }
+        .overlay {
+            if trailViewDataCenter.showSheet { //
+                Color.black.opacity(0.6)
+                    .ignoresSafeArea(.all)
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.3), value: trailViewDataCenter.showSheet)
+                    .onTapGesture {
+                        trailViewDataCenter.showSheet = false
+                    }
+            }
+        }
+        
+        
         .sheet(isPresented: $trailViewDataCenter.showSheet){
             TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex, shouldStartActivity: $shouldNavigateToActivity)
                 .presentationDetents([.medium, .height(600)])
@@ -183,14 +196,14 @@ struct TrailPieceView: View {
                     .offset(y : -65 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)) // Move up node uo
                     .offset(x: 10 * isTop(), y: 10 * isTop()) //Fix top piece
                     .offset( //Fix up node of top piece
-                    x: -5 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped) * isTop(),
-                    y : 9 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped) * isTop())
+                        x: -5 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped) * isTop(),
+                        y : 9 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped) * isTop())
                     .offset( // Fix up node nodes of Bottom piece
                         y: 3 * isBottom() * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)
                     )
                     .offset( //Fix down nodes of bottom piece
-                    x: 11 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped),
-                    y : -3 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped))
+                        x: 11 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped),
+                        y : -3 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped))
                     .offset(x: 7 * (globalIndex == 0 ? 1 : 0)) //fix first workout
                 }
             }
