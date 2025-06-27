@@ -17,8 +17,9 @@ struct ActivityModel: Identifiable, Codable {
     var mainTraining: [String]
     var restTraining: [String]
     var objectiveTraining: String
+    var requiredLevel: Int
     
-    init(id: UUID = UUID(), order: Int, seconds: Int, unlocked: Bool = false, warmingTraining: [String], mainTraining: [String], restTraining: [String], objectiveTraining: String) {
+    init(id: UUID = UUID(), order: Int, seconds: Int, unlocked: Bool = false, warmingTraining: [String], mainTraining: [String], restTraining: [String], objectiveTraining: String, requiredLevel: Int) {
         self.id = id
 
         self.order = order
@@ -28,5 +29,6 @@ struct ActivityModel: Identifiable, Codable {
         self.mainTraining = mainTraining
         self.restTraining = restTraining
         self.objectiveTraining = objectiveTraining
+        self.requiredLevel = requiredLevel
     }
 }

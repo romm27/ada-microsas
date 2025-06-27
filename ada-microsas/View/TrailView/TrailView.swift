@@ -75,7 +75,7 @@ struct TrailView: View {
         }
         .sheet(isPresented: $trailViewDataCenter.showSheet){
             TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex, shouldStartActivity: $shouldNavigateToActivity)
-                .presentationDetents([.medium])
+                .presentationDetents([.medium, .height(600)])
         }
         .navigationDestination(isPresented: $shouldNavigateToActivity) {
             ActivityView().environmentObject(planViewModel)
@@ -200,6 +200,7 @@ struct TrailPieceView: View {
         .padding(.vertical, -13)
         .padding(.vertical, -10 * isBottom())
         .padding(.vertical, 8 * isTop())
+        .preferredColorScheme(.dark)
     }
 }
 
