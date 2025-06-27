@@ -7,18 +7,8 @@
 
 import SwiftUI
 
-//
-//  TrailView.swift
-//  ada-microsas
-//
-//  Created by Giovanni Galarda Strasser on 25/06/25.
-//
-
-import SwiftUI
-
 struct TrailView: View {
-    let trail: [ActivityModel]
-    let userLevel : Int
+    let trail: [ActivityModel] = DataTrainingModel.shared.trainingList
     @ObservedObject var trailViewDataCenter: TrailViewDataCenter = .shared
     @State private var shouldNavigateToActivity = false
 
@@ -30,10 +20,7 @@ struct TrailView: View {
         WorkoutColor(trailColor: .roxo, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda)
     ]
     
-    init(trail: [ActivityModel], userLevel: Int){
-        self.trail = trail
-        self.userLevel = userLevel
-        
+    init(){
         let workoutPerTrailPiece = 3
         let steps = stride(from: 0, to: trail.count, by: workoutPerTrailPiece)
         
@@ -160,8 +147,8 @@ struct TrailPieceView: View {
                                 .scaledToFit()
                                 .frame(height: CGFloat(circleSize - 5 * 2))
                             //Text("\(workouts[index])")
-                            Image(systemName: "lock.filled")
-                                .foregroundStyle(.white)
+//                            Image(systemName: (pieceId * 3) + workout)
+//                                .foregroundStyle(.white)
                         }
                     }
                     .offset(x:40 * (flipped ? 1 : -1), y: 50) // General offset
@@ -189,6 +176,7 @@ class TrailViewDataCenter: ObservableObject{
     
     @Published var showSheet = false
     @Published var selectedButtonIndex: Int = 0
+    @Published var userLevel: Int = 1
 }
 
 struct WorkoutColor{
@@ -198,5 +186,5 @@ struct WorkoutColor{
 }
 
 #Preview {
-    TrailView(trail: DataTrainingModel.shared.trainingList, userLevel: 1)
+    TrailView()
 }
