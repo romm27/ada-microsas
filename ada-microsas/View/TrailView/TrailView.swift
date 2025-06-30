@@ -66,6 +66,7 @@ struct TrailView: View {
                                 .padding(.vertical, geometry.size.height * 0.1)
                         }
                     }
+                    .scrollIndicators(.hidden)
                     .rotationEffect(Angle(degrees: 180))
                     //aqui modifica a parte cinza de cima, caso precise
     //                .padding(.vertical, 48)
