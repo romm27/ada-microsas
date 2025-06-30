@@ -40,7 +40,7 @@ struct TrailView: View {
                         let pieceHeight = geometry.size.width * 0.45
                         
                         VStack(alignment: .leading, spacing: -pieceHeight * 0.17) {
-                            Spacer().frame(height: pieceHeight * 0.2)
+                            Spacer().frame(height: pieceHeight * 0.25)
                             ForEach(Array(chunks.enumerated()), id: \.element.id)
                             {index, chunk in
                                 let displayColor: WorkoutColor = self.trailColors[index % self.trailColors.count]
