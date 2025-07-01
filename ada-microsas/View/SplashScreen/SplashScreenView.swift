@@ -13,11 +13,15 @@ public struct SplashScreenView: View {
             Color.roxo
                 .ignoresSafeArea(edges: .all)
             VStack{
-                Image("logo")
+                Image("Logo")
                     .resizable()
                     .scaledToFit( )
                     .frame(width: 225)
             }
         }
     }
+}
+
+#Preview {
+    SplashScreenView()
 }

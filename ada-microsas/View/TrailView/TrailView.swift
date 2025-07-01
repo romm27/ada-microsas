@@ -32,71 +32,92 @@ struct TrailView: View {
     }
     
     var body: some View {
-        ZStack{
-            Rectangle().foregroundStyle(Color.cinzaEscuro)
-            VStack(){
-                ScrollView{
-                    VStack(alignment: .leading, spacing: -48) {
-                        ForEach(Array(chunks.enumerated()), id: \.element.id)
-                        {index, chunk in
-                            let displayColor: WorkoutColor = self.trailColors[index % self.trailColors.count]
-                            HStack{
-                                if index == chunks.count - 1 {
-                                    TrailPieceView(workouts: chunk.data, type: .top, flipped: index % 2 == 0,
-                                                   displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
-                                    .environmentObject(planViewModel)
-                                }
-                                else if index == 0{
-                                    TrailPieceView(workouts: chunk.data, type: .bottom, flipped: index % 2 == 0,
-                                                   displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
-                                    .environmentObject(planViewModel)
-                                    .offset(x: 10)
-                                }
-                                else{
-                                    TrailPieceView(workouts: chunk.data, type: .middle, flipped: index % 2 == 0,
-                                                   displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet)
-                                    .environmentObject(planViewModel)
-                                }
+        GeometryReader { geometry in
+            ZStack{
+                Rectangle().foregroundStyle(Color.cinzaEscuro).ignoresSafeArea()
+                VStack(){
+                    ScrollView{
+                        let pieceHeight = geometry.size.width * 0.45
+                        
+                        VStack(alignment: .leading, spacing: -pieceHeight * 0.17) {
+                            Spacer().frame(height: pieceHeight * 0.25)
+                            ForEach(Array(chunks.enumerated()), id: \.element.id)
+                            {index, chunk in
+                                let displayColor: WorkoutColor = self.trailColors[index % self.trailColors.count]
+                                
+                                let pieceType: PieceType = {
+                                    if index == chunks.count - 1 { return .top }
+                                    if index == 0 { return .bottom }
+                                    return .middle
+                                }()
+                                
+                                TrailPieceView(workouts: chunk.data, type: pieceType, flipped: index % 2 == 0,
+                                               displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet,
+                                               availableSize: geometry.size, pieceHeight: pieceHeight)
+                                .environmentObject(planViewModel)
+                                .offset(calculatePieceOffset(for: index, count: chunks.count, pieceHeight: pieceHeight, screenWidth: geometry.size.width))
                             }
-                            .offset(x: 15 * (index % 2 != 0 ? 1 : -1))
+                            Image("LogoLight")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 32)
+                                .rotationEffect(Angle(degrees: 180))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, geometry.size.height * 0.1)
                         }
-                        Image("LogoLight")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(height: 32)
-                            .rotationEffect(Angle(degrees: 180))
-                            .padding(.vertical, 96)
-                            .padding(.horizontal, 64)
                     }
+                    .scrollIndicators(.hidden)
+                    .rotationEffect(Angle(degrees: 180))
+                    //aqui modifica a parte cinza de cima, caso precise
+                    //.padding(.vertical, 48)
+                    .padding(.top, 48)
+                    .padding(.bottom, 32)
                 }
-                .rotationEffect(Angle(degrees: 180))
-                .padding(.vertical, 32)
-                
             }
-            
-        }
-        
-        .overlay {
-            if trailViewDataCenter.showSheet { //
-                Color.black.opacity(0.6)
-                    .ignoresSafeArea(.all)
-                    .transition(.opacity)
-                    .animation(.easeInOut(duration: 0.3), value: trailViewDataCenter.showSheet)
-                    .onTapGesture {
-                        trailViewDataCenter.showSheet = false
-                    }
+            .overlay {
+                if trailViewDataCenter.showSheet { //
+                    Color.black.opacity(0.6)
+                        .ignoresSafeArea(.all)
+                        .transition(.opacity)
+                        .animation(.easeInOut(duration: 0.3), value: trailViewDataCenter.showSheet)
+                        .onTapGesture {
+                            trailViewDataCenter.showSheet = false
+                        }
+                }
             }
+            .sheet(isPresented: $trailViewDataCenter.showSheet){
+                TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex, shouldStartActivity: $shouldNavigateToActivity)
+                    .presentationDetents([.medium, .height(600)])
+            }
+            .navigationDestination(isPresented: $shouldNavigateToActivity) {
+                ActivityView().environmentObject(planViewModel)
+            }
+            .navigationBarBackButtonHidden(true)
+        }
+    }
+    
+    private func calculatePieceOffset(for index: Int, count: Int, pieceHeight: CGFloat, screenWidth: CGFloat) -> CGSize {
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+
+        // --- Offset for entire peace
+        let topPieceAdjustment    = (x: pieceHeight * 0, y: pieceHeight * -0.015)
+        let bottomPieceAdjustment = (x: screenWidth * 0.025, y: pieceHeight * 0.0)
+        // ---------------------------------------------------
+
+        // Zig zag
+        x += screenWidth * 0.04 * (index % 2 != 0 ? 1 : -1)
+
+        // Adjust top and bottom pieces
+        if index == count - 1 { // Top piece
+            x += topPieceAdjustment.x
+            y += topPieceAdjustment.y
+        } else if index == 0 { // Bottom piece
+            x += bottomPieceAdjustment.x
+            y += bottomPieceAdjustment.y
         }
         
-        
-        .sheet(isPresented: $trailViewDataCenter.showSheet){
-            TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex, shouldStartActivity: $shouldNavigateToActivity)
-                .presentationDetents([.medium, .height(600)])
-        }
-        .navigationDestination(isPresented: $shouldNavigateToActivity) {
-            ActivityView().environmentObject(planViewModel)
-        }
-        .navigationBarBackButtonHidden(true)
+        return CGSize(width: x, height: y)
     }
 }
 struct ChunkedData<T>: Identifiable {
@@ -129,6 +150,12 @@ struct TrailPieceView: View {
     let pieceId: Int
     @Binding var showSheet: Bool
     
+    let availableSize: CGSize
+    let pieceHeight: CGFloat
+    
+    private var buttonSize: CGFloat { pieceHeight * 0.28 }
+    private var buttonBorderSize: CGFloat { buttonSize + 10 }
+    
     func isUpWorkout(index: Int, totalWorkouts: Int, flipped: Bool) -> CGFloat{
         if index == totalWorkouts - 1{
             return 1
@@ -142,14 +169,6 @@ struct TrailPieceView: View {
         return isUpWorkout(index: index, totalWorkouts: totalWorkouts, flipped: flipped) == 0 ? 1 : 0
     }
     
-    func isTop() -> CGFloat{
-        return type == .top ? 1 : 0
-    }
-    
-    func isBottom() -> CGFloat{
-        return type == .bottom ? 1 : 0
-    }
-    
     var body: some View {
         ZStack{
             let trailPieceImage = "TrailPiece\(type.displayName)"
@@ -157,14 +176,16 @@ struct TrailPieceView: View {
                 Image(trailPieceImage)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: 200)
+                    .frame(height: pieceHeight)
                 Image(trailPieceImage + "ColorMask")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: 200)
+                    .frame(height: pieceHeight)
                     .foregroundColor(displayColors.trailColor)
-            }.scaleEffect(x: flipped ? -1 : 1, y: 1)
-            HStack(spacing: 44){
+            }
+            .scaleEffect(x: flipped ? -1 : 1, y: 1)
+            
+            HStack(spacing: availableSize.width * 0.10){
                 ForEach(0..<workouts.count, id: \.self){
                     workout in
                     let index = flipped ?  workout : (workouts.count - workout - 1)
@@ -174,51 +195,102 @@ struct TrailPieceView: View {
                         showSheet = true
                     } label:{
                         ZStack{
-                            let circleSize = 56
                             Circle()
                                 .foregroundStyle(displayColors.workoutBorderColor)
-                                .scaledToFit()
-                                .frame(height: CGFloat(circleSize))
+                                .frame(width: buttonBorderSize, height: buttonBorderSize)
+                                .shadow(color: .black.opacity(0.35), radius: 5, x: 0, y: 4)
                             Circle()
                                 .foregroundStyle(displayColors.workoutColor)
-                                .scaledToFit()
-                                .frame(height: CGFloat(circleSize - 5 * 2))
+                                .frame(width: buttonSize, height: buttonSize)
+                            
+                            
+                            //se eu nao fiz ainda
                             if (globalIndex) > planViewModel.userLevel{
                                 Image(systemName: "lock.fill")
                                     .foregroundStyle(Color.white)
                                     .bold()
                             }
+                            //se eu to nesse nível
                             else if globalIndex == planViewModel.userLevel{
-                                Image(systemName: "figure.walk")
-                                    .foregroundStyle(Color.white)
-                                    .bold()
+                                Circle()
+                                    .frame(width: buttonSize, height: buttonSize)
+                                    .overlay {
+                                        Image("AvatarCareca")
+                                            .resizable()
+                                            .scaledToFit()
+                                    }
+                            }
+                            //se eu ja fiz
+                            else if globalIndex == planViewModel.userLevel{
+                                //nao acontece nada como o botao
                             }
                         }
                     }
-                    .offset(x:40 * (flipped ? 1 : -1), y: 50) // General offset
-                    .offset(y : -65 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)) // Move up node uo
-                    .offset(x: 10 * isTop(), y: 10 * isTop()) //Fix top piece
-                    .offset( //Fix up node of top piece
-                        x: -5 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped) * isTop(),
-                        y : 9 * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped) * isTop())
-                    .offset( // Fix up node nodes of Bottom piece
-                        y: 3 * isBottom() * isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)
-                    )
-                    .offset( //Fix down nodes of bottom piece
-                        x: 11 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped),
-                        y : -3 * isBottom() * isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped))
-                    .offset(x: 7 * (globalIndex == 0 ? 1 : 0)) //fix first workout
+                    .offset(calculateWorkoutOffset(forIndex: index, globalIndex: globalIndex))
                 }
                 
             }
            
         }
         .rotationEffect(Angle(degrees: 180))
-        .padding(.horizontal, 32)
-        .padding(.vertical, -13)
-        .padding(.vertical, -10 * isBottom())
-        .padding(.vertical, 8 * isTop())
+        .padding(.horizontal, availableSize.width * 0.08)
+        .padding(.vertical, -pieceHeight * 0.065)
+        .padding(.vertical, -pieceHeight * 0.05 * (type == .bottom ? 1 : 0))
+        .padding(.vertical, pieceHeight * 0.04 * (type == .top ? 1 : 0))
         .preferredColorScheme(.dark)
+    }
+    
+    private func calculateWorkoutOffset(forIndex index: Int, globalIndex: Int) -> CGSize {
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        
+        let upFlag = isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)
+        let downFlag = isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)
+
+        // Middle Piece
+        // General offset
+        x += (pieceHeight * 0.2) * (flipped ? 1 : -1)
+        y += pieceHeight * 0.25
+        
+        // Move up node
+        x += pieceHeight * 0.015 * upFlag * (flipped ? 1 : -1)
+        y -= pieceHeight * 0.325 * upFlag
+        
+        // Move down nodes
+        x += pieceHeight * 0.01 * downFlag * (flipped ? 1 : -1)
+        y += pieceHeight * 0.02 * downFlag
+
+        // Adjust top and bottom piece nodes
+        switch type {
+        case .top:
+            // Fix top piece
+            x += pieceHeight * 0.06
+            y += pieceHeight * 0.05
+            
+            // Fix up node of top piece
+            x += pieceHeight * 0.0125 * upFlag
+            y += pieceHeight * 0.045 * upFlag
+            
+            // Fix down nodes of top piece
+            x -= pieceHeight * 0.015 * downFlag
+            
+        case .bottom:
+            // Fix up node nodes of Bottom piece
+            y += pieceHeight * 0.015 * upFlag
+            
+            // Fix down nodes of bottom piece
+            x += pieceHeight * 0.055 * downFlag
+            
+        case .middle:
+            break
+        }
+        
+        // fix first workout
+        if globalIndex == 0 {
+            x += pieceHeight * 0.035
+        }
+        
+        return CGSize(width: x, height: y)
     }
 }
 

@@ -38,7 +38,7 @@ struct ContentView: View {
                 
       
             }
-            .ignoresSafeArea(.all)
+            .ignoresSafeArea(.all) //É AQUIIIIIII
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     withAnimation{

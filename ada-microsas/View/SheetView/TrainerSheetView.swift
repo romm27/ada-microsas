@@ -9,20 +9,19 @@ import SwiftUI
 
 struct TrainerSheetView: View {
     
-   
-    let dataTrainingModel = DataTrainingModel()
-    
-
-    
     @Environment(\.dismiss) var dismiss
-    
-    
+   
+    @EnvironmentObject var planViewModel: PlanViewModel //userLevel
+    let dataTrainingModel = DataTrainingModel()
+
     let currentIndex: Int
     
     @Binding var shouldStartActivity: Bool
     
     
-
+    func canRunLevel() -> Bool {
+        return planViewModel.userLevel + 1 >= dataTrainingModel.trainingList[currentIndex].requiredLevel
+    }
     
     
     var body: some View {
@@ -121,12 +120,15 @@ struct TrainerSheetView: View {
                     }) {
                         HStack{
                             Spacer()
+                            if !canRunLevel(){
+                                Image(systemName: "lock.fill")
+                            }
                             Text("Começar a Correr")
                             Spacer()
                         }
                         .padding(.horizontal, 72)
                         .padding(.vertical, 12)
-                        .background(.roxo)
+                        .background(canRunLevel() ? .roxo : .cinzaClaro)
                         .foregroundStyle(.white)
                         .font(.system(size: 16, weight: .semibold))
                         .cornerRadius(8)
@@ -144,4 +146,5 @@ struct TrainerSheetView: View {
 
 #Preview {
     TrainerSheetView(currentIndex: 0, shouldStartActivity: .constant(false))
+        .environmentObject(PlanViewModel())
 }
