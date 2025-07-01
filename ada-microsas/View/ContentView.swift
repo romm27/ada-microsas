@@ -35,8 +35,10 @@ struct ContentView: View {
                         .transition(.opacity)
                     
                 }
+                
       
             }
+            .ignoresSafeArea(.all)
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     withAnimation{
