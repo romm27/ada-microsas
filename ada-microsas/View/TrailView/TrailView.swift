@@ -69,7 +69,7 @@ struct TrailView: View {
                     .scrollIndicators(.hidden)
                     .rotationEffect(Angle(degrees: 180))
                     //aqui modifica a parte cinza de cima, caso precise
-    //                .padding(.vertical, 48)
+                    //.padding(.vertical, 48)
                     .padding(.top, 48)
                     .padding(.bottom, 32)
                 }
