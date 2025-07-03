@@ -29,7 +29,70 @@ struct TrailView: View {
         for start in steps{
             self.chunks.append(ChunkedData<ActivityModel>(data: Array(trail[start..<min(start+workoutPerTrailPiece, trail.count)])))
         }
+        
+        //Pede permissão de usuario apos spalshscreen
+        requestNotificationPermission()
     }
+    
+    // 1. Função que cuida do pedido de permisão para usar as features que precisamos do iphone.
+        func requestNotificationPermission() {
+            let center = UNUserNotificationCenter.current()
+            center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                if let error = error {
+                    print("Error requesting permission: \(error.localizedDescription)")
+                    return
+                }
+                
+                if granted {
+                    print("Permission Granted!")
+                    // You could schedule a notification here if you want one immediately after permission is given
+                } else {
+                    print("Permission Denied")
+                }
+            }
+        }
+        
+        // Função que checa se o usuário consentiu ao uso das features.
+        func checkNotificationPermissionStatus(completion: @escaping (UNAuthorizationStatus) -> Void) {
+            UNUserNotificationCenter.current().getNotificationSettings { settings in
+                DispatchQueue.main.async {
+                    completion(settings.authorizationStatus)
+                }
+            }
+        }
+        
+        
+        //=====================================================================================
+        // 4. Exemplo de uso do consentimento do usuario do Gemini
+//        func exampleScheduleActualNotification() {
+//            // First, check the current status
+//            checkNotificationPermissionStatus { status in
+//                switch status {
+//                case .authorized:
+//                    // Permission already granted, schedule the notification
+//                    print("Status is authorized. Scheduling notification.")
+//                    exampleScheduleActualNotification()
+//                    
+//                case .denied:
+//                    // Permission denied. Guide user to settings.
+//                    print("Status is denied. Cannot schedule notification.")
+//                    // Here you might want to show an alert to the user.
+//                    
+//                case .notDetermined:
+//                    // Permission not yet requested. Ask for it.
+//                    print("Status is not determined. Requesting permission.")
+//                    requestNotificationPermission()
+//                    // The user will see the pop-up. If they grant it, you might want to
+//                    // schedule the notification inside the request's completion handler.
+//                    
+//                default:
+//                    // Handle other cases like .provisional, etc.
+//                    print("Unhandled notification status.")
+//                }
+//            }
+//        }
+    //=========================================================================================
+
     
     var body: some View {
         GeometryReader { geometry in
@@ -94,6 +157,7 @@ struct TrailView: View {
             }
             .navigationBarBackButtonHidden(true)
         }
+        
     }
     
     private func calculatePieceOffset(for index: Int, count: Int, pieceHeight: CGFloat, screenWidth: CGFloat) -> CGSize {
