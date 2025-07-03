@@ -35,6 +35,7 @@ struct ContentView: View {
                         .transition(.opacity)
                     
                 }
+                
       
             }
             .ignoresSafeArea(.all) //É AQUIIIIIII

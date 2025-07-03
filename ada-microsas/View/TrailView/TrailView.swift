@@ -292,7 +292,9 @@ struct TrailPieceView: View {
                     }
                     .offset(calculateWorkoutOffset(forIndex: index, globalIndex: globalIndex))
                 }
+                
             }
+           
         }
         .rotationEffect(Angle(degrees: 180))
         .padding(.horizontal, availableSize.width * 0.08)

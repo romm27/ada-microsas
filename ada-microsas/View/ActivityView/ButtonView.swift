@@ -30,9 +30,13 @@ struct ButtonView: View {
             if state == .play{
                 Button(action: {
                     withAnimation {
-                        //loigica do tempo
+//                        loigica do tempo
                         timerViewModel.pauseTimer()
                         state = .pause
+                        
+//                        timerViewModel.setTimerConfig(seconds: 60)
+                        
+                        
                     }
                 }) {
                     Image(systemName: "pause.fill")

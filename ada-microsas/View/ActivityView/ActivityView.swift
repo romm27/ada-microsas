@@ -12,24 +12,28 @@ struct ActivityView: View {
     
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
-    
-    
-//    @State var progressValue: Double = 0.0
-    
+        
     @State var showCompletionAlert: Bool = false
     
     
+    @State var contador: Int = 0
+
     
     var body: some View {
-        
-        
-        
         VStack {
             Text("Você tá\namassando!")
                 .padding(.top, 84)
                 .padding(.bottom, 40)
                 .padding(.horizontal, 100)
                 .multilineTextAlignment(.center)
+            
+            //oiii afonso! aqui pensei: "hum se esta dando index out of range deve ser pq o level do user ta maior q o numero de treinos entao vou fazer uma verificacao... mas nndeu
+            if planViewModel.userLevel < DataTrainingModel.shared.trainingList.count{
+                if contador < Warming.warmUp.count {
+                    Text(Warming.warmUp[contador])
+                }
+            }
+            
         }
         .font(.largeTitle)
         .fontWeight(.bold)
@@ -46,7 +50,7 @@ struct ActivityView: View {
                 .padding(100)
                 .alert("Parabéns!", isPresented: $timerViewModel.isFinished) {
                     Button("Ok") {
-                        planViewModel.userLevel += 1 //DISCUTIR SE É O MELHOR LUGAR
+                        planViewModel.userLevel += 1
                         dismiss()
                     }
                 } message: {
@@ -54,18 +58,32 @@ struct ActivityView: View {
                 }
         }
         
-        
         Spacer()
             .navigationBarBackButtonHidden(true)
             .preferredColorScheme(.dark)
             .onAppear{
-                //vai existir uma Activity aqui, para setar o timer
-                //TODO: Mudar aqui para Activity.seconds
-                    //a activity vai vir como Binding(eu acho?) da nossa TrilhaView > ModalView
-                //timerViewModel.setTimerConfig(seconds: 5)
-                timerViewModel.setTimerConfig(seconds: DataTrainingModel.shared.trainingList[planViewModel.userLevel].seconds) //Colocado
+                print(" USER LEVEL: \(planViewModel.userLevel)")
+                //inicia so o primeiro
+                timerViewModel.setTimerConfig(seconds: DataTrainingModel.shared.trainingList[planViewModel.userLevel].warmingUp.timeWarmUp[contador])
                 timerViewModel.startTimer()
             }
+        
+        Button("Proximo"){
+            contador += 1
+            
+
+            if planViewModel.userLevel < DataTrainingModel.shared.trainingList.count{
+                if contador < DataTrainingModel.shared.trainingList[planViewModel.userLevel].warmingUp.timeWarmUp.count{
+                    
+                    timerViewModel.setTimerConfig(seconds: DataTrainingModel.shared.trainingList[planViewModel.userLevel].warmingUp.timeWarmUp[contador])
+                    
+                    timerViewModel.startTimer()
+                }
+            }
+            
+            
+        }
+        
     }
     
     
