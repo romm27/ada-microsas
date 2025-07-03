@@ -72,6 +72,7 @@ class PlanViewModel: ObservableObject {
             // Usamos JSONDecoder para converter os dados do arquivo de volta para um Int
             let decodedLevel = try JSONDecoder().decode(Int.self, from: data)
             self.userLevel = decodedLevel
+            print(userLevel)
             print("Level carregado com sucesso!")
         } catch {
             // Se der erro (ex: arquivo não existe na primeira vez),

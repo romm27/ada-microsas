@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SpriteKit
 
 struct ProgressBarView: View {
     @Environment(\.dismiss) var dismiss
@@ -17,7 +18,7 @@ struct ProgressBarView: View {
     
     var body: some View {
         ZStack{
-            
+//            SpriteView(scene: <#T##SKScene#>)
             //circle gray
             Circle()
                 .trim(from: 0, to: totalArc)

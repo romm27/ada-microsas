@@ -7,28 +7,52 @@
 
 import Foundation
 
-struct ActivityModel: Identifiable, Codable {
+struct ActivityModel: Identifiable {
     var id: UUID
     
     var order: Int
-    var seconds: Int
     var unlocked: Bool
-    var warmingTraining: [String]
-    var mainTraining: [String]
-    var restTraining: [String]
-    var objectiveTraining: String
-    var requiredLevel: Int
     
-    init(id: UUID = UUID(), order: Int, seconds: Int, unlocked: Bool = false, warmingTraining: [String], mainTraining: [String], restTraining: [String], objectiveTraining: String, requiredLevel: Int) {
+    var warmingUp: Warming
+
+    var mainTraining: MainTraining
+    
+    var requiredLevel: Int
+
+    init(id: UUID = UUID(), order: Int, unlocked: Bool = false, warmingUp: [Int], warmingUpCount: Int, mainTraining: [Int], mainTrainingCount: Int, requiredLevel: Int, ) {
         self.id = id
 
         self.order = order
-        self.seconds = seconds
         self.unlocked = unlocked
-        self.warmingTraining = warmingTraining
-        self.mainTraining = mainTraining
-        self.restTraining = restTraining
-        self.objectiveTraining = objectiveTraining
+        
+        self.warmingUp = Warming(timeWarmUp: warmingUp, warmUpCount: warmingUpCount)
+        
+        self.mainTraining = MainTraining(timeMainTraining: mainTraining, mainTrainingCount: mainTrainingCount)
+    
         self.requiredLevel = requiredLevel
     }
 }
+
+struct Warming: Identifiable{
+    let id = UUID()
+    
+    static let warmUp: [String] = ["Polichinelo", "Salto na Ponta do Pé", "Corrida Parada"]
+    
+    //polichinelo, recuperando, salto na ponta do pe, recuperando, corrida parada, recuperando
+    
+    let timeWarmUp: [Int]
+    let warmUpCount: Int
+    //tempo de cada atividade do aquecimento
+}
+
+struct MainTraining: Identifiable{
+    let id = UUID()
+    
+    static let mainTraining: [String] = ["Trotando", "Caminhando"]
+    
+    let timeMainTraining: [Int]
+    let mainTrainingCount: Int
+}
+
+
+

@@ -46,9 +46,14 @@ struct TrainerSheetView: View {
                         
                         //infos
                         VStack(alignment: .leading, spacing: 5){
-                            ForEach(dataTrainingModel.trainingList[currentIndex].warmingTraining, id: \.self) { warmingTraining in
-                                Text(warmingTraining)
+                            //                            ForEach(dataTrainingModel.trainingList[currentIndex].warmingTraining, id: \.self) { warmingTraining in
+                            //                                Text(warmingTraining)
+                            //                            }
+                          
+                            ForEach(dataTrainingModel.trainingList[currentIndex].warmingUp.timeWarmUp, id: \.self) { time in
+                                Text("time: \(time)")
                             }
+                            
                         }
                         .font(.body)
                         .fontWeight(.light)
@@ -63,10 +68,10 @@ struct TrainerSheetView: View {
                             .foregroundStyle(.roxo)
                         //infos
                         VStack(alignment: .leading, spacing: 5){
-                            ForEach(dataTrainingModel.trainingList[currentIndex].mainTraining, id: \.self) { mainTraining in
-                                Text(mainTraining)
-                                
-                            }
+//                            ForEach(dataTrainingModel.trainingList[currentIndex].mainTraining, id: \.self) { mainTraining in
+//                                Text(mainTraining)
+//                                
+//                            }
                             
                         }
                         .font(.body)
@@ -84,9 +89,9 @@ struct TrainerSheetView: View {
                             .foregroundStyle(.roxo)
                         //infos
                         VStack(alignment: .leading, spacing: 5){
-                            ForEach(dataTrainingModel.trainingList[currentIndex].restTraining, id: \.self) { restTraining in
-                                Text(restTraining)
-                            }
+//                            ForEach(dataTrainingModel.trainingList[currentIndex].restTraining, id: \.self) { restTraining in
+//                                Text(restTraining)
+//                            }
                         }
                         .font(.body)
                         .fontWeight(.light)
@@ -103,10 +108,10 @@ struct TrainerSheetView: View {
                         .font(.headline)
                         .foregroundStyle(.roxo)
 
-                    Text(dataTrainingModel.trainingList[currentIndex].objectiveTraining)
-                        .font(Font.system(size: 14))
-                        .fontWeight(.light)
-                        .foregroundStyle(.quasePreto)
+//                    Text(dataTrainingModel.trainingList[currentIndex].objectiveTraining)
+//                        .font(Font.system(size: 14))
+//                        .fontWeight(.light)
+//                        .foregroundStyle(.quasePreto)
                 }
                 
                 //botao
