@@ -9,6 +9,10 @@ import SwiftUI
 
 struct StretchingView: View {
     
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var timerViewModel: TimerViewModel
+    @EnvironmentObject var planViewModel: PlanViewModel
+    
     var body: some View {
         NavigationStack{
             VStack(spacing: 35){
@@ -25,8 +29,8 @@ struct StretchingView: View {
                     Text("Alongue o corpo todo, sem pressa.")
                 }
                 
-                Button{
-                    
+                NavigationLink{
+                    ActivityView()
                 } label: {
                     HStack{
                         Spacer()
@@ -43,8 +47,9 @@ struct StretchingView: View {
                 }
                 
             }
+            .padding(.horizontal, 32)
         }
-        .padding(.horizontal, 48)
+        
         .preferredColorScheme(.dark)
     }
     
@@ -52,4 +57,6 @@ struct StretchingView: View {
 
 #Preview{
     StretchingView()
+        .environmentObject(TimerViewModel())
+        .environmentObject(PlanViewModel())
 }
