@@ -75,7 +75,7 @@ struct TrailView: View {
                                                 let relativePosition = getRelativePosition(for: index, total: trail.count)
                                                 
                                                 Button {
-                                                    trailViewDataCenter.selectedButtonIndex = activity.order
+                                                    trailViewDataCenter.selectedButtonIndex = index
                                                     trailViewDataCenter.showSheet = true
                                                 } label: {
                                                     WorkoutTrailDisplay(
