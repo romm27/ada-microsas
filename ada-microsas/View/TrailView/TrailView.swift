@@ -14,13 +14,12 @@ struct TrailView: View {
     @ObservedObject var trailViewDataCenter: TrailViewDataCenter = .shared
     @State private var shouldNavigateToActivity = false
     
-    let trailColorInterval: Int = 4
     let trailColors: [WorkoutColor] = [
-            WorkoutColor(trailColor: .azul, workoutColor: .azulBotao, workoutBorderColor: .azulBotaoBorda),
-            WorkoutColor(trailColor: .rosa, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda),
-            WorkoutColor(trailColor: .verdeLima, workoutColor: .verdeLimaBotao, workoutBorderColor: .verdeLimaBotaoBorda),
-            WorkoutColor(trailColor: .roxo, workoutColor: .roxoBotao, workoutBorderColor: .roxoBotaoBorda)
-        ]
+        WorkoutColor(trailColor: .azul, workoutColor: .azulBotao, workoutBorderColor: .azulBotaoBorda),
+        WorkoutColor(trailColor: .rosa, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda),
+        WorkoutColor(trailColor: .verdeLima, workoutColor: .verdeLimaBotao, workoutBorderColor: .verdeLimaBotaoBorda),
+        WorkoutColor(trailColor: .roxo, workoutColor: .roxoBotao, workoutBorderColor: .roxoBotaoBorda)
+    ]
     
     // Define a ordem de cores das bolinhas, se ficar sem cores ele vai lupar de novo para o começo
     let trailColorPattern = [0,0,0, 1, 1 ,1, 2, 2 ,2, 3 ,3 ,3]
@@ -42,7 +41,6 @@ struct TrailView: View {
             
             if granted {
                 print("Permission Granted!")
-                // You could schedule a notification here if you want one immediately after permission is given
             } else {
                 print("Permission Denied")
             }
@@ -58,39 +56,6 @@ struct TrailView: View {
         }
     }
     
-    
-    //=====================================================================================
-    // 4. Exemplo de uso do consentimento do usuario do Gemini
-    //        func exampleScheduleActualNotification() {
-    //            // First, check the current status
-    //            checkNotificationPermissionStatus { status in
-    //                switch status {
-    //                case .authorized:
-    //                    // Permission already granted, schedule the notification
-    //                    print("Status is authorized. Scheduling notification.")
-    //                    exampleScheduleActualNotification()
-    //
-    //                case .denied:
-    //                    // Permission denied. Guide user to settings.
-    //                    print("Status is denied. Cannot schedule notification.")
-    //                    // Here you might want to show an alert to the user.
-    //
-    //                case .notDetermined:
-    //                    // Permission not yet requested. Ask for it.
-    //                    print("Status is not determined. Requesting permission.")
-    //                    requestNotificationPermission()
-    //                    // The user will see the pop-up. If they grant it, you might want to
-    //                    // schedule the notification inside the request's completion handler.
-    //
-    //                default:
-    //                    // Handle other cases like .provisional, etc.
-    //                    print("Unhandled notification status.")
-    //                }
-    //            }
-    //        }
-    //=========================================================================================
-    
-    
     var body: some View {
         ZStack{
             Rectangle().foregroundStyle(Color.cinzaEscuro).ignoresSafeArea()
@@ -101,7 +66,6 @@ struct TrailView: View {
                             Image("Trail")
                                 .resizable()
                                 .scaledToFit()
-                                // 1. Apply the overlay FIRST, directly to the un-padded image.
                                 .overlay {
                                     GeometryReader { geometry in
                                         ZStack {
@@ -110,11 +74,17 @@ struct TrailView: View {
                                                 let workoutColor = trailColors[trailColorPattern[index % trailColorPattern.count]]
                                                 let relativePosition = getRelativePosition(for: index, total: trail.count)
                                                 
-                                                WorkoutTrailDisplay(
-                                                    workoutColor: workoutColor,
-                                                    activity: activity,
-                                                    imageSize: geometry.size
-                                                )
+                                                Button {
+                                                    trailViewDataCenter.selectedButtonIndex = activity.order
+                                                    trailViewDataCenter.showSheet = true
+                                                } label: {
+                                                    WorkoutTrailDisplay(
+                                                        workoutColor: workoutColor,
+                                                        activity: activity,
+                                                        imageSize: geometry.size,
+                                                        orderInArray: index
+                                                    )
+                                                }
                                                 .environmentObject(planViewModel)
                                                 .position(
                                                     x: geometry.size.width * relativePosition.x,
@@ -124,9 +94,8 @@ struct TrailView: View {
                                         }
                                     }
                                 }
-                                // 2. THEN, apply the padding to the combined view (Image + Overlay).
                                 .padding(.vertical, 48)
-
+                            
                             Spacer().id("bottomAnchor")
                         }
                     }
@@ -136,39 +105,58 @@ struct TrailView: View {
                     }
                 }
             }
-            .padding(.horizontal, 56)
-        }.navigationBarBackButtonHidden(true)
+            .padding(.horizontal, 36)
+        }
+        .overlay {
+            if trailViewDataCenter.showSheet {
+                Color.black.opacity(0.6)
+                    .ignoresSafeArea(.all)
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.3), value: trailViewDataCenter.showSheet)
+                    .onTapGesture {
+                        trailViewDataCenter.showSheet = false
+                    }
+            }
+        }
+        .sheet(isPresented: $trailViewDataCenter.showSheet){
+            TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex, shouldStartActivity: $shouldNavigateToActivity)
+                .presentationDetents([.medium, .height(600)])
+        }
+        .navigationDestination(isPresented: $shouldNavigateToActivity) {
+            ActivityView().environmentObject(planViewModel)
+        }
+        .navigationBarBackButtonHidden(true)
     }
     
-    //Gera posição certa da bolinha com base no index dela, RIP 8 Offsets
+    //rip 8 Offsets
     private func getRelativePosition(for index: Int, total: Int) -> CGPoint {
         let topMargin: Double = 0.0275
         let bottomMargin: Double = 0.03
         let horizontalMargin: Double = 0.08
-
+        
         let verticalCanvasHeight = 1.0 - topMargin - bottomMargin
         let horizontalCanvasWidth = 1.0 - (horizontalMargin * 2)
-
+        
         let step = index / 3
         let iteration = index % 3
         let isFlipped = (step % 2 != 0)
         
         var relativeY = 1.0 - (Double(step) / Double(total / 3))
-
+        
         var relativeX: Double
         if iteration == 0 {
             relativeX = 0.35
         } else if iteration == 1 {
             relativeX = 0.65
-        } else { // terceiro no
+        } else {
             relativeX = 0.99
         }
-
-        if isFlipped { // Inverte a cada 3 nos
+        
+        if isFlipped {
             relativeX = 1.0 - relativeX
         }
         
-        if iteration == 2 { //sobe terceiro no
+        if iteration == 2 {
             relativeY -= 0.06
         }
         
@@ -178,32 +166,57 @@ struct TrailView: View {
         return CGPoint(x: finalX, y: finalY)
     }
 }
+
+struct WorkoutTrailDisplay : View {
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var planViewModel: PlanViewModel
+    let workoutColor: WorkoutColor
+    let activity: ActivityModel
+    let imageSize: CGSize
+    let orderInArray: Int
     
-    struct WorkoutTrailDisplay : View {
-        @Environment(\.dismiss) var dismiss
-        @EnvironmentObject var planViewModel: PlanViewModel
-        let workoutColor: WorkoutColor
-        let activity: ActivityModel
-        let imageSize: CGSize
+    var body: some View {
         
+        let diameter = imageSize.width * 0.14
         
-        var body: some View {
-            let diameter = imageSize.width * 0.14 //Fator de tamanho da bolinha (divida a largura da bolinha somada da borda dela, pela trail no figma)
-            
-            let borderDiameter = diameter * 0.82
-            ZStack{
-                Circle()
-                    .foregroundStyle(workoutColor.workoutBorderColor)
-                    .frame(width: diameter, height: diameter)
-                Circle()
-                    .foregroundStyle(workoutColor.workoutColor)
-                    .frame(width: borderDiameter,height: borderDiameter)
-            }
-                
+        let innerDiameter = diameter * 0.82
+        ZStack{
+            Circle()
+                .foregroundStyle(workoutColor.workoutBorderColor)
+                .frame(width: diameter, height: diameter)
+            Circle()
+                .foregroundStyle(workoutColor.workoutColor)
+                .frame(width: innerDiameter,height: innerDiameter)
+                .overlay{
+                    //se eu nao fiz ainda
+                    if orderInArray > planViewModel.userLevel{
+                        Image(systemName: "lock.fill")
+                            .foregroundStyle(Color.white)
+                            .bold()
+                    }
+                    //se eu to nesse nível
+                    else if orderInArray == planViewModel.userLevel{
+                        Circle()
+                            .frame(width: innerDiameter, height: innerDiameter)
+                            .overlay {
+                                Image("AvatarCareca")
+                                    .resizable()
+                                    .scaledToFit()
+                            }
+                    }
+                    //se eu ja fiz
+                    else{
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(Color.white)
+                            .bold()
+                    }
+                }
         }
         
     }
     
+}
+
 struct ChunkedData<T>: Identifiable {
     let id: UUID = UUID()
     let data : [T]
