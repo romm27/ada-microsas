@@ -10,9 +10,22 @@
 		B8E6B80B2E0C7AAD006C3565 /* ada-microsas.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ada-microsas.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B8424F802E1878070020126E /* Exceptions for "ada-microsas" folder in "ada-microsas" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B8E6B80A2E0C7AAD006C3565 /* ada-microsas */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B8E6B80D2E0C7AAD006C3565 /* ada-microsas */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B8424F802E1878070020126E /* Exceptions for "ada-microsas" folder in "ada-microsas" target */,
+			);
 			path = "ada-microsas";
 			sourceTree = "<group>";
 		};
@@ -254,6 +267,7 @@
 				DEVELOPMENT_TEAM = 7793RDG5Q6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ada-microsas/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Boost;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -290,6 +304,7 @@
 				DEVELOPMENT_TEAM = 7793RDG5Q6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ada-microsas/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Boost;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
