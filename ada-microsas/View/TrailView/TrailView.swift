@@ -14,176 +14,209 @@ struct TrailView: View {
     @ObservedObject var trailViewDataCenter: TrailViewDataCenter = .shared
     @State private var shouldNavigateToActivity = false
     
-    var chunks: [ChunkedData<ActivityModel>] = []
-    var trailColors: [WorkoutColor] = [
+    let trailColors: [WorkoutColor] = [
         WorkoutColor(trailColor: .azul, workoutColor: .azulBotao, workoutBorderColor: .azulBotaoBorda),
         WorkoutColor(trailColor: .rosa, workoutColor: .rosaBotao, workoutBorderColor: .rosaBotaoBorda),
         WorkoutColor(trailColor: .verdeLima, workoutColor: .verdeLimaBotao, workoutBorderColor: .verdeLimaBotaoBorda),
         WorkoutColor(trailColor: .roxo, workoutColor: .roxoBotao, workoutBorderColor: .roxoBotaoBorda)
     ]
     
+    // Define a ordem de cores das bolinhas, se ficar sem cores ele vai lupar de novo para o começo
+    let trailColorPattern = [0,0,0, 1, 1 ,1, 2, 2 ,2, 3 ,3 ,3]
+    
     init(){
-        let workoutPerTrailPiece = 3
-        let steps = stride(from: 0, to: trail.count, by: workoutPerTrailPiece)
-        
-        for start in steps{
-            self.chunks.append(ChunkedData<ActivityModel>(data: Array(trail[start..<min(start+workoutPerTrailPiece, trail.count)])))
-        }
         
         //Pede permissão de usuario apos spalshscreen
         requestNotificationPermission()
     }
     
     // 1. Função que cuida do pedido de permisão para usar as features que precisamos do iphone.
-        func requestNotificationPermission() {
-            let center = UNUserNotificationCenter.current()
-            center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-                if let error = error {
-                    print("Error requesting permission: \(error.localizedDescription)")
-                    return
-                }
-                
-                if granted {
-                    print("Permission Granted!")
-                    // You could schedule a notification here if you want one immediately after permission is given
-                } else {
-                    print("Permission Denied")
-                }
+    func requestNotificationPermission() {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("Error requesting permission: \(error.localizedDescription)")
+                return
+            }
+            
+            if granted {
+                print("Permission Granted!")
+            } else {
+                print("Permission Denied")
             }
         }
-        
-        // Função que checa se o usuário consentiu ao uso das features.
-        func checkNotificationPermissionStatus(completion: @escaping (UNAuthorizationStatus) -> Void) {
-            UNUserNotificationCenter.current().getNotificationSettings { settings in
-                DispatchQueue.main.async {
-                    completion(settings.authorizationStatus)
-                }
+    }
+    
+    // Função que checa se o usuário consentiu ao uso das features.
+    func checkNotificationPermissionStatus(completion: @escaping (UNAuthorizationStatus) -> Void) {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                completion(settings.authorizationStatus)
             }
         }
-        
-        
-        //=====================================================================================
-        // 4. Exemplo de uso do consentimento do usuario do Gemini
-//        func exampleScheduleActualNotification() {
-//            // First, check the current status
-//            checkNotificationPermissionStatus { status in
-//                switch status {
-//                case .authorized:
-//                    // Permission already granted, schedule the notification
-//                    print("Status is authorized. Scheduling notification.")
-//                    exampleScheduleActualNotification()
-//                    
-//                case .denied:
-//                    // Permission denied. Guide user to settings.
-//                    print("Status is denied. Cannot schedule notification.")
-//                    // Here you might want to show an alert to the user.
-//                    
-//                case .notDetermined:
-//                    // Permission not yet requested. Ask for it.
-//                    print("Status is not determined. Requesting permission.")
-//                    requestNotificationPermission()
-//                    // The user will see the pop-up. If they grant it, you might want to
-//                    // schedule the notification inside the request's completion handler.
-//                    
-//                default:
-//                    // Handle other cases like .provisional, etc.
-//                    print("Unhandled notification status.")
-//                }
-//            }
-//        }
-    //=========================================================================================
-
+    }
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack{
-                Rectangle().foregroundStyle(Color.cinzaEscuro).ignoresSafeArea()
-                VStack(){
+        ZStack{
+            Rectangle().foregroundStyle(Color.cinzaEscuro).ignoresSafeArea()
+            VStack(){
+                ScrollViewReader{ proxy in
                     ScrollView{
-                        let pieceHeight = geometry.size.width * 0.45
-                        
-                        VStack(alignment: .leading, spacing: -pieceHeight * 0.17) {
-                            Spacer().frame(height: pieceHeight * 0.25)
-                            ForEach(Array(chunks.enumerated()), id: \.element.id)
-                            {index, chunk in
-                                let displayColor: WorkoutColor = self.trailColors[index % self.trailColors.count]
-                                
-                                let pieceType: PieceType = {
-                                    if index == chunks.count - 1 { return .top }
-                                    if index == 0 { return .bottom }
-                                    return .middle
-                                }()
-                                
-                                TrailPieceView(workouts: chunk.data, type: pieceType, flipped: index % 2 == 0,
-                                               displayColors: displayColor, pieceId: index, showSheet: $trailViewDataCenter.showSheet,
-                                               availableSize: geometry.size, pieceHeight: pieceHeight)
-                                .environmentObject(planViewModel)
-                                .offset(calculatePieceOffset(for: index, count: chunks.count, pieceHeight: pieceHeight, screenWidth: geometry.size.width))
-                            }
-                            Image("LogoLight")
+                        VStack {
+                            Image("Trail")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 32)
-                                .rotationEffect(Angle(degrees: 180))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, geometry.size.height * 0.1)
+                                .overlay {
+                                    GeometryReader { geometry in
+                                        ZStack {
+                                            ForEach(trail.indices, id: \.self) { index in
+                                                let activity = trail[index]
+                                                let workoutColor = trailColors[trailColorPattern[index % trailColorPattern.count]]
+                                                let relativePosition = getRelativePosition(for: index, total: trail.count)
+                                                
+                                                Button {
+                                                    trailViewDataCenter.selectedButtonIndex = index
+                                                    trailViewDataCenter.showSheet = true
+                                                } label: {
+                                                    WorkoutTrailDisplay(
+                                                        workoutColor: workoutColor,
+                                                        activity: activity,
+                                                        imageSize: geometry.size,
+                                                        orderInArray: index
+                                                    )
+                                                }
+                                                .environmentObject(planViewModel)
+                                                .position(
+                                                    x: geometry.size.width * relativePosition.x,
+                                                    y: geometry.size.height * relativePosition.y
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding(.vertical, 48)
+                            
+                            Spacer().id("bottomAnchor")
                         }
                     }
                     .scrollIndicators(.hidden)
-                    .rotationEffect(Angle(degrees: 180))
-                    //aqui modifica a parte cinza de cima, caso precise
-                    //.padding(.vertical, 48)
-                    .padding(.top, 48)
-                    .padding(.bottom, 32)
+                    .onAppear {
+                        proxy.scrollTo("bottomAnchor")
+                    }
                 }
             }
-            .overlay {
-                if trailViewDataCenter.showSheet { //
-                    Color.black.opacity(0.6)
-                        .ignoresSafeArea(.all)
-                        .transition(.opacity)
-                        .animation(.easeInOut(duration: 0.3), value: trailViewDataCenter.showSheet)
-                        .onTapGesture {
-                            trailViewDataCenter.showSheet = false
-                        }
+            .padding(.horizontal, 36)
+        }
+        .overlay {
+            if trailViewDataCenter.showSheet {
+                Color.black.opacity(0.6)
+                    .ignoresSafeArea(.all)
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.3), value: trailViewDataCenter.showSheet)
+                    .onTapGesture {
+                        trailViewDataCenter.showSheet = false
+                    }
+            }
+        }
+        .sheet(isPresented: $trailViewDataCenter.showSheet){
+            TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex, shouldStartActivity: $shouldNavigateToActivity)
+                .presentationDetents([.medium, .height(600)])
+        }
+        .navigationDestination(isPresented: $shouldNavigateToActivity) {
+            ActivityView().environmentObject(planViewModel)
+        }
+        .navigationBarBackButtonHidden(true)
+    }
+    
+    //rip 8 Offsets
+    private func getRelativePosition(for index: Int, total: Int) -> CGPoint {
+        let topMargin: Double = 0.0275
+        let bottomMargin: Double = 0.03
+        let horizontalMargin: Double = 0.08
+        
+        let verticalCanvasHeight = 1.0 - topMargin - bottomMargin
+        let horizontalCanvasWidth = 1.0 - (horizontalMargin * 2)
+        
+        let step = index / 3
+        let iteration = index % 3
+        let isFlipped = (step % 2 != 0)
+        
+        var relativeY = 1.0 - (Double(step) / Double(total / 3))
+        
+        var relativeX: Double
+        if iteration == 0 {
+            relativeX = 0.35
+        } else if iteration == 1 {
+            relativeX = 0.65
+        } else {
+            relativeX = 0.99
+        }
+        
+        if isFlipped {
+            relativeX = 1.0 - relativeX
+        }
+        
+        if iteration == 2 {
+            relativeY -= 0.06
+        }
+        
+        let finalX = horizontalMargin + (relativeX * horizontalCanvasWidth)
+        let finalY = topMargin + (relativeY * verticalCanvasHeight)
+        
+        return CGPoint(x: finalX, y: finalY)
+    }
+}
+
+struct WorkoutTrailDisplay : View {
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var planViewModel: PlanViewModel
+    let workoutColor: WorkoutColor
+    let activity: ActivityModel
+    let imageSize: CGSize
+    let orderInArray: Int
+    
+    var body: some View {
+        
+        let diameter = imageSize.width * 0.14
+        
+        let innerDiameter = diameter * 0.82
+        ZStack{
+            Circle()
+                .foregroundStyle(workoutColor.workoutBorderColor)
+                .frame(width: diameter, height: diameter)
+            Circle()
+                .foregroundStyle(workoutColor.workoutColor)
+                .frame(width: innerDiameter,height: innerDiameter)
+                .overlay{
+                    //se eu nao fiz ainda
+                    if orderInArray > planViewModel.userLevel{
+                        Image(systemName: "lock.fill")
+                            .foregroundStyle(Color.white)
+                            .bold()
+                    }
+                    //se eu to nesse nível
+                    else if orderInArray == planViewModel.userLevel{
+                        Circle()
+                            .frame(width: innerDiameter, height: innerDiameter)
+                            .overlay {
+                                Image("AvatarCareca")
+                                    .resizable()
+                                    .scaledToFit()
+                            }
+                    }
+                    //se eu ja fiz
+                    else{
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(Color.white)
+                            .bold()
+                    }
                 }
-            }
-            .sheet(isPresented: $trailViewDataCenter.showSheet){
-                TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex, shouldStartActivity: $shouldNavigateToActivity)
-                    .presentationDetents([.medium, .height(600)])
-            }
-            .navigationDestination(isPresented: $shouldNavigateToActivity) {
-                ActivityView().environmentObject(planViewModel)
-            }
-            .navigationBarBackButtonHidden(true)
         }
         
     }
     
-    private func calculatePieceOffset(for index: Int, count: Int, pieceHeight: CGFloat, screenWidth: CGFloat) -> CGSize {
-        var x: CGFloat = 0
-        var y: CGFloat = 0
-
-        // --- Offset for entire peace
-        let topPieceAdjustment    = (x: pieceHeight * 0, y: pieceHeight * -0.015)
-        let bottomPieceAdjustment = (x: screenWidth * 0.025, y: pieceHeight * 0.0)
-        // ---------------------------------------------------
-
-        // Zig zag
-        x += screenWidth * 0.04 * (index % 2 != 0 ? 1 : -1)
-
-        // Adjust top and bottom pieces
-        if index == count - 1 { // Top piece
-            x += topPieceAdjustment.x
-            y += topPieceAdjustment.y
-        } else if index == 0 { // Bottom piece
-            x += bottomPieceAdjustment.x
-            y += bottomPieceAdjustment.y
-        }
-        
-        return CGSize(width: x, height: y)
-    }
 }
+
 struct ChunkedData<T>: Identifiable {
     let id: UUID = UUID()
     let data : [T]
@@ -201,160 +234,6 @@ enum PieceType {
         case .bottom:
             return "Bottom"
         }
-    }
-}
-
-struct TrailPieceView: View {
-    @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var planViewModel: PlanViewModel
-    let workouts: [ActivityModel]
-    let type: PieceType
-    let flipped: Bool
-    let displayColors: WorkoutColor
-    let pieceId: Int
-    @Binding var showSheet: Bool
-    
-    let availableSize: CGSize
-    let pieceHeight: CGFloat
-    
-    private var buttonSize: CGFloat { pieceHeight * 0.28 }
-    private var buttonBorderSize: CGFloat { buttonSize + 10 }
-    
-    func isUpWorkout(index: Int, totalWorkouts: Int, flipped: Bool) -> CGFloat{
-        if index == totalWorkouts - 1{
-            return 1
-        }
-        else {
-            return 0
-        }
-    }
-    
-    func isDownWorkout(index: Int, totalWorkouts: Int, flipped: Bool) -> CGFloat{
-        return isUpWorkout(index: index, totalWorkouts: totalWorkouts, flipped: flipped) == 0 ? 1 : 0
-    }
-    
-    var body: some View {
-        ZStack{
-            let trailPieceImage = "TrailPiece\(type.displayName)"
-            ZStack{
-                Image(trailPieceImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: pieceHeight)
-                Image(trailPieceImage + "ColorMask")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: pieceHeight)
-                    .foregroundColor(displayColors.trailColor)
-            }
-            .scaleEffect(x: flipped ? -1 : 1, y: 1)
-            
-            HStack(spacing: availableSize.width * 0.10){
-                ForEach(0..<workouts.count, id: \.self){
-                    workout in
-                    let index = flipped ?  workout : (workouts.count - workout - 1)
-                    let globalIndex = (pieceId * 3) + index
-                    Button{
-                        TrailViewDataCenter.shared.selectedButtonIndex = globalIndex
-                        showSheet = true
-                    } label:{
-                        ZStack{
-                            Circle()
-                                .foregroundStyle(displayColors.workoutBorderColor)
-                                .frame(width: buttonBorderSize, height: buttonBorderSize)
-                                .shadow(color: .black.opacity(0.35), radius: 5, x: 0, y: 4)
-                            Circle()
-                                .foregroundStyle(displayColors.workoutColor)
-                                .frame(width: buttonSize, height: buttonSize)
-                            
-                            
-                            //se eu nao fiz ainda
-                            if (globalIndex) > planViewModel.userLevel{
-                                Image(systemName: "lock.fill")
-                                    .foregroundStyle(Color.white)
-                                    .bold()
-                            }
-                            //se eu to nesse nível
-                            else if globalIndex == planViewModel.userLevel{
-                                Circle()
-                                    .frame(width: buttonSize, height: buttonSize)
-                                    .overlay {
-                                        Image("AvatarCareca")
-                                            .resizable()
-                                            .scaledToFit()
-                                    }
-                            }
-                            //se eu ja fiz
-                            else if globalIndex == planViewModel.userLevel{
-                                //nao acontece nada como o botao
-                            }
-                        }
-                    }
-                    .offset(calculateWorkoutOffset(forIndex: index, globalIndex: globalIndex))
-                }
-                
-            }
-           
-        }
-        .rotationEffect(Angle(degrees: 180))
-        .padding(.horizontal, availableSize.width * 0.08)
-        .padding(.vertical, -pieceHeight * 0.065)
-        .padding(.vertical, -pieceHeight * 0.05 * (type == .bottom ? 1 : 0))
-        .padding(.vertical, pieceHeight * 0.04 * (type == .top ? 1 : 0))
-        .preferredColorScheme(.dark)
-    }
-    
-    private func calculateWorkoutOffset(forIndex index: Int, globalIndex: Int) -> CGSize {
-        var x: CGFloat = 0
-        var y: CGFloat = 0
-        
-        let upFlag = isUpWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)
-        let downFlag = isDownWorkout(index: index, totalWorkouts: workouts.count, flipped: flipped)
-
-        // Middle Piece
-        // General offset
-        x += (pieceHeight * 0.2) * (flipped ? 1 : -1)
-        y += pieceHeight * 0.25
-        
-        // Move up node
-        x += pieceHeight * 0.015 * upFlag * (flipped ? 1 : -1)
-        y -= pieceHeight * 0.325 * upFlag
-        
-        // Move down nodes
-        x += pieceHeight * 0.01 * downFlag * (flipped ? 1 : -1)
-        y += pieceHeight * 0.02 * downFlag
-
-        // Adjust top and bottom piece nodes
-        switch type {
-        case .top:
-            // Fix top piece
-            x += pieceHeight * 0.06
-            y += pieceHeight * 0.05
-            
-            // Fix up node of top piece
-            x += pieceHeight * 0.0125 * upFlag
-            y += pieceHeight * 0.045 * upFlag
-            
-            // Fix down nodes of top piece
-            x -= pieceHeight * 0.015 * downFlag
-            
-        case .bottom:
-            // Fix up node nodes of Bottom piece
-            y += pieceHeight * 0.015 * upFlag
-            
-            // Fix down nodes of bottom piece
-            x += pieceHeight * 0.055 * downFlag
-            
-        case .middle:
-            break
-        }
-        
-        // fix first workout
-        if globalIndex == 0 {
-            x += pieceHeight * 0.035
-        }
-        
-        return CGSize(width: x, height: y)
     }
 }
 
