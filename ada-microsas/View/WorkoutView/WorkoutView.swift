@@ -16,8 +16,38 @@ struct WorkoutView: View {
     
     @State var showCompletionAlert: Bool = false
     
+
     let dataTrainingModel = DataTrainingModel()
     let currentIndex: Int
+    
+    var totalTime: Int {
+        let warmUpTimes = dataTrainingModel.trainingList[currentIndex].warmingUp.timeWarmUp
+        let warmUpCountTimes = dataTrainingModel.trainingList[currentIndex].warmingUp.warmUpCount
+        let warmUpRestTimes = dataTrainingModel.trainingList[currentIndex].warmingUp.warmUpRest
+        let mainTrainingTimes = dataTrainingModel.trainingList[currentIndex].mainTraining.timeMainTraining
+        let mainTrainingCountTimes = dataTrainingModel.trainingList[currentIndex].mainTraining.mainTrainingCount
+        
+        var totalWarmUp = 0
+        for time in warmUpTimes {
+            totalWarmUp += time
+            print("totalWarmUp: \(totalWarmUp)")
+        }
+        
+        var totalWarmUpRest = 0
+        for time in warmUpRestTimes {
+            totalWarmUpRest += time
+        }
+        
+        var totalMainTraining = 0
+        for time in mainTrainingTimes {
+            totalMainTraining += time
+        }
+        
+        let totalSeconds = (totalWarmUp * warmUpCountTimes) + (totalMainTraining * mainTrainingCountTimes) + totalWarmUpRest
+        
+        return totalSeconds / 60
+    }
+    
     
     var body: some View {
         
@@ -27,6 +57,7 @@ struct WorkoutView: View {
                 Image("BackgroundColorfull")
                     .resizable()
                     .scaledToFit( )
+                    
                     .offset(y: 150)
                     
                 
@@ -41,6 +72,7 @@ struct WorkoutView: View {
                             Text("Alongue o corpo todo, sem pressa.")
                         }
                     }
+                    .padding(.top, 60)
                     .font(.system(size: 12))
                     .foregroundStyle(.white)
                     
@@ -52,6 +84,7 @@ struct WorkoutView: View {
                         ZStack{
                             HStack{
                                 Spacer()
+                                
                                 ZStack{
                                     Image("Star")
                                         .resizable()
@@ -59,14 +92,12 @@ struct WorkoutView: View {
                                         .frame(width: 90)
                                         .offset(y: -70)
                                     //MUDAR AQUI
-                                    Text("35'")
+                                    Text("\(totalTime)'")
                                         .font(.system(size: 16))
                                         .fontWeight(.bold)
                                         .foregroundStyle(.white)
                                         .offset(y: -70)
                                 }
-                                
-                                
                             }
                             
                             //AQUECIMENTO
@@ -146,12 +177,22 @@ struct WorkoutView: View {
                     
                     
                     
-                    Button("Começar a correr"){
+                    Button{
+                        
+                    } label: {
+                        HStack{
+                            Spacer()
+                            Text("Começar a Correr")
+                                .padding(.vertical, 12)
+                                .foregroundStyle(.white)
+                                .font(.system(size: 16))
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                        .background(.roxo)
+                        .cornerRadius(8)
                         
                     }
-                    .padding(.vertical, 12)
-                    .background(.roxo)
-                    .cornerRadius(8)
                     
                     Spacer()
                     

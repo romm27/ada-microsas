@@ -19,13 +19,13 @@ struct ActivityModel: Identifiable {
     
     var requiredLevel: Int
 
-    init(id: UUID = UUID(), order: Int, unlocked: Bool = false, warmingUp: [Int], warmingUpCount: Int, mainTraining: [Int], mainTrainingCount: Int, requiredLevel: Int, ) {
+    init(id: UUID = UUID(), order: Int, unlocked: Bool = false, warmingUp: [Int], warmingUpCount: Int, warmUpRest: [Int], mainTraining: [Int], mainTrainingCount: Int, requiredLevel: Int, ) {
         self.id = id
 
         self.order = order
         self.unlocked = unlocked
         
-        self.warmingUp = Warming(timeWarmUp: warmingUp, warmUpCount: warmingUpCount)
+        self.warmingUp = Warming(timeWarmUp: warmingUp, warmUpCount: warmingUpCount, warmUpRest: warmUpRest)
         
         self.mainTraining = MainTraining(timeMainTraining: mainTraining, mainTrainingCount: mainTrainingCount)
     
@@ -42,6 +42,7 @@ struct Warming: Identifiable{
     
     let timeWarmUp: [Int]
     let warmUpCount: Int
+    let warmUpRest: [Int]
     //tempo de cada atividade do aquecimento
 }
 

@@ -85,12 +85,8 @@ struct ActivityView: View {
         }
         
     }
-    
-    
+ 
 }
-
-
-
 #Preview {
     ActivityView()
         .environmentObject(TimerViewModel())
