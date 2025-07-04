@@ -12,6 +12,7 @@ import UserNotifications
 struct TrailView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var planViewModel: PlanViewModel
+    @EnvironmentObject var timerViewModel: TimerViewModel
     let trail: [ActivityModel] = DataTrainingModel.shared.trainingList
     @ObservedObject var trailViewDataCenter: TrailViewDataCenter = .shared
     @State private var shouldNavigateToActivity = false
@@ -82,9 +83,11 @@ struct TrailView: View {
                                                 let workoutColor = trailColors[trailColorPattern[index % trailColorPattern.count]]
                                                 let relativePosition = getRelativePosition(for: index, total: trail.count)
                                                 
-                                                Button {
-                                                    trailViewDataCenter.selectedButtonIndex = index
-                                                    trailViewDataCenter.showSheet = true
+                                                NavigationLink {
+                                                    WorkoutView(currentIndex: index)
+                                                        .environmentObject(planViewModel)
+                                                        .environmentObject(timerViewModel)
+                                                    
                                                 } label: {
                                                     WorkoutTrailDisplay(
                                                         workoutColor: workoutColor,
@@ -268,5 +271,5 @@ struct WorkoutColor{
 }
 
 #Preview {
-    TrailView().environmentObject(PlanViewModel())
+    TrailView().environmentObject(PlanViewModel()).environmentObject(TimerViewModel())
 }

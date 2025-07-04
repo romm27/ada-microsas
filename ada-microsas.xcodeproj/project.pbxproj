@@ -44,19 +44,12 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B86359F12E184DB4003993FD /* Exceptions for "ada-microsas" folder in "ada-microsas" target */ = {
+		B8424F802E1878070020126E /* Exceptions for "ada-microsas" folder in "ada-microsas" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = B8E6B80A2E0C7AAD006C3565 /* ada-microsas */;
-		};
-		B8635A0E2E184FEE003993FD /* Exceptions for "TimerWidget" folder in "TimerWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = B86359F52E184FED003993FD /* TimerWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -72,7 +65,7 @@
 		B8E6B80D2E0C7AAD006C3565 /* ada-microsas */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B86359F12E184DB4003993FD /* Exceptions for "ada-microsas" folder in "ada-microsas" target */,
+				B8424F802E1878070020126E /* Exceptions for "ada-microsas" folder in "ada-microsas" target */,
 			);
 			path = "ada-microsas";
 			sourceTree = "<group>";
