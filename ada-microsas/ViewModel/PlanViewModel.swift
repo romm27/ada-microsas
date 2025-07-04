@@ -32,7 +32,7 @@ class PlanViewModel: ObservableObject {
     @Published var userLevel: Int = 0 { //Começa em 0 por causa do array, ao mostrar para o jogador adicione + 1.
         //Por exemplo o workout do userLevel 0 é igual ao PRIMEIRO workout(1) para o jogador.
         didSet{
-            savePlan()
+//            savePlan()
         }
     }
     
@@ -72,7 +72,7 @@ class PlanViewModel: ObservableObject {
             let data = try Data(contentsOf: fileURL)
             // Usamos JSONDecoder para converter os dados do arquivo de volta para um Int
             let decodedLevel = try JSONDecoder().decode(Int.self, from: data)
-            self.userLevel = decodedLevel
+            self.userLevel = isRunningInPreview() ? 0 : decodedLevel
             print(userLevel)
             print("Level carregado com sucesso!")
         } catch {
@@ -92,7 +92,9 @@ class PlanViewModel: ObservableObject {
 //    }
     
     
-    
-    
+    /// Isso aqui provavelmente é desnecessário, mas vamo deixar pra poder usar preview.
+    func isRunningInPreview() -> Bool {
+        ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
+    }
     
 }

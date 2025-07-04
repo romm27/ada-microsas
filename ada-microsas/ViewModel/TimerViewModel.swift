@@ -27,6 +27,9 @@ class TimerViewModel: ObservableObject {
     @Published var progress: Double = 0.0
     @Published var isFinished: Bool = false
     
+    //gemini: Add properties to store the timer's state when the app is backgrounded.
+    var backgroundEntryTime: Date?
+    
     var formattedCurrentTimer: String {
         let minutes = currentTimer / 60
         let seconds = currentTimer % 60
@@ -57,6 +60,8 @@ class TimerViewModel: ObservableObject {
         currentTimer = seconds
         maxTimer = seconds
         isFinished = false
+        //gemini: Reset the background time whenever a new timer is configured.
+        backgroundEntryTime = nil
     }
     
     func startTimer() {
@@ -103,6 +108,35 @@ class TimerViewModel: ObservableObject {
         
         currentTimer = 0
         maxTimer = 0
+        //gemini: Reset the background time when the timer is fully reset.
+        backgroundEntryTime = nil
     }
     
+    //gemini: Add a new method to synchronize the timer after returning from the background.
+    func syncTimer() {
+        //gemini: Ensure we have a time stored from when the app was backgrounded.
+        guard let backgroundEntryTime = self.backgroundEntryTime else { return }
+
+        let timeElapsed = Int(Date().timeIntervalSince(backgroundEntryTime))
+        
+        print("App returned to foreground. Time elapsed in background: \(timeElapsed) seconds.")
+
+        //gemini: Check if the timer should have finished while in the background.
+        if currentTimer <= timeElapsed {
+            currentTimer = 0
+            //gemini: Manually trigger the timer completion logic.
+            handleTimeExecution()
+        } else {
+            //gemini: Subtract the elapsed time from the current timer.
+            currentTimer -= timeElapsed
+            //gemini: Update the progress bar to reflect the new time.
+            self.progress = 1.0 - (Double(self.currentTimer) / Double(self.maxTimer))
+        }
+
+        //gemini: Clear the background entry time after syncing.
+        self.backgroundEntryTime = nil
+    }
 }
+
+
+// --- END OF FILE ---

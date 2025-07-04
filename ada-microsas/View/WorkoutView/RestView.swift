@@ -34,7 +34,7 @@ struct RestView: View {
                     .font(.system(size: 34))
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
-                //timer
+//                timer
                 Text("\(timerViewModel.getFormattedCurrentTimer())")
                     .font(.system(size: 58))
                     .fontWeight(.regular)

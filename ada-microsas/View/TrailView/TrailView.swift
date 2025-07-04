@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+//gemini: Import the UserNotifications framework to request permission.
+import UserNotifications
 
 struct TrailView: View {
     @Environment(\.dismiss) var dismiss
@@ -28,22 +30,28 @@ struct TrailView: View {
     init(){
         
         //Pede permissão de usuario apos spalshscreen
-        requestNotificationPermission()
+        //gemini: The init() method is not the best place for this. Moving the logic to .onAppear ensures the view is ready.
+        // requestNotificationPermission()
     }
     
+    //gemini: This function will be called from .onAppear to request notification permissions from the user.
     // 1. Função que cuida do pedido de permisão para usar as features que precisamos do iphone.
     func requestNotificationPermission() {
         let center = UNUserNotificationCenter.current()
+        //gemini: Request authorization for alerts, sounds, and badges.
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if let error = error {
-                print("Error requesting permission: \(error.localizedDescription)")
+                // Handle the error here. For now, we'll just print it.
+                print("Error requesting notification permission: \(error.localizedDescription)")
                 return
             }
             
             if granted {
-                print("Permission Granted!")
+                print("Notification Permission Granted!")
             } else {
-                print("Permission Denied")
+                // The user denied permission. You could show an alert here
+                // explaining why notifications are useful for the app.
+                print("Notification Permission Denied.")
             }
         }
     }
@@ -105,6 +113,9 @@ struct TrailView: View {
                     .scrollIndicators(.hidden)
                     .onAppear {
                         proxy.scrollTo("bottomAnchor")
+                        //gemini: Request permission when the view appears. This will only show the dialog to the user once.
+                        //gemini: If permission is already granted or denied, this function does nothing.
+                        requestNotificationPermission()
                     }
                 }
             }

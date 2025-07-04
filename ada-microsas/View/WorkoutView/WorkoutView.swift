@@ -30,7 +30,6 @@ struct WorkoutView: View {
         var totalWarmUp = 0
         for time in warmUpTimes {
             totalWarmUp += time
-            print("totalWarmUp: \(totalWarmUp)")
         }
         
         var totalWarmUpRest = 0
@@ -177,8 +176,8 @@ struct WorkoutView: View {
                     
                     
                     
-                    Button{
-                        
+                    NavigationLink{
+                        StretchingView()
                     } label: {
                         HStack{
                             Spacer()
@@ -226,4 +225,6 @@ struct WorkoutView: View {
 
 #Preview {
     WorkoutView(currentIndex: 0)
+        .environmentObject(TimerViewModel())
+        .environmentObject(PlanViewModel())
 }
