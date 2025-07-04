@@ -12,42 +12,34 @@ struct ActivityView: View {
     
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
-        
+    
     @State var showCompletionAlert: Bool = false
     
-    
     @State var contador: Int = 0
-
+    
     
     var body: some View {
-        VStack {
-            Text("Você tá\namassando!")
-                .padding(.top, 84)
-                .padding(.bottom, 40)
-                .padding(.horizontal, 100)
-                .multilineTextAlignment(.center)
-            
-            //oiii afonso! aqui pensei: "hum se esta dando index out of range deve ser pq o level do user ta maior q o numero de treinos entao vou fazer uma verificacao... mas nndeu
-            if planViewModel.userLevel < DataTrainingModel.shared.trainingList.count{
-                if contador < Warming.warmUp.count {
-                    Text(Warming.warmUp[contador])
+        VStack{
+            ZStack{
+                Image("BackgroundAquecimento")
+                
+                VStack(spacing: 5){
+                    Image("BelezinhaAquecimento")
+                        .padding(8)
+                    Text("Treino")
+                        .font(.callout)
+                        .fontWeight(.regular)
+                    Text("Trote")
+                        .font(.title2)
+                        .fontWeight(.bold)
                 }
+                .padding(.top, 48)
             }
             
-        }
-        .font(.largeTitle)
-        .fontWeight(.bold)
-        .foregroundColor(.white)
-        .background(.roxo)
-        .cornerRadius(20)
-        .ignoresSafeArea(.all)
-        
-        Spacer()
-        
-        VStack{
+            Spacer()
+            
             ProgressBarView()
                 .frame(width: 300, height: 300)
-                .padding(100)
                 .alert("Parabéns!", isPresented: $timerViewModel.isFinished) {
                     Button("Ok") {
                         planViewModel.userLevel += 1
@@ -56,34 +48,45 @@ struct ActivityView: View {
                 } message: {
                     Text("Você concluiu a atividade!")
                 }
-        }
-        
-        Spacer()
-            .navigationBarBackButtonHidden(true)
-            .preferredColorScheme(.dark)
-            .onAppear{
-                print(" USER LEVEL: \(planViewModel.userLevel)")
-                //inicia so o primeiro
-                timerViewModel.setTimerConfig(seconds: DataTrainingModel.shared.trainingList[planViewModel.userLevel].warmingUp.timeWarmUp[contador])
-                timerViewModel.startTimer()
-            }
-        
-        Button("Proximo"){
-            contador += 1
             
-
-            if planViewModel.userLevel < DataTrainingModel.shared.trainingList.count{
-                if contador < DataTrainingModel.shared.trainingList[planViewModel.userLevel].warmingUp.timeWarmUp.count{
-                    
-                    timerViewModel.setTimerConfig(seconds: DataTrainingModel.shared.trainingList[planViewModel.userLevel].warmingUp.timeWarmUp[contador])
-                    
-                    timerViewModel.startTimer()
+            Spacer()
+            
+            TotalProgressBarView()
+            
+            Spacer()
+            
+            //Aqui vamos colocar alguma funcao do TimerViewModel que mude quando o timer finalizar
+            Button("Proximo"){
+                
+                contador += 1
+                
+                
+                //User está num level válido(1-24) >>  se user level é menor que a quantidade de treinos
+                if planViewModel.userLevel < DataTrainingModel.shared.trainingList.count{
+                    //contador é o index da array do aquecimento ou da corrida
+                    //se esse contador/index for menor que a quantidade de intervalos do treino do level que estamos
+                    if contador < DataTrainingModel.shared.trainingList[planViewModel.userLevel].warmingUp.timeWarmUp.count{
+                        
+                        //seta o timer com os segundos do intervalo que estamos com o contador/index
+                        //starta o timer (que só vai passar para o próximo count quando terminar)
+                        timerViewModel.setTimerConfig(seconds: DataTrainingModel.shared.trainingList[planViewModel.userLevel].warmingUp.timeWarmUp[contador])
+                        
+                        timerViewModel.startTimer()
+                    }
                 }
+                
+                
             }
-            
-            
         }
-        
+        .navigationBarBackButtonHidden(true)
+        .preferredColorScheme(.dark)
+        .ignoresSafeArea(.all)
+        .onAppear{
+            print(" USER LEVEL: \(planViewModel.userLevel)")
+            //inicia so o primeiro
+            timerViewModel.setTimerConfig(seconds: DataTrainingModel.shared.trainingList[planViewModel.userLevel].warmingUp.timeWarmUp[contador])
+            timerViewModel.startTimer()
+        }
     }
     
     

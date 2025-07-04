@@ -65,6 +65,7 @@ class PlanViewModel: ObservableObject {
     }
     
     func loadPlan() {
+        
         let fileURL = getDocumentsDirectory().appendingPathComponent(saveKey)
         
         do {
@@ -80,6 +81,10 @@ class PlanViewModel: ObservableObject {
             print("Não foi possível carregar o level: \(error.localizedDescription). Começando no level 1.")
             self.userLevel = 0
         }
+    }
+    
+    func setLevel(_ level: Int) {
+        self.userLevel = level
     }
     
 //    func markDayAsDone(at index: Int) {
