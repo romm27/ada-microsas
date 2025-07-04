@@ -33,13 +33,13 @@ struct DataTrainingModel{
 //            warmingUp: [30, 50, 30]
 //        )
         
-        //treino 01
+        //ATIVIDADE FAKE
          ActivityModel(
             order: 01,
-            warmingUp: [5, 5, 5],
+            warmingUp: [15, 15, 15],
             warmingUpCount: 2,
-            warmUpRest: [30, 30, 30],
-            mainTraining: [30, 180],
+            warmUpRest: [5, 5, 5],
+            mainTraining: [5, 5],
             mainTrainingCount: 6,
             requiredLevel: 1,
         ),
@@ -82,6 +82,186 @@ struct DataTrainingModel{
              mainTraining: [30, 180],
              mainTrainingCount: 6,
              requiredLevel: 5,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
+         ),
+         //treino 03
+          ActivityModel(
+             order: 06,
+             warmingUp: [30, 30, 30, 30, 30, 30],
+             warmingUpCount: 2,
+             warmUpRest: [30, 30, 30],
+             mainTraining: [30, 180],
+             mainTrainingCount: 6,
+             requiredLevel: 6,
          ),
          //treino 03
           ActivityModel(
