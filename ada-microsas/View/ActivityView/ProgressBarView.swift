@@ -33,9 +33,16 @@ struct ProgressBarView: View {
                 .trim(from: 0, to: CGFloat(timerViewModel.progress) * 0.7)
                 .stroke(style: StrokeStyle(lineWidth: 35.0, lineCap: .round, lineJoin: .round))
                 .foregroundStyle(
-                    LinearGradient(gradient: Gradient(colors: [Color.roxo, Color.verdeLima]),
-                                   startPoint: .topLeading,
-                                   endPoint: .bottomTrailing)
+                    LinearGradient(
+                        gradient: Gradient(
+                            colors: [
+                                Color.roxo,
+                                Color.verdeLima
+                            ]
+                        ),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                 )
                 .animation(.interpolatingSpring, value: timerViewModel.progress)
               
@@ -51,11 +58,11 @@ struct ProgressBarView: View {
 //                .foregroundStyle(Color.primary)
 //                .offset(y: -150)
             
-            Text("\(Int((timerViewModel.progress) * 100))%")
-                .font(.system(size: 16))
-                .fontWeight(.regular)
-                .foregroundStyle(Color.primary)
-                .offset(y: -150)
+//            Text("\(Int((timerViewModel.progress) * 100))%")
+//                .font(.system(size: 16))
+//                .fontWeight(.regular)
+//                .foregroundStyle(Color.primary)
+//                .offset(y: -150)
             
             
             
