@@ -98,6 +98,7 @@ class TimerViewModel: ObservableObject {
     func endTimer() {
         print("Tempo encerrado!")
         
+        self.timer?.invalidate() //isso para o timer
         isFinished = true
         timerStatus = .paused
         resetTimer()
