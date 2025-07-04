@@ -189,7 +189,12 @@ struct WorkoutTrailDisplay : View {
                 .frame(width: innerDiameter,height: innerDiameter)
                 .overlay{
                     //se eu nao fiz ainda
-                    if orderInArray > planViewModel.userLevel{
+                    if orderInArray == planViewModel.userLevel + 1{
+                        Image(systemName: "lock.open.fill")
+                            .foregroundStyle(Color.white)
+                            .bold()
+                    }
+                    else if orderInArray > planViewModel.userLevel{
                         Image(systemName: "lock.fill")
                             .foregroundStyle(Color.white)
                             .bold()
