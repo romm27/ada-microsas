@@ -36,7 +36,7 @@ struct DataTrainingModel{
         //treino 01
          ActivityModel(
             order: 01,
-            warmingUp: [30, 30, 30],
+            warmingUp: [5, 5, 5],
             warmingUpCount: 2,
             warmUpRest: [30, 30, 30],
             mainTraining: [30, 180],
