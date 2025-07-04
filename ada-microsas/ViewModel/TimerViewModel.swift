@@ -14,7 +14,13 @@ class TimerViewModel: ObservableObject {
         case paused
     }
     
+    enum TrainState {
+        case training
+        case resting
+    }
+    
     @Published var timerStatus: TimerStatus = .paused //estado do timer
+    @Published var trainState: TrainState = .training //estado do treino
     @Published var currentTimer: Int = 0 //nosso controle do tempo
     var maxTimer: Int = 0
     
