@@ -6,10 +6,9 @@
 //
 
 import SwiftUI
-//gemini: Import UserNotifications to schedule notifications.
 import UserNotifications
 
-enum StateActivity{
+enum StateActivity {
     case treino
     case aquecimento
     case descanso
@@ -17,104 +16,44 @@ enum StateActivity{
 
 struct ActivityView: View {
     @Environment(\.dismiss) var dismiss
-    
-    @State var test = false
-    
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
     
-    @State var showCompletionAlert: Bool = false
-    
-    //gemini: The old counter is no longer needed as the new state machine below is more robust.
-//    @State var contador: Int = 0
-    
-    //Deep Seek: We'll keep the original state enum but use it differently with the new data model
-    @State var state: StateActivity = .aquecimento
-    
-    //Deep Seek: New state variables to work with ActivityPhase directly
+    @State private var state: StateActivity = .aquecimento
     @State private var currentPhase: ActivityPhase?
     @State private var nextPhase: ActivityPhase?
+    @State private var currentGroupIndex: Int = 0
     @State private var currentPhaseIndex: Int = 0
     @State private var currentRepetition: Int = 1
-
+    @State private var currentGroupRepetition: Int = 1
+    
     var body: some View {
-        NavigationStack{
-            //gemini: The logic is now handled by the 'isResting' state, making the flow automatic and self-contained.
+        NavigationStack {
             Group {
-                if let phase = currentPhase, phase.isRest {
-                    //Deep Seek: Modified rest view to use ActivityPhase properties directly
-                    VStack(spacing: 35){
-                        Image(phase.imageAsset)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 150)
-                        
-                        VStack(spacing: 10){
-                            Text(phase.name)
-                                .font(.system(size: 34))
-                                .fontWeight(.bold)
-                                .foregroundStyle(.white)
-
-                            Text("\(timerViewModel.getFormattedCurrentTimer())")
-                                .font(.system(size: 58))
-                                .fontWeight(.regular)
-                                .foregroundStyle(.verdeLima)
-                            
-                            if let next = nextPhase {
-                                VStack(spacing: 5){
-                                    Text("Próxima Atividade")
-                                        .font(.system(size: 15))
-                                        .fontWeight(.semibold)
-                                    Text(next.name)
-                                        .font(.system(size: 13))
-                                        .foregroundStyle(.white)
-                                }
-                            }
-                        }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    VStack{
-                        if let phase = currentPhase {
-                            //Deep Seek: Unified activity view using ActivityPhase properties
-                            ZStack{
-                                Image(phase.isRest ? "BackgroundDescanso" :
-                                      state == .treino ? "BackgroundTreino" : "BackgroundAquecimento")
-                                
-                                VStack(spacing: 5){
-                                    Image(phase.imageAsset)
-                                        .padding(8)
-                                    Text(state == .treino ? "Treino" : "Aquecendo")
-                                        .font(.callout)
-                                        .fontWeight(.regular)
-                                    Text(phase.name)
-                                        .font(.title2)
-                                        .fontWeight(.bold)
-                                }
-                                .padding(.top, 48)
-                            }
-                        }
-                        
-                        Spacer()
-                        
-                        ProgressBarView()
-                            .frame(width: 300, height: 300)
-                        
-                        Spacer()
-                        
-                        TotalProgressBarView()
-                        
-                        Spacer()
+                if let phase = currentPhase {
+                    if phase.isRest {
+                        // Rest View
+                        RestPhaseView(
+                            phase: phase,
+                            nextPhase: nextPhase,
+                            timerText: timerViewModel.getFormattedCurrentTimer()
+                        )
+                    } else {
+                        // Activity View
+                        ActivityPhaseView(
+                            phase: phase,
+                            state: state,
+                            timerText: timerViewModel.getFormattedCurrentTimer()
+                        )
                     }
                 }
             }
-            .toolbar{
-                ToolbarItem(placement: .navigationBarLeading){
-                    Button{
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
                         dismiss()
-//                        planViewModel.setLevel(0)
                     } label: {
-                        HStack{
+                        HStack {
                             Image(systemName: "chevron.left")
                                 .padding()
                         }
@@ -123,17 +62,12 @@ struct ActivityView: View {
                     }
                 }
             }
-            
             .navigationBarBackButtonHidden(true)
             .preferredColorScheme(.dark)
             .ignoresSafeArea(.all)
-            .onAppear{
-                print(" USER LEVEL: \(planViewModel.userLevel)")
-                //Deep Seek: Modified to use the new data model initialization
-                startFirstActivity()
+            .onAppear {
+                startWorkout()
             }
-            
-            //gemini: When any timer finishes, the state machine will determine the next step.
             .onChange(of: timerViewModel.isFinished) { isFinished in
                 if isFinished {
                     proceedToNextPhase()
@@ -142,95 +76,79 @@ struct ActivityView: View {
         }
     }
     
-    //Deep Seek: Modified to work with ActivityPhase directly while keeping similar structure
-    func startFirstActivity() {
-        guard planViewModel.userLevel < DataTrainingModel.shared.trainingPlans.count else {
+    private func startWorkout() {
+        guard let workout = currentWorkout() else {
             dismiss()
             return
         }
         
-        let workout = DataTrainingModel.shared.trainingPlans[planViewModel.userLevel]
-        guard !workout.phases.isEmpty else {
-            dismiss()
-            return
-        }
+        currentGroupIndex = 0
+        currentPhaseIndex = 0
+        currentRepetition = 1
+        currentGroupRepetition = 1
         
-        currentPhase = workout.phases[0]
-        state = currentPhase?.isRest == true ? .descanso : .aquecimento
-        
-        //Deep Seek: Set next phase if available
-        if workout.phases.count > 1 {
-            nextPhase = workout.phases[1]
-        }
-        
-        timerViewModel.setTimerConfig(seconds: currentPhase?.duration ?? 0)
-        timerViewModel.startTimer()
+        loadCurrentPhase()
     }
     
-    //gemini: This function schedules a local notification with a custom sound.
-    func scheduleNotification(title: String, body: String, duration: TimeInterval, soundName: String) {
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        //gemini: The sound file must be in your project bundle.
-        content.sound = UNNotificationSound(named: UNNotificationSoundName(soundName))
-
-        // Trigger the notification after the specified duration
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: duration, repeats: false)
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Error scheduling notification: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    //Deep Seek: Modified version of passNextIntervalTraining that works with ActivityPhase
-    func proceedToNextPhase() {
-        guard planViewModel.userLevel < DataTrainingModel.shared.trainingPlans.count else {
+    private func proceedToNextPhase() {
+        guard let workout = currentWorkout() else {
             dismiss()
             return
         }
         
-        let workout = DataTrainingModel.shared.trainingPlans[planViewModel.userLevel]
+        let currentGroup = workout.patternGroups[currentGroupIndex]
         
-        // Check if there are more phases
-        if currentPhaseIndex < workout.phases.count - 1 {
+        // Move to next phase in current group
+        if currentPhaseIndex < currentGroup.phases.count - 1 {
             currentPhaseIndex += 1
         } else {
-            // Check if there are more repetitions
-            if currentRepetition < workout.totalRepetitions {
+            // Move to next repetition or next group
+            if currentGroupRepetition < currentGroup.repetitions {
                 currentPhaseIndex = 0
-                currentRepetition += 1
+                currentGroupRepetition += 1
             } else {
-                // Workout complete
-                planViewModel.userLevel += 1
-                dismiss()
-                return
+                // Move to next group
+                if currentGroupIndex < workout.patternGroups.count - 1 {
+                    currentGroupIndex += 1
+                    currentPhaseIndex = 0
+                    currentGroupRepetition = 1
+                } else {
+                    // Workout complete
+                    planViewModel.userLevel += 1
+                    dismiss()
+                    return
+                }
             }
         }
         
-        // Update current and next phases
-        currentPhase = workout.phases[currentPhaseIndex]
-        
-        // Update state based on activity type
-        if currentPhase?.isRest == true {
-            state = .descanso
-        } else {
-            state = currentRepetition > 1 ? .treino : .aquecimento
+        loadCurrentPhase()
+    }
+    
+    private func loadCurrentPhase() {
+        guard let workout = currentWorkout() else {
+            dismiss()
+            return
         }
         
-        // Set next phase if available
-        let nextIndex = currentPhaseIndex + 1
-        if nextIndex < workout.phases.count {
-            nextPhase = workout.phases[nextIndex]
-        } else if currentRepetition < workout.totalRepetitions {
-            nextPhase = workout.phases[0]
+        let currentGroup = workout.patternGroups[currentGroupIndex]
+        currentPhase = currentGroup.phases[currentPhaseIndex]
+        
+        // Determine next phase
+        if currentPhaseIndex < currentGroup.phases.count - 1 {
+            nextPhase = currentGroup.phases[currentPhaseIndex + 1]
+        } else if currentGroupRepetition < currentGroup.repetitions {
+            nextPhase = currentGroup.phases.first
+        } else if currentGroupIndex < workout.patternGroups.count - 1 {
+            nextPhase = workout.patternGroups[currentGroupIndex + 1].phases.first
         } else {
             nextPhase = nil
         }
         
+        // Update activity state
+        state = currentPhase?.isRest == true ? .descanso :
+                currentGroup.isWarmup ? .aquecimento : .treino
+        
+        // Start timer
         timerViewModel.setTimerConfig(seconds: currentPhase?.duration ?? 0)
         timerViewModel.startTimer()
         
@@ -243,6 +161,108 @@ struct ActivityView: View {
                 soundName: "finish_sound.caf"
             )
         }
+    }
+    
+    private func currentWorkout() -> WorkoutPlan? {
+        guard planViewModel.userLevel < DataTrainingModel.shared.trainingPlans.count else {
+            return nil
+        }
+        return DataTrainingModel.shared.trainingPlans[planViewModel.userLevel]
+    }
+    
+    private func scheduleNotification(title: String, body: String, duration: TimeInterval, soundName: String) {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = UNNotificationSound(named: UNNotificationSoundName(soundName))
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: duration, repeats: false)
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request)
+    }
+}
+
+// MARK: - Subviews
+
+struct ActivityPhaseView: View {
+    let phase: ActivityPhase
+    let state: StateActivity
+    let timerText: String
+    
+    var body: some View {
+        VStack {
+            ZStack {
+                Image(backgroundImageName)
+                
+                VStack(spacing: 5) {
+                    Image(phase.imageAsset)
+                        .padding(8)
+                    Text(activityTypeText)
+                        .font(.callout)
+                        .fontWeight(.regular)
+                    Text(phase.name)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                }
+                .padding(.top, 48)
+            }
+            
+            Spacer()
+            ProgressBarView()
+                .frame(width: 300, height: 300)
+            Spacer()
+            TotalProgressBarView()
+            Spacer()
+        }
+    }
+    
+    private var backgroundImageName: String {
+        phase.isRest ? "BackgroundDescanso" :
+        state == .treino ? "BackgroundTreino" : "BackgroundAquecimento"
+    }
+    
+    private var activityTypeText: String {
+        state == .treino ? "Treino" : "Aquecendo"
+    }
+}
+
+struct RestPhaseView: View {
+    let phase: ActivityPhase
+    let nextPhase: ActivityPhase?
+    let timerText: String
+    
+    var body: some View {
+        VStack(spacing: 35) {
+            Image(phase.imageAsset)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 150)
+            
+            VStack(spacing: 10) {
+                Text(phase.name)
+                    .font(.system(size: 34))
+                    .fontWeight(.bold)
+                    .foregroundStyle(.white)
+
+                Text(timerText)
+                    .font(.system(size: 58))
+                    .fontWeight(.regular)
+                    .foregroundStyle(.verdeLima)
+                
+                if let nextPhase = nextPhase {
+                    VStack(spacing: 5) {
+                        Text("Próxima Atividade")
+                            .font(.system(size: 15))
+                            .fontWeight(.semibold)
+                        Text(nextPhase.name)
+                            .font(.system(size: 13))
+                            .foregroundStyle(.white)
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

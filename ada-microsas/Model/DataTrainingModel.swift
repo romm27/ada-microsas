@@ -8,11 +8,7 @@
 import Foundation
 
 struct DataTrainingModel {
-    
     static let shared = DataTrainingModel()
-    
-    
-    
     
     //DEBUG TOSCO D++++ REAVALIAR SEGUNDA!
     static let restActivityPhase: ActivityPhase = ActivityPhase(
@@ -23,62 +19,61 @@ struct DataTrainingModel {
     )
     
     static let debugWorkoutPlan: WorkoutPlan = WorkoutPlan(
-        phases: [
-            ActivityPhase(
-                name: "Polichinelo",
-                duration: 15,
-                isRest: false,
-                imageAsset: "BelezinhaAquecimento"
+        patternGroups: [
+            // Warmup group (repeats 3 times)
+            PatternGroup(
+                repetitions: 3,
+                isWarmup: true,
+                phases: [
+                    ActivityPhase(
+                        name: "Polichinelo",
+                        duration: 15,
+                        isRest: false,
+                        imageAsset: "BelezinhaAquecimento"
+                    ),
+                    restActivityPhase,
+                    ActivityPhase(
+                        name: "Salto na Ponta do Pé",
+                        duration: 15,
+                        isRest: false,
+                        imageAsset: "BelezinhaAquecimento"
+                    ),
+                    restActivityPhase,
+                    ActivityPhase(
+                        name: "Correr Parado",
+                        duration: 15,
+                        isRest: false,
+                        imageAsset: "BelezinhaAquecimento"
+                    ),
+                    restActivityPhase
+                ]
             ),
-            restActivityPhase,
-            ActivityPhase(
-                name: "Salto na Ponta do Pé",
-                duration: 15,
-                isRest: false,
-                imageAsset: "BelezinhaAquecimento"
-            ),
-            restActivityPhase,
-            ActivityPhase(
-                name: "Corrida Parada",
-                duration: 15,
-                isRest: false,
-                imageAsset: "BelezinhaAquecimento"
-            ),
-            restActivityPhase,
-            ActivityPhase(
-                name: "Trote",
-                duration: 15,
-                isRest: false,
-                imageAsset: "BelezinhaTreino"
-            ),
-            ActivityPhase(
-                name: "Corrida",
-                duration: 15,
-                isRest: false,
-                imageAsset: "BelezinhaTreino"
-            ),
-            restActivityPhase,
-            ActivityPhase(
-                name: "Trote",
-                duration: 15,
-                isRest: false,
-                imageAsset: "BelezinhaTreino"
-            ),
-            ActivityPhase(
-                name: "Caminhada",
-                duration: 15,
-                isRest: false,
-                imageAsset: "BelezinhaTreino"
-            ),
+            
+            // Main training group (repeats 2 times)
+            PatternGroup(
+                repetitions: 2,
+                isWarmup: false,
+                phases: [
+                    ActivityPhase(
+                        name: "Trote",
+                        duration: 30,
+                        isRest: false,
+                        imageAsset: "BelezinhaTreino"
+                    ),
+                    ActivityPhase(
+                        name: "Corrida",
+                        duration: 45,
+                        isRest: false,
+                        imageAsset: "BelezinhaTreino"
+                    ),
+                    restActivityPhase
+                ]
+            )
         ],
-        totalRepetitions: 2,
         requiredLevel: 1
     )
     
-    //Transformar em let na segunda
-    var trainingPlans: [WorkoutPlan] = [
-        
-    ]
+    var trainingPlans: [WorkoutPlan] = []
     
     init() {
         for _ in 1...24 {
@@ -86,10 +81,6 @@ struct DataTrainingModel {
         }
     }
 }
-
-
-
-
 
 struct ActivityPhase: Identifiable {
     let id = UUID()
@@ -99,13 +90,29 @@ struct ActivityPhase: Identifiable {
     let imageAsset: String
 }
 
+struct PatternGroup: Identifiable {
+    let id = UUID()
+    let repetitions: Int      // Moved to top
+    let isWarmup: Bool       // Moved to top
+    let phases: [ActivityPhase]
+    
+    var totalDuration: Int {
+        phases.reduce(0) { $0 + $1.duration } * repetitions
+    }
+}
+
 struct WorkoutPlan: Identifiable {
     let id = UUID()
-    let phases: [ActivityPhase]
-    let totalRepetitions: Int
+    let patternGroups: [PatternGroup]
     let requiredLevel: Int
     
     var totalDurationMinutes: Int {
-        (phases.reduce(0) { $0 + $1.duration } * totalRepetitions) / 60
+        patternGroups.reduce(0) { $0 + $1.totalDuration } / 60
+    }
+    
+    var allPhases: [ActivityPhase] {
+        patternGroups.flatMap { group in
+            Array(repeating: group.phases, count: group.repetitions).flatMap { $0 }
+        }
     }
 }

@@ -81,8 +81,8 @@ struct TrailView: View {
                                                 let relativePosition = getRelativePosition(for: index, total: trail.count)
                                                 
                                                 NavigationLink {
-                                                    //Deep Seek: Directly navigate to ActivityView
-                                                    ActivityView()
+                                                    //Deep Seek: Corrected to navigate to WorkoutView
+                                                    WorkoutView(currentIndex: index)
                                                         .environmentObject(planViewModel)
                                                         .environmentObject(timerViewModel)
                                                 } label: {

@@ -11,22 +11,26 @@ struct RestView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
-    @State var contador: Int = 0
+    @State private var currentCounter: Int = 0
+    
     let currentIndex: Int
     
-    //Deep Seek: Computed property to get current workout plan
     private var workoutPlan: WorkoutPlan {
-        guard currentIndex < DataTrainingModel.shared.trainingPlans.count else {
-            return DataTrainingModel.shared.trainingPlans[0]
-        }
-        return DataTrainingModel.shared.trainingPlans[currentIndex]
+        DataTrainingModel.shared.trainingPlans[currentIndex]
     }
     
-    //Deep Seek: Computed property to get next activity
+    private var currentGroup: PatternGroup {
+        workoutPlan.patternGroups.first(where: { !$0.isWarmup }) ?? workoutPlan.patternGroups[0]
+    }
+    
     private var nextActivity: ActivityPhase? {
-        let phases = workoutPlan.phases
-        guard contador + 1 < phases.count else { return nil }
-        return phases[contador + 1]
+        let allPhases = currentGroup.phases.filter { !$0.isRest }
+        guard currentCounter < allPhases.count - 1 else { return nil }
+        return allPhases[currentCounter + 1]
+    }
+    
+    private var totalActivitiesInGroup: Int {
+        currentGroup.phases.filter { !$0.isRest }.count
     }
 
     var body: some View {
@@ -37,62 +41,56 @@ struct RestView: View {
                 .frame(width: 150)
             
             VStack(spacing: 10) {
-                //titulo
                 Text("Descansar")
                     .font(.system(size: 34))
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
                 
-                //timer
                 Text("\(timerViewModel.getFormattedCurrentTimer())")
                     .font(.system(size: 58))
                     .fontWeight(.regular)
                     .foregroundStyle(.verdeLima)
-                    .onAppear() {
-                        timerViewModel.pauseTimer()
-                        timerViewModel.endTimer()
-                        //Deep Seek: Updated to use ActivityPhase duration
-                        if !workoutPlan.phases.isEmpty {
-                            timerViewModel.setTimerConfig(seconds: workoutPlan.phases[0].duration)
-                            timerViewModel.startTimer()
-                        }
+                    .onAppear {
+                        setupTimer()
                     }
                 
-                //proxima atividade
                 VStack(spacing: 20) {
                     VStack(spacing: 5) {
                         HStack {
-                            //titulo
                             Text("Próxima Atividade")
-                            //contador fraçao
-                            Text("\(contador + 1)/\(workoutPlan.phases.filter { !$0.isRest }.count)")
+                            Text("\(currentCounter + 1)/\(totalActivitiesInGroup)")
                                 .foregroundStyle(.verdeLima)
                         }
                         .font(.system(size: 15))
                         .fontWeight(.semibold)
                         
-                        //proxima atividade
-                        if let nextActivity = nextActivity, !nextActivity.isRest {
+                        if let nextActivity = nextActivity {
                             Text(nextActivity.name)
                                 .font(.system(size: 13))
                                 .foregroundStyle(.white)
                         }
                         
                         Button("Proximo") {
-                            contador += 1
-                            //Deep Seek: Updated to use ActivityPhase sequence
-                            if contador < workoutPlan.phases.count {
-                                timerViewModel.pauseTimer()
-                                timerViewModel.endTimer()
-                                timerViewModel.setTimerConfig(seconds: workoutPlan.phases[contador].duration)
-                                timerViewModel.startTimer()
-                            }
+                            currentCounter += 1
+                            setupTimer()
                         }
                     }
                 }
             }
         }
         .preferredColorScheme(.dark)
+    }
+    
+    private func setupTimer() {
+        timerViewModel.pauseTimer()
+        timerViewModel.endTimer()
+        
+        let activePhases = currentGroup.phases.filter { !$0.isRest }
+        guard currentCounter < activePhases.count else { return }
+        
+        let nextPhase = activePhases[currentCounter]
+        timerViewModel.setTimerConfig(seconds: nextPhase.duration)
+        timerViewModel.startTimer()
     }
 }
 
