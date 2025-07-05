@@ -77,31 +77,29 @@ struct TrailView: View {
     }
     
     private func trailItem(for index: Int, geometry: GeometryProxy) -> some View {
-        let position = getRelativePosition(for: index, total: trail.count)
-        let workoutColor = trailColors[trailColorPattern[index % trailColorPattern.count]]
-        
-        return NavigationLink {
-            ActivityView()
-                .environmentObject(planViewModel)
-                .environmentObject(timerViewModel)
-                .onDisappear {
-                    timerViewModel.pauseTimer()
-                }
-        } label: {
-            WorkoutTrailDisplay(
-                workoutColor: workoutColor,
-                workoutPlan: trail[index],
-                imageSize: geometry.size,
-                orderInArray: index
+            let position = getRelativePosition(for: index, total: trail.count)
+            let workoutColor = trailColors[trailColorPattern[index % trailColorPattern.count]]
+            
+            return NavigationLink {
+                // Changed to navigate to WorkoutView first
+                WorkoutView(currentIndex: index)
+                    .environmentObject(planViewModel)
+                    .environmentObject(timerViewModel)
+            } label: {
+                WorkoutTrailDisplay(
+                    workoutColor: workoutColor,
+                    workoutPlan: trail[index],
+                    imageSize: geometry.size,
+                    orderInArray: index
+                )
+            }
+            .environmentObject(planViewModel)
+            .position(
+                x: geometry.size.width * position.x,
+                y: geometry.size.height * position.y
             )
         }
-        .environmentObject(planViewModel)
-        .position(
-            x: geometry.size.width * position.x,
-            y: geometry.size.height * position.y
-        )
-    }
-    
+
     private func getRelativePosition(for index: Int, total: Int) -> CGPoint {
         let topMargin: Double = 0.0275
         let bottomMargin: Double = 0.03

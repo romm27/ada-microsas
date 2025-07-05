@@ -56,13 +56,13 @@ struct WorkoutView: View {
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 90)
+                                        .offset(y: -70)
                                     Text("\(totalTime)'")
                                         .font(.system(size: 16))
                                         .fontWeight(.bold)
                                         .foregroundStyle(.white)
-                                        
+                                        .offset(y: -70)
                                 }
-                                .offset(y: -110)
                             }
                             
                             // Workout content
@@ -135,9 +135,11 @@ struct WorkoutView: View {
                     .background(Color.white)
                     .cornerRadius(16)
                     
-                    // Start button
+                    // Start button - now navigates to ActivityView
                     NavigationLink {
-                        StretchingView()
+                        ActivityView()
+                            .environmentObject(planViewModel)
+                            .environmentObject(timerViewModel)
                     } label: {
                         HStack {
                             Spacer()
