@@ -30,7 +30,7 @@ struct ContentView: View {
                 } else {
 
                     
-                    TrailView()
+                    TabOnBoardingView()
                         .environmentObject(planViewModel)
                         .transition(.opacity)
                     

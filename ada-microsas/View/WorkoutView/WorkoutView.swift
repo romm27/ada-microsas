@@ -148,7 +148,7 @@ struct WorkoutView: View {
                     
                     // Start button
                     NavigationLink {
-                        ActivityView()
+                        StretchingView()
                             .environmentObject(planViewModel)
                             .environmentObject(timerViewModel)
                     } label: {
@@ -185,6 +185,7 @@ struct WorkoutView: View {
                     }
                 }
             }
+            .preferredColorScheme(.dark)
             .ignoresSafeArea(.all)
         }
     }
