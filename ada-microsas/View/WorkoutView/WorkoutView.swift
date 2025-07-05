@@ -34,15 +34,100 @@ struct WorkoutView: View {
                 VStack(spacing: 48) {
                     Spacer()
                     
-                    WarmupTipView()
+                    // Warmup tip box
+                    ZStack {
+                        Image("DashedRectangle")
+                        HStack {
+                            Image(systemName: "figure.flexibility")
+                            Text("Alongue o corpo todo, sem pressa.")
+                        }
+                    }
+                    .padding(.top, 60)
+                    .font(.system(size: 12))
+                    .foregroundStyle(.white)
                     
                     // White content rectangle
                     VStack(alignment: .leading, spacing: 40) {
-                        WorkoutHeaderView(totalTime: totalTime)
-                        
-                        // Display all pattern groups
-                        ForEach(workoutPlan.patternGroups) { group in
-                            PatternGroupView(group: group)
+                        ZStack {
+                            HStack {
+                                Spacer()
+                                ZStack {
+                                    Image("Star")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 90)
+                                        .offset(y: -70)
+                                    Text("\(totalTime)'")
+                                        .font(.system(size: 16))
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(.white)
+                                        .offset(y: -70)
+                                }
+                            }
+                            
+                            // Workout content
+                            VStack(alignment: .leading, spacing: 0) {
+                                // Warmup Section
+                                if let warmupGroup = workoutPlan.patternGroups.first(where: { $0.isWarmup }) {
+                                    Text("Aquecimento (\(warmupGroup.repetitions)x)")
+                                        .font(.system(size: 14))
+                                        .fontWeight(.semibold)
+                                        .padding(.bottom, 8)
+                                    
+                                    ForEach(Array(warmupGroup.phases.filter { !$0.isRest }.enumerated()), id: \.offset) { index, phase in
+                                        HStack {
+                                            Image(systemName: "figure.walk")
+                                                .font(.system(size: 20))
+                                                .padding(.trailing, 24)
+                                            VStack(alignment: .leading) {
+                                                Text(phase.name)
+                                                    .font(.system(size: 12))
+                                                    .fontWeight(.regular)
+                                                Text("\(phase.duration)\"")
+                                                    .font(.system(size: 12))
+                                                    .fontWeight(.bold)
+                                            }
+                                        }
+                                        .padding(.horizontal, 25)
+                                        .padding(.vertical, 8)
+                                        
+                                        if index < warmupGroup.phases.filter({ !$0.isRest }).count - 1 {
+                                            Divider()
+                                        }
+                                    }
+                                }
+                                
+                                // Main Training Section
+                                if let trainingGroup = workoutPlan.patternGroups.first(where: { !$0.isWarmup }) {
+                                    Text("Treino Principal (\(trainingGroup.repetitions)x)")
+                                        .font(.system(size: 14))
+                                        .fontWeight(.semibold)
+                                        .padding(.bottom, 8)
+                                        .padding(.top, 16)
+                                    
+                                    ForEach(Array(trainingGroup.phases.filter { !$0.isRest }.enumerated()), id: \.offset) { index, phase in
+                                        HStack {
+                                            Image(systemName: "figure.run")
+                                                .font(.system(size: 20))
+                                                .padding(.trailing, 24)
+                                            VStack(alignment: .leading) {
+                                                Text(phase.name)
+                                                    .font(.system(size: 12))
+                                                    .fontWeight(.regular)
+                                                Text("\(phase.duration)\"")
+                                                    .font(.system(size: 12))
+                                                    .fontWeight(.bold)
+                                            }
+                                        }
+                                        .padding(.horizontal, 25)
+                                        .padding(.vertical, 8)
+                                        
+                                        if index < trainingGroup.phases.filter({ !$0.isRest }).count - 1 {
+                                            Divider()
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     .padding(.vertical, 32)
@@ -50,7 +135,22 @@ struct WorkoutView: View {
                     .background(Color.white)
                     .cornerRadius(16)
                     
-                    StartWorkoutButton()
+                    // Start button
+                    NavigationLink {
+                        StretchingView()
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("Começar a Correr")
+                                .padding(.vertical, 12)
+                                .foregroundStyle(.white)
+                                .font(.system(size: 16))
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                        .background(.roxo)
+                        .cornerRadius(8)
+                    }
                     
                     Spacer()
                 }
@@ -58,7 +158,17 @@ struct WorkoutView: View {
                 .navigationBarBackButtonHidden(true)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        BackButton()
+                        Button {
+                            dismiss()
+                        } label: {
+                            HStack {
+                                Image(systemName: "arrow.backward")
+                                Text("Treino de Hoje")
+                            }
+                            .font(.system(size: 28))
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white)
+                        }
                     }
                 }
             }
@@ -67,136 +177,10 @@ struct WorkoutView: View {
     }
 }
 
-// MARK: - Subviews
-
-private struct WarmupTipView: View {
-    var body: some View {
-        ZStack {
-            Image("DashedRectangle")
-            HStack {
-                Image(systemName: "figure.flexibility")
-                Text("Alongue o corpo todo, sem pressa.")
-            }
-        }
-        .padding(.top, 60)
-        .font(.system(size: 12))
-        .foregroundStyle(.white)
+struct WorkoutView_Previews: PreviewProvider {
+    static var previews: some View {
+        WorkoutView(currentIndex: 0)
+            .environmentObject(TimerViewModel())
+            .environmentObject(PlanViewModel())
     }
-}
-
-private struct WorkoutHeaderView: View {
-    let totalTime: Int
-    
-    var body: some View {
-        ZStack {
-            HStack {
-                Spacer()
-                ZStack {
-                    Image("Star")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 90)
-                        .offset(y: -70)
-                    Text("\(totalTime)'")
-                        .font(.system(size: 16))
-                        .fontWeight(.bold)
-                        .foregroundStyle(.white)
-                        .offset(y: -70)
-                }
-            }
-        }
-    }
-}
-
-private struct PatternGroupView: View {
-    let group: PatternGroup
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text(groupTitle)
-                .font(.system(size: 14))
-                .fontWeight(.semibold)
-                .padding(.bottom, 8)
-            
-            ForEach(group.phases) { phase in
-                if !phase.isRest { // Skip rest phases in the overview
-                    ActivityRow(phase: phase, isWarmup: group.isWarmup)
-                    Divider()
-                }
-            }
-        }
-    }
-    
-    private var groupTitle: String {
-        group.isWarmup ?
-        "Aquecimento (\(group.repetitions)x)" :
-        "Treino Principal (\(group.repetitions)x)"
-    }
-}
-
-private struct ActivityRow: View {
-    let phase: ActivityPhase
-    let isWarmup: Bool
-    
-    var body: some View {
-        HStack {
-            Image(systemName: isWarmup ? "figure.walk" : "figure.run")
-                .font(.system(size: 20))
-                .padding(.trailing, 24)
-            VStack(alignment: .leading) {
-                Text(phase.name)
-                    .font(.system(size: 12))
-                    .fontWeight(.regular)
-                Text("\(phase.duration)\"")
-                    .font(.system(size: 12))
-                    .fontWeight(.bold)
-            }
-        }
-        .padding(.horizontal, 25)
-        .padding(.vertical, 8)
-    }
-}
-
-private struct StartWorkoutButton: View {
-    var body: some View {
-        NavigationLink {
-            StretchingView()
-        } label: {
-            HStack {
-                Spacer()
-                Text("Começar a Correr")
-                    .padding(.vertical, 12)
-                    .foregroundStyle(.white)
-                    .font(.system(size: 16))
-                    .fontWeight(.semibold)
-                Spacer()
-            }
-            .background(.roxo)
-            .cornerRadius(8)
-        }
-    }
-}
-
-private struct BackButton: View {
-    @Environment(\.dismiss) var dismiss
-    
-    var body: some View {
-        Button {
-            dismiss()
-        } label: {
-            HStack {
-                Image(systemName: "arrow.backward")
-                Text("Treino de Hoje")
-            }
-            .font(.system(size: 28))
-            .fontWeight(.bold)
-            .foregroundStyle(.white)
-        }
-    }
-}
-
-#Preview {
-    WorkoutView(currentIndex: 0)
-        .environmentObject(TimerViewModel())
-        .environmentObject(PlanViewModel())
 }
