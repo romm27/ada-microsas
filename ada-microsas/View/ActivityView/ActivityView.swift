@@ -47,20 +47,20 @@ struct ActivityView: View {
                     }
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        HStack {
-                            Image(systemName: "chevron.left")
-                                .padding()
-                        }
-                        .font(.headline)
-                        .foregroundStyle(.quasePreto)
-                    }
-                }
-            }
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarLeading) {
+//                    Button {
+//                        dismiss()
+//                    } label: {
+//                        HStack {
+//                            Image(systemName: "chevron.left")
+//                                .padding()
+//                        }
+//                        .font(.headline)
+//                        .foregroundStyle(.quasePreto)
+//                    }
+//                }
+//            }
             .navigationBarBackButtonHidden(true)
             .preferredColorScheme(.dark)
             .ignoresSafeArea(.all)
@@ -233,35 +233,44 @@ struct RestPhaseView: View {
     let timerText: String
     
     var body: some View {
-        VStack(spacing: 35) {
-            Image(phase.imageAsset)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 150)
+        ZStack{
             
-            VStack(spacing: 10) {
-                Text(phase.name)
-                    .font(.system(size: 34))
-                    .fontWeight(.bold)
-                    .foregroundStyle(.white)
-
-                Text(timerText)
-                    .font(.system(size: 58))
-                    .fontWeight(.regular)
-                    .foregroundStyle(.verdeLima)
+            Image("RestImage")
+                .resizable()
+                .scaledToFill()
+            
+            VStack(spacing: 35) {
+                Image(phase.imageAsset)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 150)
                 
-                if let nextPhase = nextPhase {
-                    VStack(spacing: 5) {
-                        Text("Próxima Atividade")
-                            .font(.system(size: 15))
-                            .fontWeight(.semibold)
-                        Text(nextPhase.name)
-                            .font(.system(size: 13))
-                            .foregroundStyle(.white)
+                VStack(spacing: 10) {
+                    Text(phase.name)
+                        .font(.system(size: 34))
+                        .fontWeight(.bold)
+                        .foregroundStyle(.white)
+
+                    Text(timerText)
+                        .font(.system(size: 58))
+                        .fontWeight(.regular)
+                        .foregroundStyle(.verdeLima)
+                    
+                    if let nextPhase = nextPhase {
+                        VStack(spacing: 5) {
+                            Text("Próxima Atividade")
+                                .font(.system(size: 15))
+                                .fontWeight(.semibold)
+                            Text(nextPhase.name)
+                                .font(.system(size: 13))
+                                .foregroundStyle(.white)
+                        }
                     }
                 }
             }
         }
+        .ignoresSafeArea(.all)
+        .preferredColorScheme(.dark)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

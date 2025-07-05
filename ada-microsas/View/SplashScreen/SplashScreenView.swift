@@ -9,17 +9,15 @@ import SwiftUI
 
 public struct SplashScreenView: View {
     public var body: some View {
-        ZStack{
-            Color.roxo
-                .ignoresSafeArea(edges: .all)
-            VStack{
-                Image("LogoLight")
-                    .resizable()
-                    .scaledToFit( )
-                    .frame(width: 225)
-            }
+        VStack{
+            Image("SplashScreen")
+                .resizable()
+                .scaledToFill()
         }
+        .ignoresSafeArea(.all)
+        .preferredColorScheme(.dark)
     }
+    
 }
 
 #Preview {

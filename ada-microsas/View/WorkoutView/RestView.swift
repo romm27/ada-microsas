@@ -34,50 +34,62 @@ struct RestView: View {
     }
 
     var body: some View {
-        VStack(spacing: 35) {
-            Image("BelezinhaDescanso")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 150)
+
+        ZStack{
             
-            VStack(spacing: 10) {
-                Text("Descansar")
-                    .font(.system(size: 34))
-                    .fontWeight(.bold)
-                    .foregroundStyle(.white)
+            Image("RestImage")
+                .resizable()
+                .scaledToFill()
+            
+            VStack(spacing: 35) {
+                Image("BelezinhaDescanso")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 150)
                 
-                Text("\(timerViewModel.getFormattedCurrentTimer())")
-                    .font(.system(size: 58))
-                    .fontWeight(.regular)
-                    .foregroundStyle(.verdeLima)
-                    .onAppear {
-                        setupTimer()
-                    }
-                
-                VStack(spacing: 20) {
-                    VStack(spacing: 5) {
-                        HStack {
-                            Text("Próxima Atividade")
-                            Text("\(currentCounter + 1)/\(totalActivitiesInGroup)")
-                                .foregroundStyle(.verdeLima)
-                        }
-                        .font(.system(size: 15))
-                        .fontWeight(.semibold)
-                        
-                        if let nextActivity = nextActivity {
-                            Text(nextActivity.name)
-                                .font(.system(size: 13))
-                                .foregroundStyle(.white)
-                        }
-                        
-                        Button("Proximo") {
-                            currentCounter += 1
+                VStack(spacing: 10) {
+                    Text("Descansar")
+                        .font(.system(size: 34))
+                        .fontWeight(.bold)
+                        .foregroundStyle(.white)
+                    
+                    Text("\(timerViewModel.getFormattedCurrentTimer())")
+                        .font(.system(size: 58))
+                        .fontWeight(.regular)
+                        .foregroundStyle(.verdeLima)
+                        .onAppear {
                             setupTimer()
+                        }
+                    
+                    VStack(spacing: 20) {
+                        VStack(spacing: 5) {
+                            HStack {
+                                Text("Próxima Atividade")
+                                Text("\(currentCounter + 1)/\(totalActivitiesInGroup)")
+                                    .foregroundStyle(.verdeLima)
+                            }
+                            .font(.system(size: 15))
+                            .fontWeight(.semibold)
+                            
+                            if let nextActivity = nextActivity {
+                                Text(nextActivity.name)
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(.white)
+                            }
+                            
+                            Button("Proximo") {
+                                currentCounter += 1
+                                setupTimer()
+                            }
                         }
                     }
                 }
             }
+            
         }
+        .ignoresSafeArea(.all)
+
+
         .preferredColorScheme(.dark)
     }
     
