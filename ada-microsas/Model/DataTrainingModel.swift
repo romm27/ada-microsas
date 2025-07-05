@@ -13,7 +13,7 @@ struct DataTrainingModel {
     //DEBUG TOSCO D++++ REAVALIAR SEGUNDA!
     static let restActivityPhase: ActivityPhase = ActivityPhase(
         name: "Descanso",
-        duration: 3,
+        duration: 15,
         isRest: true,
         imageAsset: "BelezinhaDescanso"
     )
@@ -26,21 +26,21 @@ struct DataTrainingModel {
                 phases: [
                     ActivityPhase(
                         name: "Polichinelo",
-                        duration: 3,
+                        duration: 15,
                         isRest: false,
                         imageAsset: "BelezinhaAquecimento"
                     ),
                     restActivityPhase,
                     ActivityPhase(
                         name: "Salto na Ponta do Pé",
-                        duration: 3,
+                        duration: 15,
                         isRest: false,
                         imageAsset: "BelezinhaAquecimento"
                     ),
                     restActivityPhase,
                     ActivityPhase(
                         name: "Correr Parado",
-                        duration: 3,
+                        duration: 15,
                         isRest: false,
                         imageAsset: "BelezinhaAquecimento"
                     ),
@@ -55,13 +55,13 @@ struct DataTrainingModel {
                 phases: [
                     ActivityPhase(
                         name: "Trote",
-                        duration: 3,
+                        duration: 15,
                         isRest: false,
                         imageAsset: "BelezinhaTreino"
                     ),
                     ActivityPhase(
                         name: "Corrida",
-                        duration: 3,
+                        duration: 15,
                         isRest: false,
                         imageAsset: "BelezinhaTreino"
                     )

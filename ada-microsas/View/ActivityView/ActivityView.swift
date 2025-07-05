@@ -1,5 +1,5 @@
 //
-//  AtividadeView.swift
+//  ActivityView.swift
 //  ada-microsas
 //
 //  Created by Carla Araujo on 25/06/25.
@@ -20,28 +20,27 @@ struct ActivityView: View {
     @EnvironmentObject var planViewModel: PlanViewModel
     
     @State private var state: StateActivity = .aquecimento
-    @State private var currentPhase: ActivityPhase?
-    @State private var nextPhase: ActivityPhase?
+    @State private var isResting: Bool = false
     @State private var currentGroupIndex: Int = 0
     @State private var currentPhaseIndex: Int = 0
     @State private var currentRepetition: Int = 1
-    @State private var currentGroupRepetition: Int = 1
+    @State private var currentActivity: ActivityPhase?
+    @State private var nextActivity: ActivityPhase?
+    @State private var showCompletionAlert: Bool = false
     
     var body: some View {
         NavigationStack {
             Group {
-                if let phase = currentPhase {
-                    if phase.isRest {
-                        // Rest View
+                if let currentActivity = currentActivity {
+                    if currentActivity.isRest {
                         RestPhaseView(
-                            phase: phase,
-                            nextPhase: nextPhase,
+                            phase: currentActivity,
+                            nextPhase: nextActivity,
                             timerText: timerViewModel.getFormattedCurrentTimer()
                         )
                     } else {
-                        // Activity View
                         ActivityPhaseView(
-                            phase: phase,
+                            phase: currentActivity,
                             state: state,
                             timerText: timerViewModel.getFormattedCurrentTimer()
                         )
@@ -73,6 +72,13 @@ struct ActivityView: View {
                     proceedToNextPhase()
                 }
             }
+            .alert("Parabéns!", isPresented: $showCompletionAlert) {
+                Button("OK") {
+                    dismiss()
+                }
+            } message: {
+                Text("Você concluiu o treino com sucesso!")
+            }
         }
     }
     
@@ -85,40 +91,32 @@ struct ActivityView: View {
         currentGroupIndex = 0
         currentPhaseIndex = 0
         currentRepetition = 1
-        currentGroupRepetition = 1
         
         loadCurrentPhase()
     }
     
     private func proceedToNextPhase() {
         guard let workout = currentWorkout() else {
-            dismiss()
+            showCompletionAlert = true
             return
         }
         
         let currentGroup = workout.patternGroups[currentGroupIndex]
         
-        // Move to next phase in current group
         if currentPhaseIndex < currentGroup.phases.count - 1 {
             currentPhaseIndex += 1
+        } else if currentRepetition < currentGroup.repetitions {
+            currentPhaseIndex = 0
+            currentRepetition += 1
+        } else if currentGroupIndex < workout.patternGroups.count - 1 {
+            currentGroupIndex += 1
+            currentPhaseIndex = 0
+            currentRepetition = 1
         } else {
-            // Move to next repetition or next group
-            if currentGroupRepetition < currentGroup.repetitions {
-                currentPhaseIndex = 0
-                currentGroupRepetition += 1
-            } else {
-                // Move to next group
-                if currentGroupIndex < workout.patternGroups.count - 1 {
-                    currentGroupIndex += 1
-                    currentPhaseIndex = 0
-                    currentGroupRepetition = 1
-                } else {
-                    // Workout complete
-                    planViewModel.userLevel += 1
-                    dismiss()
-                    return
-                }
-            }
+            // Workout complete
+            planViewModel.userLevel += 1
+            showCompletionAlert = true
+            return
         }
         
         loadCurrentPhase()
@@ -131,33 +129,34 @@ struct ActivityView: View {
         }
         
         let currentGroup = workout.patternGroups[currentGroupIndex]
-        currentPhase = currentGroup.phases[currentPhaseIndex]
+        currentActivity = currentGroup.phases[currentPhaseIndex]
         
-        // Determine next phase
-        if currentPhaseIndex < currentGroup.phases.count - 1 {
-            nextPhase = currentGroup.phases[currentPhaseIndex + 1]
-        } else if currentGroupRepetition < currentGroup.repetitions {
-            nextPhase = currentGroup.phases.first
+        // Set next activity if available
+        let nextPhaseIndex = currentPhaseIndex + 1
+        if nextPhaseIndex < currentGroup.phases.count {
+            nextActivity = currentGroup.phases[nextPhaseIndex]
+        } else if currentRepetition < currentGroup.repetitions {
+            nextActivity = currentGroup.phases.first
         } else if currentGroupIndex < workout.patternGroups.count - 1 {
-            nextPhase = workout.patternGroups[currentGroupIndex + 1].phases.first
+            nextActivity = workout.patternGroups[currentGroupIndex + 1].phases.first
         } else {
-            nextPhase = nil
+            nextActivity = nil
         }
         
         // Update activity state
-        state = currentPhase?.isRest == true ? .descanso :
+        state = currentActivity?.isRest == true ? .descanso :
                 currentGroup.isWarmup ? .aquecimento : .treino
         
         // Start timer
-        timerViewModel.setTimerConfig(seconds: currentPhase?.duration ?? 0)
+        timerViewModel.setTimerConfig(seconds: currentActivity?.duration ?? 0)
         timerViewModel.startTimer()
         
         // Schedule notification for non-rest activities
-        if let phase = currentPhase, !phase.isRest {
+        if let currentActivity = currentActivity, !currentActivity.isRest {
             scheduleNotification(
                 title: "Intervalo Concluído!",
-                body: "Você completou: \(phase.name).",
-                duration: TimeInterval(phase.duration),
+                body: "Você completou: \(currentActivity.name).",
+                duration: TimeInterval(currentActivity.duration),
                 soundName: "finish_sound.caf"
             )
         }
@@ -183,8 +182,6 @@ struct ActivityView: View {
     }
 }
 
-// MARK: - Subviews
-
 struct ActivityPhaseView: View {
     let phase: ActivityPhase
     let state: StateActivity
@@ -209,16 +206,19 @@ struct ActivityPhaseView: View {
             }
             
             Spacer()
+            
             ProgressBarView()
                 .frame(width: 300, height: 300)
+            
             Spacer()
+            
             TotalProgressBarView()
+            
             Spacer()
         }
     }
     
     private var backgroundImageName: String {
-        phase.isRest ? "BackgroundDescanso" :
         state == .treino ? "BackgroundTreino" : "BackgroundAquecimento"
     }
     
