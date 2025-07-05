@@ -8,223 +8,192 @@
 import SwiftUI
 
 struct WorkoutView: View {
-    
     @Environment(\.dismiss) var dismiss
-    
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
     
-    @State var showCompletionAlert: Bool = false
-    
-
-    let dataTrainingModel = DataTrainingModel()
     let currentIndex: Int
     
-    var totalTime: Int {
-        let warmUpTimes = dataTrainingModel.trainingList[currentIndex].warmingUp.timeWarmUp
-        let warmUpCountTimes = dataTrainingModel.trainingList[currentIndex].warmingUp.warmUpCount
-        let warmUpRestTimes = dataTrainingModel.trainingList[currentIndex].warmingUp.warmUpRest
-        let mainTrainingTimes = dataTrainingModel.trainingList[currentIndex].mainTraining.timeMainTraining
-        let mainTrainingCountTimes = dataTrainingModel.trainingList[currentIndex].mainTraining.mainTrainingCount
-        
-        var totalWarmUp = 0
-        for time in warmUpTimes {
-            totalWarmUp += time
-        }
-        
-        var totalWarmUpRest = 0
-        for time in warmUpRestTimes {
-            totalWarmUpRest += time
-        }
-        
-        var totalMainTraining = 0
-        for time in mainTrainingTimes {
-            totalMainTraining += time
-        }
-        
-        let totalSeconds = (totalWarmUp * warmUpCountTimes) + (totalMainTraining * mainTrainingCountTimes) + totalWarmUpRest
-        
-        return totalSeconds / 60
+    private var workoutPlan: WorkoutPlan {
+        DataTrainingModel.shared.trainingPlans[currentIndex]
     }
     
+    var totalTime: Int {
+        workoutPlan.totalDurationMinutes
+    }
     
     var body: some View {
-        
-        NavigationStack{
-            ZStack{
+        NavigationStack {
+            ZStack {
                 Color.quasePreto
+                    .edgesIgnoringSafeArea(.all)
+                
                 Image("BackgroundColorfull")
                     .resizable()
-                    .scaledToFit( )
-                    
+                    .scaledToFit()
                     .offset(y: 150)
-                    
+                    .zIndex(0) // Ensure it stays behind content
                 
-                VStack(spacing: 48){
-                    
+                VStack(spacing: 48) {
                     Spacer()
                     
-                    ZStack{
+                    // Warmup tip box - make sure this is visible
+                    ZStack {
                         Image("DashedRectangle")
-                        HStack{
+                            .foregroundColor(.white) // Ensure visibility
+                        HStack {
                             Image(systemName: "figure.flexibility")
+                                .foregroundColor(.white)
                             Text("Alongue o corpo todo, sem pressa.")
+                                .foregroundColor(.white)
                         }
                     }
                     .padding(.top, 60)
-                    .font(.system(size: 12))
-                    .foregroundStyle(.white)
+                    .font(.system(size: 12, weight: .regular))
+                    .zIndex(1) // Bring to front
                     
-                    
-                    
-                    //RETANGULO BRANCO
-                    VStack(alignment: .leading, spacing: 40){
-                        
-                        ZStack{
-                            HStack{
+                    // White content rectangle
+                    VStack(alignment: .leading, spacing: 40) {
+                        ZStack {
+                            HStack {
                                 Spacer()
-                                
-                                ZStack{
+                                ZStack {
                                     Image("Star")
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 90)
                                         .offset(y: -70)
-                                    //MUDAR AQUI
                                     Text("\(totalTime)'")
-                                        .font(.system(size: 16))
-                                        .fontWeight(.bold)
-                                        .foregroundStyle(.white)
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(.white)
                                         .offset(y: -70)
                                 }
                             }
                             
-                            //AQUECIMENTO
-                            VStack(alignment: .leading){
-                                Text("Aquecimento (\(dataTrainingModel.trainingList[currentIndex].warmingUp.warmUpCount)x)")
-                                    .font(.system(size: 14))
-                                    .fontWeight(.semibold)
-                                    .padding(.bottom, 8)
-                                
-                                ForEach(Array(dataTrainingModel.trainingList[currentIndex].warmingUp.timeWarmUp.enumerated()), id: \.offset) { idx, time in
-                                    //                            [Int] -> Array
-                                    HStack{
-                                        Image(systemName: "figure.walk")
-                                            .font(.system(size: 20))
-                                            .padding(.trailing, 24)
-                                        VStack(alignment: .leading){
-                                            Text("\(Warming.warmUp[idx])")
-                                                .font(.system(size: 12))
-                                                .fontWeight(.regular)
-                                            Text("\(time)\"")
-                                                .font(.system(size: 12))
-                                                .fontWeight(.bold)
+                            // Workout content - ensure all text is visible
+                            VStack(alignment: .leading, spacing: 0) {
+                                // Warmup Section
+                                if let warmupGroup = workoutPlan.patternGroups.first(where: { $0.isWarmup }) {
+                                    Text("Aquecimento (\(warmupGroup.repetitions)x)")
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundColor(.black) // Explicit black for white background
+                                        .padding(.bottom, 8)
+                                    
+                                    ForEach(Array(warmupGroup.phases.filter { !$0.isRest }.enumerated()), id: \.offset) { index, phase in
+                                        HStack {
+                                            Image(systemName: "figure.walk")
+                                                .font(.system(size: 20))
+                                                .foregroundColor(.black)
+                                                .padding(.trailing, 24)
+                                            VStack(alignment: .leading) {
+                                                Text(phase.name)
+                                                    .font(.system(size: 12, weight: .regular))
+                                                    .foregroundColor(.black)
+                                                Text("\(phase.duration)\"")
+                                                    .font(.system(size: 12, weight: .bold))
+                                                    .foregroundColor(.black)
+                                            }
+                                        }
+                                        .padding(.horizontal, 25)
+                                        .padding(.vertical, 8)
+                                        
+                                        if index < warmupGroup.phases.filter({ !$0.isRest }).count - 1 {
+                                            Divider()
+                                                .background(Color.gray)
                                         }
                                     }
-                                    .padding(.horizontal, 25)
-                                    .padding(.vertical, 8)
-                                    Divider()
-                                    
                                 }
-                            }
-                        }
-                        //TREINO PRINCIPAL
-                        VStack(alignment: .leading){
-                            Text("Treino Principal (\(dataTrainingModel.trainingList[currentIndex].mainTraining.mainTrainingCount)x)")
-                                .font(.system(size: 14))
-                                .fontWeight(.semibold)
-                                .padding(.bottom, 8)
-                            
-                            ForEach(Array(dataTrainingModel.trainingList[currentIndex].mainTraining.timeMainTraining.enumerated()), id: \.offset) { idx, time in
                                 
-                                HStack{
-                                    Image(systemName: "figure.run")
-                                        .font(.system(size: 20))
-                                        .padding(.trailing, 24)
-                                    VStack(alignment: .leading){
-                                        Text("\(MainTraining.mainTraining[idx])")
-                                            .font(.system(size: 12))
-                                            .fontWeight(.regular)
-                                        Text("\(time)\"")
-                                            .font(.system(size: 12))
-                                            .fontWeight(.bold)
+                                // Main Training Section
+                                if let trainingGroup = workoutPlan.patternGroups.first(where: { !$0.isWarmup }) {
+                                    Text("Treino Principal (\(trainingGroup.repetitions)x)")
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundColor(.black)
+                                        .padding(.bottom, 8)
+                                        .padding(.top, 16)
+                                    
+                                    ForEach(Array(trainingGroup.phases.filter { !$0.isRest }.enumerated()), id: \.offset) { index, phase in
+                                        HStack {
+                                            Image(systemName: "figure.run")
+                                                .font(.system(size: 20))
+                                                .foregroundColor(.black)
+                                                .padding(.trailing, 24)
+                                            VStack(alignment: .leading) {
+                                                Text(phase.name)
+                                                    .font(.system(size: 12, weight: .regular))
+                                                    .foregroundColor(.black)
+                                                Text("\(phase.duration)\"")
+                                                    .font(.system(size: 12, weight: .bold))
+                                                    .foregroundColor(.black)
+                                            }
+                                        }
+                                        .padding(.horizontal, 25)
+                                        .padding(.vertical, 8)
+                                        
+                                        if index < trainingGroup.phases.filter({ !$0.isRest }).count - 1 {
+                                            Divider()
+                                                .background(Color.gray)
+                                        }
                                     }
                                 }
-                                .padding(.horizontal, 25)
-                                .padding(.vertical, 8)
-                                Divider()
-
                             }
                         }
-                        
-                        
-                        //                        ForEach(0..<Warming.warmUp.count) { idx in
-                        ////                            [Int] -> Array
-                        //
-                        //                                VStack{
-                        //                                    Text("\(Warming.warmUp[idx])")
-                        //                                        .foregroundStyle(.white)
-                        //                                    Text("\(dataTrainingModel.trainingList[currentIndex].warmingUp.timeWarmUp[idx])")
-                        //                                        .foregroundStyle(.white)
-                        //                                }
-                        //                        }
                     }
                     .padding(.vertical, 32)
                     .padding(.horizontal, 16)
                     .background(Color.white)
                     .cornerRadius(16)
+                    .shadow(radius: 10)
+                    .zIndex(1) // Ensure it's above background
                     
-                    
-                    
-                    NavigationLink{
-                        StretchingView()
+                    // Start button
+                    NavigationLink {
+                        ActivityView()
+                            .environmentObject(planViewModel)
+                            .environmentObject(timerViewModel)
                     } label: {
-                        HStack{
+                        HStack {
                             Spacer()
                             Text("Começar a Correr")
                                 .padding(.vertical, 12)
-                                .foregroundStyle(.white)
-                                .font(.system(size: 16))
-                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                                .font(.system(size: 16, weight: .semibold))
                             Spacer()
                         }
-                        .background(.roxo)
+                        .background(Color.roxo)
                         .cornerRadius(8)
-                        
                     }
+                    .zIndex(1)
                     
                     Spacer()
-                    
                 }
                 .padding(.horizontal, 32)
                 .navigationBarBackButtonHidden(true)
-                .toolbar{
-                    ToolbarItem(placement: .navigationBarLeading){
-                        Button{
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
                             dismiss()
                         } label: {
-                            HStack{
+                            HStack {
                                 Image(systemName: "arrow.backward")
+                                    .foregroundColor(.white)
                                 Text("Treino de Hoje")
+                                    .foregroundColor(.white)
                             }
-                            .font(.system(size: 28))
-                            .fontWeight(.bold)
-                            .foregroundStyle(.white)
-                            //.offset(y: 40)
+                            .font(.system(size: 28, weight: .bold))
                         }
                     }
                 }
             }
             .ignoresSafeArea(.all)
         }
-        
-        
     }
-    
 }
 
-#Preview {
-    WorkoutView(currentIndex: 0)
-        .environmentObject(TimerViewModel())
-        .environmentObject(PlanViewModel())
+struct WorkoutView_Previews: PreviewProvider {
+    static var previews: some View {
+        WorkoutView(currentIndex: 0)
+            .environmentObject(TimerViewModel())
+            .environmentObject(PlanViewModel())
+    }
 }

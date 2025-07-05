@@ -2,20 +2,16 @@
 //  TrailView.swift
 //  ada-microsas
 //
-//  Created by Giovanni Galarda Strasser on 25/06/25.
+//  Created by Carla Araujo on 25/06/25.
 //
 
 import SwiftUI
-//gemini: Import the UserNotifications framework to request permission.
 import UserNotifications
 
 struct TrailView: View {
-    @Environment(\.dismiss) var dismiss
     @EnvironmentObject var planViewModel: PlanViewModel
     @EnvironmentObject var timerViewModel: TimerViewModel
-    let trail: [ActivityModel] = DataTrainingModel.shared.trainingList
-    @ObservedObject var trailViewDataCenter: TrailViewDataCenter = .shared
-    @State private var shouldNavigateToActivity = false
+    let trail: [WorkoutPlan] = DataTrainingModel.shared.trainingPlans
     
     let trailColors: [WorkoutColor] = [
         WorkoutColor(trailColor: .azul, workoutColor: .azulBotao, workoutBorderColor: .azulBotaoBorda),
@@ -24,125 +20,86 @@ struct TrailView: View {
         WorkoutColor(trailColor: .roxo, workoutColor: .roxoBotao, workoutBorderColor: .roxoBotaoBorda)
     ]
     
-    // Define a ordem de cores das bolinhas, se ficar sem cores ele vai lupar de novo para o começo
     let trailColorPattern = [0,0,0, 1, 1 ,1, 2, 2 ,2, 3 ,3 ,3]
     
-    init(){
-        
-        //Pede permissão de usuario apos spalshscreen
-        //gemini: The init() method is not the best place for this. Moving the logic to .onAppear ensures the view is ready.
-        // requestNotificationPermission()
-    }
-    
-    //gemini: This function will be called from .onAppear to request notification permissions from the user.
-    // 1. Função que cuida do pedido de permisão para usar as features que precisamos do iphone.
-    func requestNotificationPermission() {
-        let center = UNUserNotificationCenter.current()
-        //gemini: Request authorization for alerts, sounds, and badges.
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if let error = error {
-                // Handle the error here. For now, we'll just print it.
-                print("Error requesting notification permission: \(error.localizedDescription)")
-                return
-            }
-            
-            if granted {
-                print("Notification Permission Granted!")
-            } else {
-                // The user denied permission. You could show an alert here
-                // explaining why notifications are useful for the app.
-                print("Notification Permission Denied.")
-            }
-        }
-    }
-    
-    // Função que checa se o usuário consentiu ao uso das features.
-    func checkNotificationPermissionStatus(completion: @escaping (UNAuthorizationStatus) -> Void) {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            DispatchQueue.main.async {
-                completion(settings.authorizationStatus)
-            }
-        }
-    }
-    
     var body: some View {
-        ZStack{
-            Rectangle().foregroundStyle(Color.cinzaEscuro).ignoresSafeArea()
-            VStack(){
-                ScrollViewReader{ proxy in
-                    ScrollView{
-                        VStack {
-                            Image("Trail")
-                                .resizable()
-                                .scaledToFit()
-                                .overlay {
-                                    GeometryReader { geometry in
-                                        ZStack {
-                                            ForEach(trail.indices, id: \.self) { index in
-                                                let activity = trail[index]
-                                                let workoutColor = trailColors[trailColorPattern[index % trailColorPattern.count]]
-                                                let relativePosition = getRelativePosition(for: index, total: trail.count)
-                                                
-                                                NavigationLink {
-                                                    WorkoutView(currentIndex: index)
-                                                        .environmentObject(planViewModel)
-                                                        .environmentObject(timerViewModel)
-                                                    
-                                                } label: {
-                                                    WorkoutTrailDisplay(
-                                                        workoutColor: workoutColor,
-                                                        activity: activity,
-                                                        imageSize: geometry.size,
-                                                        orderInArray: index
-                                                    )
-                                                }
-                                                .environmentObject(planViewModel)
-                                                .position(
-                                                    x: geometry.size.width * relativePosition.x,
-                                                    y: geometry.size.height * relativePosition.y
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                                .padding(.vertical, 48)
-                            
-                            Spacer().id("bottomAnchor")
-                        }
-                    }
-                    .scrollIndicators(.hidden)
-                    .onAppear {
-                        proxy.scrollTo("bottomAnchor")
-                        //gemini: Request permission when the view appears. This will only show the dialog to the user once.
-                        //gemini: If permission is already granted or denied, this function does nothing.
-                        requestNotificationPermission()
-                    }
+        NavigationStack {
+            trailContentView
+        }
+    }
+    
+    private var trailContentView: some View {
+        ZStack {
+            backgroundView
+            trailItemsView
+        }
+    }
+    
+    private var backgroundView: some View {
+        Rectangle()
+            .foregroundStyle(Color.cinzaEscuro)
+            .ignoresSafeArea()
+    }
+    
+    private var trailItemsView: some View {
+        VStack {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    trailImageWithOverlay
+                        .padding(.vertical, 48)
+                    Spacer().id("bottomAnchor")
+                }
+                .scrollIndicators(.hidden)
+                .onAppear {
+                    proxy.scrollTo("bottomAnchor")
+                    requestNotificationPermission()
                 }
             }
-            .padding(.horizontal, 36)
         }
-        .overlay {
-            if trailViewDataCenter.showSheet {
-                Color.black.opacity(0.6)
-                    .ignoresSafeArea(.all)
-                    .transition(.opacity)
-                    .animation(.easeInOut(duration: 0.3), value: trailViewDataCenter.showSheet)
-                    .onTapGesture {
-                        trailViewDataCenter.showSheet = false
-                    }
-            }
-        }
-        .sheet(isPresented: $trailViewDataCenter.showSheet){
-            TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex, shouldStartActivity: $shouldNavigateToActivity)
-                .presentationDetents([.medium, .height(600)])
-        }
-        .navigationDestination(isPresented: $shouldNavigateToActivity) {
-            ActivityView().environmentObject(planViewModel)
-        }
-        .navigationBarBackButtonHidden(true)
+        .padding(.horizontal, 36)
     }
     
-    //rip 8 Offsets
+    private var trailImageWithOverlay: some View {
+        Image("Trail")
+            .resizable()
+            .scaledToFit()
+            .overlay(trailItemsOverlay)
+    }
+    
+    private var trailItemsOverlay: some View {
+        GeometryReader { geometry in
+            ZStack {
+                ForEach(trail.indices, id: \.self) { index in
+                    trailItem(for: index, geometry: geometry)
+                }
+            }
+        }
+    }
+    
+    private func trailItem(for index: Int, geometry: GeometryProxy) -> some View {
+            let position = getRelativePosition(for: index, total: trail.count)
+            let workoutColor = trailColors[trailColorPattern[index % trailColorPattern.count]]
+            
+            return NavigationLink {
+                // Changed to navigate to WorkoutView first
+                WorkoutView(currentIndex: index)
+                    .environmentObject(planViewModel)
+                    .environmentObject(timerViewModel)
+            } label: {
+                WorkoutTrailDisplay(
+                    workoutColor: workoutColor,
+                    workoutPlan: trail[index],
+                    imageSize: geometry.size,
+                    orderInArray: index
+                )
+            }
+            .environmentObject(planViewModel)
+            .position(
+                x: geometry.size.width * position.x,
+                y: geometry.size.height * position.y
+            )
+        }
+
     private func getRelativePosition(for index: Int, total: Int) -> CGPoint {
         let topMargin: Double = 0.0275
         let bottomMargin: Double = 0.03
@@ -179,42 +136,45 @@ struct TrailView: View {
         
         return CGPoint(x: finalX, y: finalY)
     }
+    
+    func requestNotificationPermission() {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if granted {
+                print("Notification Permission Granted!")
+            }
+        }
+    }
 }
 
-struct WorkoutTrailDisplay : View {
-    @Environment(\.dismiss) var dismiss
+struct WorkoutTrailDisplay: View {
     @EnvironmentObject var planViewModel: PlanViewModel
     let workoutColor: WorkoutColor
-    let activity: ActivityModel
+    let workoutPlan: WorkoutPlan
     let imageSize: CGSize
     let orderInArray: Int
     
     var body: some View {
-        
         let diameter = imageSize.width * 0.14
-        
         let innerDiameter = diameter * 0.82
-        ZStack{
+        
+        ZStack {
             Circle()
                 .foregroundStyle(workoutColor.workoutBorderColor)
                 .frame(width: diameter, height: diameter)
             Circle()
                 .foregroundStyle(workoutColor.workoutColor)
-                .frame(width: innerDiameter,height: innerDiameter)
+                .frame(width: innerDiameter, height: innerDiameter)
                 .overlay{
-                    //se eu nao fiz ainda
-                    if orderInArray == planViewModel.userLevel + 1{
+                    if orderInArray == planViewModel.userLevel + 1 {
                         Image(systemName: "lock.open.fill")
                             .foregroundStyle(Color.white)
                             .bold()
-                    }
-                    else if orderInArray > planViewModel.userLevel{
+                    } else if orderInArray > planViewModel.userLevel {
                         Image(systemName: "lock.fill")
                             .foregroundStyle(Color.white)
                             .bold()
-                    }
-                    //se eu to nesse nível
-                    else if orderInArray == planViewModel.userLevel{
+                    } else if orderInArray == planViewModel.userLevel {
                         Circle()
                             .frame(width: innerDiameter, height: innerDiameter)
                             .overlay {
@@ -222,54 +182,24 @@ struct WorkoutTrailDisplay : View {
                                     .resizable()
                                     .scaledToFit()
                             }
-                    }
-                    //se eu ja fiz
-                    else{
+                    } else {
                         Image(systemName: "checkmark")
                             .foregroundStyle(Color.white)
                             .bold()
                     }
                 }
         }
-        
-    }
-    
-}
-
-struct ChunkedData<T>: Identifiable {
-    let id: UUID = UUID()
-    let data : [T]
-}
-
-enum PieceType {
-    case top, middle, bottom
-    
-    var displayName: String {
-        switch self {
-        case .top:
-            return "Top"
-        case .middle:
-            return "Middle"
-        case .bottom:
-            return "Bottom"
-        }
     }
 }
 
-class TrailViewDataCenter: ObservableObject{
-    static let shared = TrailViewDataCenter()
-    
-    @Published var showSheet = false
-    @Published var selectedButtonIndex: Int = 0
-    @Published var userLevel: Int = 1
-}
-
-struct WorkoutColor{
+struct WorkoutColor {
     let trailColor: Color
     let workoutColor: Color
     let workoutBorderColor: Color
 }
 
 #Preview {
-    TrailView().environmentObject(PlanViewModel()).environmentObject(TimerViewModel())
+    TrailView()
+        .environmentObject(PlanViewModel())
+        .environmentObject(TimerViewModel())
 }

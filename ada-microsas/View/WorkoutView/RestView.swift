@@ -8,96 +8,93 @@
 import SwiftUI
 
 struct RestView: View {
-    
     @Environment(\.dismiss) var dismiss
-    
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
-    @State var contador: Int = 0
-    let dataTrainingModel = DataTrainingModel()
+    @State private var currentCounter: Int = 0
+    
     let currentIndex: Int
     
+    private var workoutPlan: WorkoutPlan {
+        DataTrainingModel.shared.trainingPlans[currentIndex]
+    }
+    
+    private var currentGroup: PatternGroup {
+        workoutPlan.patternGroups.first(where: { !$0.isWarmup }) ?? workoutPlan.patternGroups[0]
+    }
+    
+    private var nextActivity: ActivityPhase? {
+        let allPhases = currentGroup.phases.filter { !$0.isRest }
+        guard currentCounter < allPhases.count - 1 else { return nil }
+        return allPhases[currentCounter + 1]
+    }
+    
+    private var totalActivitiesInGroup: Int {
+        currentGroup.phases.filter { !$0.isRest }.count
+    }
+
     var body: some View {
-        
-        
-        VStack(spacing: 35){
+        VStack(spacing: 35) {
             Image("BelezinhaDescanso")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 150)
             
-            
-            //
-            VStack(spacing: 10){
-                //titulo
+            VStack(spacing: 10) {
                 Text("Descansar")
                     .font(.system(size: 34))
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
-//                timer
+                
                 Text("\(timerViewModel.getFormattedCurrentTimer())")
                     .font(.system(size: 58))
                     .fontWeight(.regular)
                     .foregroundStyle(.verdeLima)
-                    .onAppear(){
-                        timerViewModel.pauseTimer()
-                        timerViewModel.endTimer()
-                        timerViewModel.setTimerConfig(seconds: DataTrainingModel.shared.trainingList[planViewModel.userLevel].warmingUp.timeWarmUp[0])
-                        timerViewModel.startTimer()
+                    .onAppear {
+                        setupTimer()
                     }
                 
-                //proxima atividade
-                VStack(spacing: 20){
-                    //proxima atividade
-                    VStack(spacing: 5){
-                        HStack{
-                            //titulo
+                VStack(spacing: 20) {
+                    VStack(spacing: 5) {
+                        HStack {
                             Text("Próxima Atividade")
-                            //contador fraçao
-                            Text("\(contador + 1)/\(dataTrainingModel.trainingList[currentIndex].warmingUp.warmUpRest.count)")
+                            Text("\(currentCounter + 1)/\(totalActivitiesInGroup)")
                                 .foregroundStyle(.verdeLima)
                         }
                         .font(.system(size: 15))
                         .fontWeight(.semibold)
-                        //proxima atividade
-                        if planViewModel.userLevel < DataTrainingModel.shared.trainingList.count{
-                            if contador < Warming.warmUp.count {
-                                Text(Warming.warmUp[contador])
-                                    .font(.system(size: 13))
-                                    .foregroundStyle(.white)
-                            }
+                        
+                        if let nextActivity = nextActivity {
+                            Text(nextActivity.name)
+                                .font(.system(size: 13))
+                                .foregroundStyle(.white)
                         }
                         
-                        
-                        Button("Proximo"){
-                            contador += 1
-                            if planViewModel.userLevel < DataTrainingModel.shared.trainingList.count{
-                                if contador < DataTrainingModel.shared.trainingList[planViewModel.userLevel].warmingUp.timeWarmUp.count{
-                                    timerViewModel.pauseTimer()
-                                    timerViewModel.endTimer()
-                                    timerViewModel.setTimerConfig(seconds: DataTrainingModel.shared.trainingList[planViewModel.userLevel].warmingUp.timeWarmUp[contador])
-                                    
-                                    timerViewModel.startTimer()
-                                }
-                            }
-                            
-                            
+                        Button("Proximo") {
+                            currentCounter += 1
+                            setupTimer()
                         }
-                        
                     }
                 }
-                
             }
-
-            
-            
         }
-        
         .preferredColorScheme(.dark)
+    }
+    
+    private func setupTimer() {
+        timerViewModel.pauseTimer()
+        timerViewModel.endTimer()
+        
+        let activePhases = currentGroup.phases.filter { !$0.isRest }
+        guard currentCounter < activePhases.count else { return }
+        
+        let nextPhase = activePhases[currentCounter]
+        timerViewModel.setTimerConfig(seconds: nextPhase.duration)
+        timerViewModel.startTimer()
     }
 }
 
-#Preview{
+#Preview {
     RestView(currentIndex: 0)
         .environmentObject(TimerViewModel())
         .environmentObject(PlanViewModel())
