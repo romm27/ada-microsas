@@ -26,25 +26,31 @@ struct WorkoutView: View {
         NavigationStack {
             ZStack {
                 Color.quasePreto
+                    .edgesIgnoringSafeArea(.all)
+                
                 Image("BackgroundColorfull")
                     .resizable()
                     .scaledToFit()
                     .offset(y: 150)
+                    .zIndex(0) // Ensure it stays behind content
                 
                 VStack(spacing: 48) {
                     Spacer()
                     
-                    // Warmup tip box
+                    // Warmup tip box - make sure this is visible
                     ZStack {
                         Image("DashedRectangle")
+                            .foregroundColor(.white) // Ensure visibility
                         HStack {
                             Image(systemName: "figure.flexibility")
+                                .foregroundColor(.white)
                             Text("Alongue o corpo todo, sem pressa.")
+                                .foregroundColor(.white)
                         }
                     }
                     .padding(.top, 60)
-                    .font(.system(size: 12))
-                    .foregroundStyle(.white)
+                    .font(.system(size: 12, weight: .regular))
+                    .zIndex(1) // Bring to front
                     
                     // White content rectangle
                     VStack(alignment: .leading, spacing: 40) {
@@ -58,34 +64,34 @@ struct WorkoutView: View {
                                         .frame(width: 90)
                                         .offset(y: -70)
                                     Text("\(totalTime)'")
-                                        .font(.system(size: 16))
-                                        .fontWeight(.bold)
-                                        .foregroundStyle(.white)
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(.white)
                                         .offset(y: -70)
                                 }
                             }
                             
-                            // Workout content
+                            // Workout content - ensure all text is visible
                             VStack(alignment: .leading, spacing: 0) {
                                 // Warmup Section
                                 if let warmupGroup = workoutPlan.patternGroups.first(where: { $0.isWarmup }) {
                                     Text("Aquecimento (\(warmupGroup.repetitions)x)")
-                                        .font(.system(size: 14))
-                                        .fontWeight(.semibold)
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundColor(.black) // Explicit black for white background
                                         .padding(.bottom, 8)
                                     
                                     ForEach(Array(warmupGroup.phases.filter { !$0.isRest }.enumerated()), id: \.offset) { index, phase in
                                         HStack {
                                             Image(systemName: "figure.walk")
                                                 .font(.system(size: 20))
+                                                .foregroundColor(.black)
                                                 .padding(.trailing, 24)
                                             VStack(alignment: .leading) {
                                                 Text(phase.name)
-                                                    .font(.system(size: 12))
-                                                    .fontWeight(.regular)
+                                                    .font(.system(size: 12, weight: .regular))
+                                                    .foregroundColor(.black)
                                                 Text("\(phase.duration)\"")
-                                                    .font(.system(size: 12))
-                                                    .fontWeight(.bold)
+                                                    .font(.system(size: 12, weight: .bold))
+                                                    .foregroundColor(.black)
                                             }
                                         }
                                         .padding(.horizontal, 25)
@@ -93,6 +99,7 @@ struct WorkoutView: View {
                                         
                                         if index < warmupGroup.phases.filter({ !$0.isRest }).count - 1 {
                                             Divider()
+                                                .background(Color.gray)
                                         }
                                     }
                                 }
@@ -100,8 +107,8 @@ struct WorkoutView: View {
                                 // Main Training Section
                                 if let trainingGroup = workoutPlan.patternGroups.first(where: { !$0.isWarmup }) {
                                     Text("Treino Principal (\(trainingGroup.repetitions)x)")
-                                        .font(.system(size: 14))
-                                        .fontWeight(.semibold)
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundColor(.black)
                                         .padding(.bottom, 8)
                                         .padding(.top, 16)
                                     
@@ -109,14 +116,15 @@ struct WorkoutView: View {
                                         HStack {
                                             Image(systemName: "figure.run")
                                                 .font(.system(size: 20))
+                                                .foregroundColor(.black)
                                                 .padding(.trailing, 24)
                                             VStack(alignment: .leading) {
                                                 Text(phase.name)
-                                                    .font(.system(size: 12))
-                                                    .fontWeight(.regular)
+                                                    .font(.system(size: 12, weight: .regular))
+                                                    .foregroundColor(.black)
                                                 Text("\(phase.duration)\"")
-                                                    .font(.system(size: 12))
-                                                    .fontWeight(.bold)
+                                                    .font(.system(size: 12, weight: .bold))
+                                                    .foregroundColor(.black)
                                             }
                                         }
                                         .padding(.horizontal, 25)
@@ -124,6 +132,7 @@ struct WorkoutView: View {
                                         
                                         if index < trainingGroup.phases.filter({ !$0.isRest }).count - 1 {
                                             Divider()
+                                                .background(Color.gray)
                                         }
                                     }
                                 }
@@ -134,8 +143,10 @@ struct WorkoutView: View {
                     .padding(.horizontal, 16)
                     .background(Color.white)
                     .cornerRadius(16)
+                    .shadow(radius: 10)
+                    .zIndex(1) // Ensure it's above background
                     
-                    // Start button - now navigates to ActivityView
+                    // Start button
                     NavigationLink {
                         ActivityView()
                             .environmentObject(planViewModel)
@@ -145,14 +156,14 @@ struct WorkoutView: View {
                             Spacer()
                             Text("Começar a Correr")
                                 .padding(.vertical, 12)
-                                .foregroundStyle(.white)
-                                .font(.system(size: 16))
-                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                                .font(.system(size: 16, weight: .semibold))
                             Spacer()
                         }
-                        .background(.roxo)
+                        .background(Color.roxo)
                         .cornerRadius(8)
                     }
+                    .zIndex(1)
                     
                     Spacer()
                 }
@@ -165,11 +176,11 @@ struct WorkoutView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "arrow.backward")
+                                    .foregroundColor(.white)
                                 Text("Treino de Hoje")
+                                    .foregroundColor(.white)
                             }
-                            .font(.system(size: 28))
-                            .fontWeight(.bold)
-                            .foregroundStyle(.white)
+                            .font(.system(size: 28, weight: .bold))
                         }
                     }
                 }
