@@ -16,49 +16,22 @@ struct WorkoutView: View {
     
     @State var showCompletionAlert: Bool = false
     
-
-    let dataTrainingModel = DataTrainingModel()
     let currentIndex: Int
     
+    //Deep Seek: Updated to use WorkoutPlan's totalDurationMinutes instead of calculating manually
     var totalTime: Int {
-        let warmUpTimes = dataTrainingModel.trainingList[currentIndex].warmingUp.timeWarmUp
-        let warmUpCountTimes = dataTrainingModel.trainingList[currentIndex].warmingUp.warmUpCount
-        let warmUpRestTimes = dataTrainingModel.trainingList[currentIndex].warmingUp.warmUpRest
-        let mainTrainingTimes = dataTrainingModel.trainingList[currentIndex].mainTraining.timeMainTraining
-        let mainTrainingCountTimes = dataTrainingModel.trainingList[currentIndex].mainTraining.mainTrainingCount
-        
-        var totalWarmUp = 0
-        for time in warmUpTimes {
-            totalWarmUp += time
-        }
-        
-        var totalWarmUpRest = 0
-        for time in warmUpRestTimes {
-            totalWarmUpRest += time
-        }
-        
-        var totalMainTraining = 0
-        for time in mainTrainingTimes {
-            totalMainTraining += time
-        }
-        
-        let totalSeconds = (totalWarmUp * warmUpCountTimes) + (totalMainTraining * mainTrainingCountTimes) + totalWarmUpRest
-        
-        return totalSeconds / 60
+        guard currentIndex < DataTrainingModel.shared.trainingPlans.count else { return 0 }
+        return DataTrainingModel.shared.trainingPlans[currentIndex].totalDurationMinutes
     }
     
-    
     var body: some View {
-        
         NavigationStack{
             ZStack{
                 Color.quasePreto
                 Image("BackgroundColorfull")
                     .resizable()
                     .scaledToFit( )
-                    
                     .offset(y: 150)
-                    
                 
                 VStack(spacing: 48){
                     
@@ -74,8 +47,6 @@ struct WorkoutView: View {
                     .padding(.top, 60)
                     .font(.system(size: 12))
                     .foregroundStyle(.white)
-                    
-                    
                     
                     //RETANGULO BRANCO
                     VStack(alignment: .leading, spacing: 40){
@@ -99,82 +70,16 @@ struct WorkoutView: View {
                                 }
                             }
                             
-                            //AQUECIMENTO
-                            VStack(alignment: .leading){
-                                Text("Aquecimento (\(dataTrainingModel.trainingList[currentIndex].warmingUp.warmUpCount)x)")
-                                    .font(.system(size: 14))
-                                    .fontWeight(.semibold)
-                                    .padding(.bottom, 8)
-                                
-                                ForEach(Array(dataTrainingModel.trainingList[currentIndex].warmingUp.timeWarmUp.enumerated()), id: \.offset) { idx, time in
-                                    //                            [Int] -> Array
-                                    HStack{
-                                        Image(systemName: "figure.walk")
-                                            .font(.system(size: 20))
-                                            .padding(.trailing, 24)
-                                        VStack(alignment: .leading){
-                                            Text("\(Warming.warmUp[idx])")
-                                                .font(.system(size: 12))
-                                                .fontWeight(.regular)
-                                            Text("\(time)\"")
-                                                .font(.system(size: 12))
-                                                .fontWeight(.bold)
-                                        }
-                                    }
-                                    .padding(.horizontal, 25)
-                                    .padding(.vertical, 8)
-                                    Divider()
-                                    
-                                }
+                            //Deep Seek: Updated to show phases grouped by type (warmup vs main)
+                            if currentIndex < DataTrainingModel.shared.trainingPlans.count {
+                                WorkoutPhasesView(workoutPlan: DataTrainingModel.shared.trainingPlans[currentIndex])
                             }
                         }
-                        //TREINO PRINCIPAL
-                        VStack(alignment: .leading){
-                            Text("Treino Principal (\(dataTrainingModel.trainingList[currentIndex].mainTraining.mainTrainingCount)x)")
-                                .font(.system(size: 14))
-                                .fontWeight(.semibold)
-                                .padding(.bottom, 8)
-                            
-                            ForEach(Array(dataTrainingModel.trainingList[currentIndex].mainTraining.timeMainTraining.enumerated()), id: \.offset) { idx, time in
-                                
-                                HStack{
-                                    Image(systemName: "figure.run")
-                                        .font(.system(size: 20))
-                                        .padding(.trailing, 24)
-                                    VStack(alignment: .leading){
-                                        Text("\(MainTraining.mainTraining[idx])")
-                                            .font(.system(size: 12))
-                                            .fontWeight(.regular)
-                                        Text("\(time)\"")
-                                            .font(.system(size: 12))
-                                            .fontWeight(.bold)
-                                    }
-                                }
-                                .padding(.horizontal, 25)
-                                .padding(.vertical, 8)
-                                Divider()
-
-                            }
-                        }
-                        
-                        
-                        //                        ForEach(0..<Warming.warmUp.count) { idx in
-                        ////                            [Int] -> Array
-                        //
-                        //                                VStack{
-                        //                                    Text("\(Warming.warmUp[idx])")
-                        //                                        .foregroundStyle(.white)
-                        //                                    Text("\(dataTrainingModel.trainingList[currentIndex].warmingUp.timeWarmUp[idx])")
-                        //                                        .foregroundStyle(.white)
-                        //                                }
-                        //                        }
                     }
                     .padding(.vertical, 32)
                     .padding(.horizontal, 16)
                     .background(Color.white)
                     .cornerRadius(16)
-                    
-                    
                     
                     NavigationLink{
                         StretchingView()
@@ -190,11 +95,9 @@ struct WorkoutView: View {
                         }
                         .background(.roxo)
                         .cornerRadius(8)
-                        
                     }
                     
                     Spacer()
-                    
                 }
                 .padding(.horizontal, 32)
                 .navigationBarBackButtonHidden(true)
@@ -210,17 +113,78 @@ struct WorkoutView: View {
                             .font(.system(size: 28))
                             .fontWeight(.bold)
                             .foregroundStyle(.white)
-                            //.offset(y: 40)
                         }
                     }
                 }
             }
             .ignoresSafeArea(.all)
         }
-        
-        
     }
+}
+
+//Deep Seek: New helper view to display workout phases
+struct WorkoutPhasesView: View {
+    let workoutPlan: WorkoutPlan
     
+    var body: some View {
+        VStack(alignment: .leading) {
+            //Group warmup phases
+            let warmupPhases = workoutPlan.phases.filter { $0.imageAsset.contains("Aquecimento") }
+            if !warmupPhases.isEmpty {
+                Text("Aquecimento (\(workoutPlan.totalRepetitions)x)")
+                    .font(.system(size: 14))
+                    .fontWeight(.semibold)
+                    .padding(.bottom, 8)
+                
+                ForEach(warmupPhases) { phase in
+                    HStack {
+                        Image(systemName: "figure.walk")
+                            .font(.system(size: 20))
+                            .padding(.trailing, 24)
+                        VStack(alignment: .leading) {
+                            Text(phase.name)
+                                .font(.system(size: 12))
+                                .fontWeight(.regular)
+                            Text("\(phase.duration)\"")
+                                .font(.system(size: 12))
+                                .fontWeight(.bold)
+                        }
+                    }
+                    .padding(.horizontal, 25)
+                    .padding(.vertical, 8)
+                    Divider()
+                }
+            }
+            
+            //Group main training phases
+            let trainingPhases = workoutPlan.phases.filter { $0.imageAsset.contains("Treino") }
+            if !trainingPhases.isEmpty {
+                Text("Treino Principal (\(workoutPlan.totalRepetitions)x)")
+                    .font(.system(size: 14))
+                    .fontWeight(.semibold)
+                    .padding(.bottom, 8)
+                
+                ForEach(trainingPhases) { phase in
+                    HStack {
+                        Image(systemName: "figure.run")
+                            .font(.system(size: 20))
+                            .padding(.trailing, 24)
+                        VStack(alignment: .leading) {
+                            Text(phase.name)
+                                .font(.system(size: 12))
+                                .fontWeight(.regular)
+                            Text("\(phase.duration)\"")
+                                .font(.system(size: 12))
+                                .fontWeight(.bold)
+                        }
+                    }
+                    .padding(.horizontal, 25)
+                    .padding(.vertical, 8)
+                    Divider()
+                }
+            }
+        }
+    }
 }
 
 #Preview {

@@ -13,9 +13,7 @@ struct TrailView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var planViewModel: PlanViewModel
     @EnvironmentObject var timerViewModel: TimerViewModel
-    let trail: [ActivityModel] = DataTrainingModel.shared.trainingList
-    @ObservedObject var trailViewDataCenter: TrailViewDataCenter = .shared
-    @State private var shouldNavigateToActivity = false
+    let trail: [WorkoutPlan] = DataTrainingModel.shared.trainingPlans
     
     let trailColors: [WorkoutColor] = [
         WorkoutColor(trailColor: .azul, workoutColor: .azulBotao, workoutBorderColor: .azulBotaoBorda),
@@ -28,7 +26,6 @@ struct TrailView: View {
     let trailColorPattern = [0,0,0, 1, 1 ,1, 2, 2 ,2, 3 ,3 ,3]
     
     init(){
-        
         //Pede permissão de usuario apos spalshscreen
         //gemini: The init() method is not the best place for this. Moving the logic to .onAppear ensures the view is ready.
         // requestNotificationPermission()
@@ -79,19 +76,19 @@ struct TrailView: View {
                                     GeometryReader { geometry in
                                         ZStack {
                                             ForEach(trail.indices, id: \.self) { index in
-                                                let activity = trail[index]
+                                                let workoutPlan = trail[index]
                                                 let workoutColor = trailColors[trailColorPattern[index % trailColorPattern.count]]
                                                 let relativePosition = getRelativePosition(for: index, total: trail.count)
                                                 
                                                 NavigationLink {
-                                                    WorkoutView(currentIndex: index)
+                                                    //Deep Seek: Directly navigate to ActivityView
+                                                    ActivityView()
                                                         .environmentObject(planViewModel)
                                                         .environmentObject(timerViewModel)
-                                                    
                                                 } label: {
                                                     WorkoutTrailDisplay(
                                                         workoutColor: workoutColor,
-                                                        activity: activity,
+                                                        workoutPlan: workoutPlan,
                                                         imageSize: geometry.size,
                                                         orderInArray: index
                                                     )
@@ -120,24 +117,6 @@ struct TrailView: View {
                 }
             }
             .padding(.horizontal, 36)
-        }
-        .overlay {
-            if trailViewDataCenter.showSheet {
-                Color.black.opacity(0.6)
-                    .ignoresSafeArea(.all)
-                    .transition(.opacity)
-                    .animation(.easeInOut(duration: 0.3), value: trailViewDataCenter.showSheet)
-                    .onTapGesture {
-                        trailViewDataCenter.showSheet = false
-                    }
-            }
-        }
-        .sheet(isPresented: $trailViewDataCenter.showSheet){
-            TrainerSheetView(currentIndex: trailViewDataCenter.selectedButtonIndex, shouldStartActivity: $shouldNavigateToActivity)
-                .presentationDetents([.medium, .height(600)])
-        }
-        .navigationDestination(isPresented: $shouldNavigateToActivity) {
-            ActivityView().environmentObject(planViewModel)
         }
         .navigationBarBackButtonHidden(true)
     }
@@ -185,15 +164,14 @@ struct WorkoutTrailDisplay : View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var planViewModel: PlanViewModel
     let workoutColor: WorkoutColor
-    let activity: ActivityModel
+    let workoutPlan: WorkoutPlan
     let imageSize: CGSize
     let orderInArray: Int
     
     var body: some View {
-        
         let diameter = imageSize.width * 0.14
-        
         let innerDiameter = diameter * 0.82
+        
         ZStack{
             Circle()
                 .foregroundStyle(workoutColor.workoutBorderColor)
@@ -203,18 +181,18 @@ struct WorkoutTrailDisplay : View {
                 .frame(width: innerDiameter,height: innerDiameter)
                 .overlay{
                     //se eu nao fiz ainda
-                    if orderInArray == planViewModel.userLevel + 1{
+                    if orderInArray == planViewModel.userLevel + 1 {
                         Image(systemName: "lock.open.fill")
                             .foregroundStyle(Color.white)
                             .bold()
                     }
-                    else if orderInArray > planViewModel.userLevel{
+                    else if orderInArray > planViewModel.userLevel {
                         Image(systemName: "lock.fill")
                             .foregroundStyle(Color.white)
                             .bold()
                     }
                     //se eu to nesse nível
-                    else if orderInArray == planViewModel.userLevel{
+                    else if orderInArray == planViewModel.userLevel {
                         Circle()
                             .frame(width: innerDiameter, height: innerDiameter)
                             .overlay {
@@ -224,47 +202,17 @@ struct WorkoutTrailDisplay : View {
                             }
                     }
                     //se eu ja fiz
-                    else{
+                    else {
                         Image(systemName: "checkmark")
                             .foregroundStyle(Color.white)
                             .bold()
                     }
                 }
         }
-        
-    }
-    
-}
-
-struct ChunkedData<T>: Identifiable {
-    let id: UUID = UUID()
-    let data : [T]
-}
-
-enum PieceType {
-    case top, middle, bottom
-    
-    var displayName: String {
-        switch self {
-        case .top:
-            return "Top"
-        case .middle:
-            return "Middle"
-        case .bottom:
-            return "Bottom"
-        }
     }
 }
 
-class TrailViewDataCenter: ObservableObject{
-    static let shared = TrailViewDataCenter()
-    
-    @Published var showSheet = false
-    @Published var selectedButtonIndex: Int = 0
-    @Published var userLevel: Int = 1
-}
-
-struct WorkoutColor{
+struct WorkoutColor {
     let trailColor: Color
     let workoutColor: Color
     let workoutBorderColor: Color

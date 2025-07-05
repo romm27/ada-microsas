@@ -28,30 +28,29 @@ struct ActivityView: View {
     //gemini: The old counter is no longer needed as the new state machine below is more robust.
 //    @State var contador: Int = 0
     
+    //Deep Seek: We'll keep the original state enum but use it differently with the new data model
     @State var state: StateActivity = .aquecimento
     
-    //gemini: Add new state variables to manage the entire workout flow automatically.
-    @State private var isResting: Bool = false
-    @State private var isWarmup: Bool = true
+    //Deep Seek: New state variables to work with ActivityPhase directly
+    @State private var currentPhase: ActivityPhase?
+    @State private var nextPhase: ActivityPhase?
     @State private var currentPhaseIndex: Int = 0
     @State private var currentRepetition: Int = 1
-    @State private var currentActivityName: String = ""
-    @State private var nextActivityName: String = ""
-    
+
     var body: some View {
         NavigationStack{
             //gemini: The logic is now handled by the 'isResting' state, making the flow automatic and self-contained.
             Group {
-                if isResting {
-                    //gemini: A new, inline Rest UI that doesn't conflict with external views.
+                if let phase = currentPhase, phase.isRest {
+                    //Deep Seek: Modified rest view to use ActivityPhase properties directly
                     VStack(spacing: 35){
-                        Image("BelezinhaDescanso")
+                        Image(phase.imageAsset)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 150)
                         
                         VStack(spacing: 10){
-                            Text("Descansar")
+                            Text(phase.name)
                                 .font(.system(size: 34))
                                 .fontWeight(.bold)
                                 .foregroundStyle(.white)
@@ -61,57 +60,39 @@ struct ActivityView: View {
                                 .fontWeight(.regular)
                                 .foregroundStyle(.verdeLima)
                             
-                            VStack(spacing: 5){
-                                Text("Próxima Atividade")
-                                    .font(.system(size: 15))
-                                    .fontWeight(.semibold)
-                                Text(nextActivityName)
-                                    .font(.system(size: 13))
-                                    .foregroundStyle(.white)
+                            if let next = nextPhase {
+                                VStack(spacing: 5){
+                                    Text("Próxima Atividade")
+                                        .font(.system(size: 15))
+                                        .fontWeight(.semibold)
+                                    Text(next.name)
+                                        .font(.system(size: 13))
+                                        .foregroundStyle(.white)
+                                }
                             }
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     VStack{
-                        switch state {
-                        case .treino:
+                        if let phase = currentPhase {
+                            //Deep Seek: Unified activity view using ActivityPhase properties
                             ZStack{
-                                Image("BackgroundTreino")
+                                Image(phase.isRest ? "BackgroundDescanso" :
+                                      state == .treino ? "BackgroundTreino" : "BackgroundAquecimento")
                                 
                                 VStack(spacing: 5){
-                                    Image("BelezinhaTreino")
+                                    Image(phase.imageAsset)
                                         .padding(8)
-                                    Text("Treino")
+                                    Text(state == .treino ? "Treino" : "Aquecendo")
                                         .font(.callout)
                                         .fontWeight(.regular)
-                                    //gemini: Display the current activity name dynamically.
-                                    Text(currentActivityName)
+                                    Text(phase.name)
                                         .font(.title2)
                                         .fontWeight(.bold)
                                 }
                                 .padding(.top, 48)
                             }
-                        case .aquecimento:
-                            ZStack{
-                                Image("BackgroundAquecimento")
-                                
-                                VStack(spacing: 5){
-                                    Image("BelezinhaAquecimento")
-                                        .padding(8)
-                                    Text("Aquecendo")
-                                        .font(.callout)
-                                        .fontWeight(.regular)
-                                    //gemini: Display the current activity name dynamically.
-                                    Text(currentActivityName)
-                                        .font(.title2)
-                                        .fontWeight(.bold)
-                                }
-                                .padding(.top, 48)
-                            }
-                        case .descanso:
-                            //carla aqui :)
-                            Text("carla")
                         }
                         
                         Spacer()
@@ -119,23 +100,11 @@ struct ActivityView: View {
                         ProgressBarView()
                             .frame(width: 300, height: 300)
                         
-                        
-                        
-        //                    .alert("Parabéns!", isPresented: $timerViewModel.isFinished) {
-        //                        Button("Ok") {
-        //                            planViewModel.userLevel += 1
-        //                            dismiss()
-        //                        }
-        //                    } message: {
-        //                        Text("Você concluiu a atividade!")
-        //                    }
-                        
                         Spacer()
                         
                         TotalProgressBarView()
                         
                         Spacer()
-                            
                     }
                 }
             }
@@ -160,29 +129,41 @@ struct ActivityView: View {
             .ignoresSafeArea(.all)
             .onAppear{
                 print(" USER LEVEL: \(planViewModel.userLevel)")
-                //gemini: Start the first activity of the workout.
+                //Deep Seek: Modified to use the new data model initialization
                 startFirstActivity()
             }
             
             //gemini: When any timer finishes, the state machine will determine the next step.
             .onChange(of: timerViewModel.isFinished) { isFinished in
                 if isFinished {
-                    passNextIntervalTraining()
+                    proceedToNextPhase()
                 }
             }
         }
     }
     
-    //gemini: A helper function to start the very first activity.
+    //Deep Seek: Modified to work with ActivityPhase directly while keeping similar structure
     func startFirstActivity() {
-        let training = DataTrainingModel.shared.trainingList[planViewModel.userLevel]
-        isWarmup = true
-        state = .aquecimento
-        currentPhaseIndex = 0
-        currentRepetition = 1
-        currentActivityName = Warming.warmUp[0]
-        let time = training.warmingUp.timeWarmUp[0]
-        timerViewModel.setTimerConfig(seconds: time)
+        guard planViewModel.userLevel < DataTrainingModel.shared.trainingPlans.count else {
+            dismiss()
+            return
+        }
+        
+        let workout = DataTrainingModel.shared.trainingPlans[planViewModel.userLevel]
+        guard !workout.phases.isEmpty else {
+            dismiss()
+            return
+        }
+        
+        currentPhase = workout.phases[0]
+        state = currentPhase?.isRest == true ? .descanso : .aquecimento
+        
+        //Deep Seek: Set next phase if available
+        if workout.phases.count > 1 {
+            nextPhase = workout.phases[1]
+        }
+        
+        timerViewModel.setTimerConfig(seconds: currentPhase?.duration ?? 0)
         timerViewModel.startTimer()
     }
     
@@ -205,102 +186,68 @@ struct ActivityView: View {
         }
     }
     
-    //gemini: This state machine now controls the entire workout sequence.
-    func passNextIntervalTraining() {
-        let training = DataTrainingModel.shared.trainingList[planViewModel.userLevel]
-
-        // --- Handle starting a new activity after a rest ---
-        if isResting {
-            isResting = false
-            let time: Int
-            if isWarmup {
-                time = training.warmingUp.timeWarmUp[currentPhaseIndex]
-                currentActivityName = Warming.warmUp[currentPhaseIndex]
-                state = .aquecimento
-            } else { // Main Training
-                time = training.mainTraining.timeMainTraining[currentPhaseIndex]
-                currentActivityName = MainTraining.mainTraining[currentPhaseIndex]
-                state = .treino
-                //gemini: Schedule the notification right before the main training timer starts.
-                scheduleNotification(
-                    title: "Intervalo Concluído!",
-                    body: "Você completou: \(currentActivityName).",
-                    duration: TimeInterval(time),
-                    soundName: "finish_sound.caf" // IMPORTANT: Add your sound file to the project.
-                )
-            }
-            timerViewModel.setTimerConfig(seconds: time)
-            timerViewModel.startTimer()
+    //Deep Seek: Modified version of passNextIntervalTraining that works with ActivityPhase
+    func proceedToNextPhase() {
+        guard planViewModel.userLevel < DataTrainingModel.shared.trainingPlans.count else {
+            dismiss()
             return
         }
-
-        // --- Handle starting a rest period after an activity ---
-        if isWarmup {
-            let warmUpActivities = training.warmingUp.timeWarmUp
-            // Check if there are more activities in the current warm-up set
-            if currentPhaseIndex < warmUpActivities.count - 1 {
-                isResting = true
-                currentPhaseIndex += 1
-                nextActivityName = Warming.warmUp[currentPhaseIndex]
-                let restTime = training.warmingUp.warmUpRest[currentPhaseIndex - 1]
-                timerViewModel.setTimerConfig(seconds: restTime)
-                timerViewModel.startTimer()
-            } else { // End of a warm-up set
-                if currentRepetition < training.warmingUp.warmUpCount {
-                    // More warm-up sets to go
-                    isResting = true
-                    currentRepetition += 1
-                    currentPhaseIndex = 0
-                    nextActivityName = Warming.warmUp[currentPhaseIndex]
-                    let restTime = training.warmingUp.warmUpRest.last ?? 30 // Rest before next set
-                    timerViewModel.setTimerConfig(seconds: restTime)
-                    timerViewModel.startTimer()
-                } else {
-                    // Warm-up phase is complete, transition to main training
-                    isWarmup = false
-                    currentRepetition = 1
-                    currentPhaseIndex = 0
-                    isResting = true // Start with a rest before main training
-                    nextActivityName = MainTraining.mainTraining[currentPhaseIndex]
-                    let restTime = 60 // Default rest time before main training
-                    timerViewModel.setTimerConfig(seconds: restTime)
-                    timerViewModel.startTimer()
-                }
+        
+        let workout = DataTrainingModel.shared.trainingPlans[planViewModel.userLevel]
+        
+        // Check if there are more phases
+        if currentPhaseIndex < workout.phases.count - 1 {
+            currentPhaseIndex += 1
+        } else {
+            // Check if there are more repetitions
+            if currentRepetition < workout.totalRepetitions {
+                currentPhaseIndex = 0
+                currentRepetition += 1
+            } else {
+                // Workout complete
+                planViewModel.userLevel += 1
+                dismiss()
+                return
             }
-        } else { // Main Training Logic
-            let mainActivities = training.mainTraining.timeMainTraining
-            // Check if there are more activities in the current main training set
-            if currentPhaseIndex < mainActivities.count - 1 {
-                isResting = true
-                currentPhaseIndex += 1
-                nextActivityName = MainTraining.mainTraining[currentPhaseIndex]
-                let restTime = 60 // Model does not specify main rest, using 60s default
-                timerViewModel.setTimerConfig(seconds: restTime)
-                timerViewModel.startTimer()
-            } else { // End of a main training set
-                if currentRepetition < training.mainTraining.mainTrainingCount {
-                    // More main training sets to go
-                    isResting = true
-                    currentRepetition += 1
-                    currentPhaseIndex = 0
-                    nextActivityName = MainTraining.mainTraining[currentPhaseIndex]
-                    let restTime = 60 // Default rest time
-                    timerViewModel.setTimerConfig(seconds: restTime)
-                    timerViewModel.startTimer()
-                } else {
-                    // Workout is complete!
-                    planViewModel.userLevel += 1
-                    dismiss()
-                }
-            }
+        }
+        
+        // Update current and next phases
+        currentPhase = workout.phases[currentPhaseIndex]
+        
+        // Update state based on activity type
+        if currentPhase?.isRest == true {
+            state = .descanso
+        } else {
+            state = currentRepetition > 1 ? .treino : .aquecimento
+        }
+        
+        // Set next phase if available
+        let nextIndex = currentPhaseIndex + 1
+        if nextIndex < workout.phases.count {
+            nextPhase = workout.phases[nextIndex]
+        } else if currentRepetition < workout.totalRepetitions {
+            nextPhase = workout.phases[0]
+        } else {
+            nextPhase = nil
+        }
+        
+        timerViewModel.setTimerConfig(seconds: currentPhase?.duration ?? 0)
+        timerViewModel.startTimer()
+        
+        // Schedule notification for non-rest activities
+        if let phase = currentPhase, !phase.isRest {
+            scheduleNotification(
+                title: "Intervalo Concluído!",
+                body: "Você completou: \(phase.name).",
+                duration: TimeInterval(phase.duration),
+                soundName: "finish_sound.caf"
+            )
         }
     }
 }
+
 #Preview {
     ActivityView()
         .environmentObject(TimerViewModel())
         .environmentObject(PlanViewModel())
 }
-
-
-// --- END OF FILE ---
