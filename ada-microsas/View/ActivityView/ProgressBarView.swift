@@ -24,7 +24,7 @@ struct ProgressBarView: View {
                 .trim(from: 0, to: totalArc)
                 .stroke(style: StrokeStyle(lineWidth: 35.0, lineCap: .round, lineJoin: .round))
                 .opacity(0.25)
-                .foregroundStyle(Color.gray)
+                .foregroundStyle(.cinzaClaro)
                 .rotationEffect(Angle(degrees: 144))
             
             //circle green

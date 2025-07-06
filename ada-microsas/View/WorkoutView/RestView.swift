@@ -37,55 +37,60 @@ struct RestView: View {
 
         ZStack{
             
+            Color.cinzaEscuro.edgesIgnoringSafeArea(.all)
+            
+
+            
             Image("RestImage")
                 .resizable()
                 .scaledToFill()
             
-            VStack(spacing: 35) {
+            VStack(spacing: 25) {
+                
+                VStack(spacing: 5) {
+                    Text("Próxima Atividade")
+                        .font(.system(size: 16))
+                        .fontWeight(.semibold)
+                    Text("Salto na Ponta do Pé")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.white)
+                }
+                
                 Image("BelezinhaDescanso")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 150)
+                    .frame(width: 130)
                 
-                VStack(spacing: 10) {
-                    Text("Descansar")
-                        .font(.system(size: 34))
+                VStack(spacing: 25) {
+                    Text("Descanso")
+                        .font(.system(size: 30))
                         .fontWeight(.bold)
                         .foregroundStyle(.white)
                     
-                    Text("\(timerViewModel.getFormattedCurrentTimer())")
-                        .font(.system(size: 58))
+                    Text("00:30")
+                        .font(.system(size: 35))
                         .fontWeight(.regular)
                         .foregroundStyle(.verdeLima)
-                        .onAppear {
-                            setupTimer()
-                        }
                     
-                    VStack(spacing: 20) {
-                        VStack(spacing: 5) {
-                            HStack {
-                                Text("Próxima Atividade")
-                                Text("\(currentCounter + 1)/\(totalActivitiesInGroup)")
-                                    .foregroundStyle(.verdeLima)
-                            }
-                            .font(.system(size: 15))
+                    VStack{
+                        ButtonView()
+                            .padding(.trailing, 12)
+                        
+                        Button{}
+                        label: {
+                            Text("Pular")
+                            .font(.title3)
                             .fontWeight(.semibold)
-                            
-                            if let nextActivity = nextActivity {
-                                Text(nextActivity.name)
-                                    .font(.system(size: 13))
-                                    .foregroundStyle(.white)
-                            }
-                            
-                            Button("Proximo") {
-                                currentCounter += 1
-                                setupTimer()
-                            }
-                        }
+                            .foregroundColor(.white)
+                            .padding(.vertical, 10)                        }
                     }
+                    
+                   
+                 
+
+                    
                 }
             }
-            
         }
         .ignoresSafeArea(.all)
 

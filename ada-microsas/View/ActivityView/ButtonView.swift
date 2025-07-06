@@ -18,7 +18,7 @@ struct ButtonView: View {
         case pause
         case stop
     }
-   
+    
     @State var state: PlayerState = .play
     @State var showAlert: Bool = false
     @State var showEndingAlert: Bool = false
@@ -27,39 +27,40 @@ struct ButtonView: View {
     var body: some View {
         
         HStack{
-            if state == .play{
-                Button(action: {
-                    withAnimation {
-//                        loigica do tempo
-                        timerViewModel.pauseTimer()
-                        state = .pause
-                        
-//                        timerViewModel.setTimerConfig(seconds: 60)
-                        
-                        
-                    }
-                }) {
-                    Image(systemName: "pause.fill")
-                        .font(.largeTitle)
-                        .padding(15)
-                        .background(.brancoGelo)
-                        .foregroundColor(.cinzaClaro)
-                        .clipShape(Circle())
-                        .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 4)
-                }
-                
-                
-            } else if state == .pause {
+            //            if state == .play{
+            //                Button(action: {
+            //                    withAnimation {
+            ////                        loigica do tempo
+            //                        timerViewModel.pauseTimer()
+            //                        state = .pause
+            //
+            ////                        timerViewModel.setTimerConfig(seconds: 60)
+            //
+            //
+            //                    }
+            //                }) {
+            //                    Image(systemName: "pause.fill")
+            //                        .font(.largeTitle)
+            //                        .padding(15)
+            //                        .background(.brancoGelo)
+            //                        .foregroundColor(.cinzaClaro)
+            //                        .clipShape(Circle())
+            //                        .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 4)
+            //                }
+            //
+            //
+            //            }
+            if state == .play {
                 Button(action: {
                     //logica do tempo
-                    timerViewModel.startTimer()
-                    state = .play
+                    timerViewModel.pauseTimer()
+                    state = .pause
                     
                 }) {
-                    Image(systemName: "play.fill")
-                        .font(.largeTitle)
-                        .padding(15)
-                        .background(.cinzaClaro)
+                    Image(systemName: "pause.fill")
+                        .font(.system(size: 28))
+                        .padding(12)
+                        .background(.roxo)
                         .foregroundColor(.white)
                         .clipShape(Circle())
                         .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 10)
@@ -72,9 +73,9 @@ struct ButtonView: View {
                     showAlert.toggle()
                 }) {
                     Image(systemName: "stop.fill")
-                        .font(.largeTitle)
-                        .padding(15)
-                        .background(.cinzaClaro)
+                        .font(.system(size: 28))
+                        .padding(12)
+                        .background(.roxo)
                         .foregroundColor(.white)
                         .clipShape(Circle())
                         .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 10)
@@ -88,29 +89,35 @@ struct ButtonView: View {
                     Button("Encerrar", role: .destructive) {
                         //timerViewModel.endTimer()
                         timerViewModel.pauseTimer()
+                        timerViewModel.endTimer()
                         dismiss()
                         //logica de encerrar
                     }
-                                        
+                    
                 }
                 
                 message: {
                     Text("Se você encerrar agora, vai perder todo o seu progresso. Tem certeza?")
-                    }
+                }
                 
                 
                 
-            } else if state == .stop {
-            
+            } else if state == .pause {
+                
                 Button(action: {
                     withAnimation {
+                        timerViewModel.startTimer()
                         state = .play
                     }
                 }) {
-                    //COMEÇA DE NOVO SO PARA TESTE!!
-                    Text("Reiniciar Teste")
-                        .font(.largeTitle)
-                    }
+                    Image(systemName: "play.fill")
+                        .font(.system(size: 28))
+                        .padding(12)
+                        .background(.verdeLimaBotao)
+                        .foregroundColor(.quasePreto)
+                        .clipShape(Circle())
+                        .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 4)
+                }
             }
         }
         
@@ -122,11 +129,11 @@ struct ButtonView: View {
                     timerViewModel.endTimer()
                 }
             }
-                } message: {
-                    Text("Sua máquina do tempo corrompeu.")
-                }
-                .preferredColorScheme(.dark)
-
+        } message: {
+            Text("Sua máquina do tempo corrompeu.")
+        }
+        .preferredColorScheme(.dark)
+        
     }
 }
 

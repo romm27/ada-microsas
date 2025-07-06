@@ -28,6 +28,7 @@ struct WorkoutView: View {
                 Color.quasePreto
                     .edgesIgnoringSafeArea(.all)
                 
+         
                 Image("BackgroundColorfull")
                     .resizable()
                     .scaledToFit()
@@ -62,11 +63,11 @@ struct WorkoutView: View {
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 90)
-                                        .offset(y: -70)
+                                        .offset(y: -120)
                                     Text("\(totalTime)'")
                                         .font(.system(size: 16, weight: .bold))
                                         .foregroundColor(.white)
-                                        .offset(y: -70)
+                                        .offset(y: -120)
                                 }
                             }
                             
