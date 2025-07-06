@@ -28,6 +28,8 @@ struct ActivityView: View {
     @State private var nextActivity: ActivityPhase?
     @State private var showCompletionAlert: Bool = false
     
+    @State var showAlert: Bool = false
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -36,7 +38,11 @@ struct ActivityView: View {
                         RestPhaseView(
                             phase: currentActivity,
                             nextPhase: nextActivity,
-                            timerText: timerViewModel.getFormattedCurrentTimer()
+                            timerText: timerViewModel.getFormattedCurrentTimer(),
+                            onSkip: { // <--- AQUI: O QUE ACONTECE QUANDO "PULAR" É CLICADO
+                                timerViewModel.endTimer() // Para o timer do descanso
+                                proceedToNextPhase() // Avança para a próxima fase
+                            }
                         )
                     } else {
                         ActivityPhaseView(
@@ -47,21 +53,41 @@ struct ActivityView: View {
                     }
                 }
             }
-//            .toolbar {
-//                ToolbarItem(placement: .navigationBarLeading) {
-//                    Button {
-//                        dismiss()
-//                    } label: {
-//                        HStack {
-//                            Image(systemName: "chevron.left")
-//                                .padding()
-//                        }
-//                        .font(.headline)
-//                        .foregroundStyle(.quasePreto)
-//                    }
-//                }
-//            }
             .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showAlert.toggle()
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.backward")
+                                .foregroundColor(.white)
+                            Text("Sair")
+                                .foregroundColor(.white)
+                        }
+                        .font(.system(size: 24, weight: .bold))
+                    }
+                    .alert("Cuidado!", isPresented: $showAlert) {
+                        Button("Voltar", role: .cancel) {
+                            //logica do tempo
+                        }
+                        
+                        Button("Encerrar", role: .destructive) {
+                            //timerViewModel.endTimer()
+                            timerViewModel.pauseTimer()
+                            timerViewModel.endTimer()
+                            dismiss()
+                            //logica de encerrar
+                        }
+                        
+                    }
+                    message: {
+                        Text("Se você encerrar agora, vai perder todo o seu progresso. Tem certeza?")
+                    }
+                    
+                    
+                }
+            }
             .preferredColorScheme(.dark)
             .ignoresSafeArea(.all)
             .onAppear {
@@ -145,7 +171,7 @@ struct ActivityView: View {
         
         // Update activity state
         state = currentActivity?.isRest == true ? .descanso :
-                currentGroup.isWarmup ? .aquecimento : .treino
+        currentGroup.isWarmup ? .aquecimento : .treino
         
         // Start timer
         timerViewModel.setTimerConfig(seconds: currentActivity?.duration ?? 0)
@@ -231,41 +257,57 @@ struct RestPhaseView: View {
     let phase: ActivityPhase
     let nextPhase: ActivityPhase?
     let timerText: String
+    let onSkip: () -> Void
     
     var body: some View {
         ZStack{
+            
+            Color.cinzaEscuro.edgesIgnoringSafeArea(.all)
             
             Image("RestImage")
                 .resizable()
                 .scaledToFill()
             
-            VStack(spacing: 35) {
+            VStack(spacing: 25) {
+                
+                if let nextPhase = nextPhase {
+                    VStack(spacing: 5) {
+                        Text("Próxima Atividade")
+                            .font(.system(size: 16))
+                            .fontWeight(.semibold)
+                        Text(nextPhase.name)
+                            .font(.system(size: 14))
+                            .foregroundStyle(.white)
+                    }
+                }
+                
                 Image(phase.imageAsset)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 150)
+                    .frame(width: 130)
                 
-                VStack(spacing: 10) {
+                VStack(spacing: 25) {
                     Text(phase.name)
-                        .font(.system(size: 34))
+                        .font(.system(size: 30))
                         .fontWeight(.bold)
                         .foregroundStyle(.white)
-
+                    
                     Text(timerText)
-                        .font(.system(size: 58))
+                        .font(.system(size: 35))
                         .fontWeight(.regular)
                         .foregroundStyle(.verdeLima)
                     
-                    if let nextPhase = nextPhase {
-                        VStack(spacing: 5) {
-                            Text("Próxima Atividade")
-                                .font(.system(size: 15))
-                                .fontWeight(.semibold)
-                            Text(nextPhase.name)
-                                .font(.system(size: 13))
-                                .foregroundStyle(.white)
-                        }
+                    ButtonView()
+                        .padding(.trailing, 12)
+                    
+                    Button("Pular") {
+                        onSkip() // Dispara o callback para a ActivityView
                     }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding(.vertical, 10)    
+                    
+
                 }
             }
         }

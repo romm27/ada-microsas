@@ -31,13 +31,15 @@ struct TotalProgressBarView: View {
                     Rectangle()
                         .frame(width: 300, height: 25)
                         .cornerRadius(24)
-                        .foregroundStyle(.brancoGelo)
+                        .foregroundStyle(.cinzaClaro)
+                        .opacity(0.25)
                     ZStack{
                         Rectangle()
                     .frame(width: (300*timerViewModel.progress), height: 25)
     //                        .frame(width: (300*fakeProgress), height: 25)
                             .cornerRadius(24)
                             .foregroundStyle(.roxo)
+                            .opacity(0.5)
                             .animation(.interpolatingSpring, value: timerViewModel.progress)
                         
                         HStack{
@@ -56,7 +58,7 @@ struct TotalProgressBarView: View {
                     HStack{
                         Spacer()
                         Text(progressText)
-                            .foregroundStyle(.cinzaClaro)
+                            .foregroundStyle(.brancoGelo)
                             .padding(.trailing, 8)
                     }
                     .frame(width: 300)
