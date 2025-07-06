@@ -70,6 +70,7 @@ struct WorkoutView: View {
                                         .offset(y: -120)
                                 }
                             }
+                    
                             
                             // Workout content - ensure all text is visible
                             VStack(alignment: .leading, spacing: 0) {

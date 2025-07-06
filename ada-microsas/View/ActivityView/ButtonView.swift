@@ -22,6 +22,7 @@ struct ButtonView: View {
     @State var state: PlayerState = .play
     @State var showAlert: Bool = false
     @State var showEndingAlert: Bool = false
+    @State var showColapseView: Bool = false
     
     
     var body: some View {
@@ -86,12 +87,16 @@ struct ButtonView: View {
                         //logica do tempo
                     }
                     
-                    Button("Encerrar", role: .destructive) {
-                        //timerViewModel.endTimer()
-                        timerViewModel.pauseTimer()
-                        timerViewModel.endTimer()
-                        dismiss()
-                        //logica de encerrar
+                    NavigationLink(destination: TemporalColapseView()){
+                        Button("Encerrar", role: .destructive) {
+                            //timerViewModel.endTimer()
+                            timerViewModel.pauseTimer()
+                            timerViewModel.endTimer()
+                            showColapseView.toggle()
+                            
+                            //dismiss()
+                            //logica de encerrar
+                        }
                     }
                     
                 }
@@ -99,6 +104,7 @@ struct ButtonView: View {
                 message: {
                     Text("Se você encerrar agora, vai perder todo o seu progresso. Tem certeza?")
                 }
+                
                 
                 
                 
@@ -119,18 +125,6 @@ struct ButtonView: View {
                         .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 4)
                 }
             }
-        }
-        
-        
-        //alerta de encerramento antes de concluir atividade
-        .alert("Colapso Temporal", isPresented: $showEndingAlert) {
-            Button("Ok") {
-                withAnimation {
-                    timerViewModel.endTimer()
-                }
-            }
-        } message: {
-            Text("Sua máquina do tempo corrompeu.")
         }
         .preferredColorScheme(.dark)
         

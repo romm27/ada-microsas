@@ -29,6 +29,7 @@ struct ActivityView: View {
     @State private var showCompletionAlert: Bool = false
     
     @State var showAlert: Bool = false
+    @State var showColapseView: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -71,14 +72,16 @@ struct ActivityView: View {
                         Button("Voltar", role: .cancel) {
                             //logica do tempo
                         }
-                        
-                        Button("Encerrar", role: .destructive) {
-                            //timerViewModel.endTimer()
-                            timerViewModel.pauseTimer()
-                            timerViewModel.endTimer()
-                            dismiss()
-                            //logica de encerrar
+                        NavigationLink(destination: TemporalColapseView()){
+                            Button("Encerrar", role: .destructive) {
+                                //timerViewModel.endTimer()
+                                timerViewModel.pauseTimer()
+                                timerViewModel.endTimer()
+                                showColapseView.toggle()
+                                //logica de encerrar
+                            }
                         }
+
                         
                     }
                     message: {
