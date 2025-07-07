@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UserNotifications
+import HealthKit
 
 //gemini: This delegate class is correct and already handles foreground notifications.
 class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
@@ -25,11 +26,29 @@ struct ada_microsasApp: App {
     @StateObject private var timerViewModel = TimerViewModel()
     @StateObject private var planViewModel = PlanViewModel()
     
+    private let healthStore: HKHealthStore
+    
     //gemini: Use the scenePhase environment variable to detect when the app state changes.
     @Environment(\.scenePhase) var scenePhase
     
     init() {
         UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
+        
+        guard HKHealthStore.isHealthDataAvailable() else {  fatalError("This app requires a device that supports HealthKit") }
+        
+        healthStore = HKHealthStore()
+        requestHealthkitPermissions()
+    }
+    
+    private func requestHealthkitPermissions() {
+        
+        let typesToShare: Set<HKSampleType> = [
+            HKObjectType.workoutType(),
+        ]
+        
+        healthStore.requestAuthorization(toShare: typesToShare, read: nil) { (success, error) in
+            print("Request Authorization -- Success: ", success, " Error: ", error ?? "nil")
+        }
     }
     
     var body: some Scene {
@@ -37,6 +56,7 @@ struct ada_microsasApp: App {
             ContentView()
                 .environmentObject(timerViewModel)
                 .environmentObject(planViewModel)
+                .environmentObject(healthStore)
         }
         //gemini: Add a handler to react to scene phase changes.
         .onChange(of: scenePhase) { newPhase in
@@ -53,8 +73,9 @@ struct ada_microsasApp: App {
             }
         }
     }
-    
 }
+
+extension HKHealthStore: ObservableObject{}
 
 
 #Preview {
