@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UserNotifications
+import HealthKit
 
 enum StateActivity {
     case treino
@@ -18,6 +19,8 @@ struct ActivityView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
+    @EnvironmentObject var healthStore: HKHealthStore
+    
     
     @State private var state: StateActivity = .aquecimento
     @State private var isResting: Bool = false
@@ -32,6 +35,7 @@ struct ActivityView: View {
     @State var showColapseView: Bool = false
     
     var body: some View {
+        
         NavigationStack {
             Group {
                 if let currentActivity = currentActivity {
@@ -145,6 +149,13 @@ struct ActivityView: View {
             // Workout complete
             planViewModel.userLevel += 1
             showCompletionAlert = true
+            
+            let activitySeconds = currentGroup.totalDuration
+            Task{
+                await saveRunningActivity(seconds: Double(activitySeconds)) //activity seconds
+                //TODO: mudar a boolean do alert aqui
+            }
+            
             return
         }
         
@@ -208,6 +219,44 @@ struct ActivityView: View {
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         
         UNUserNotificationCenter.current().add(request)
+    }
+    
+    //MARK: - SAVE > Running Activity
+    func saveRunningActivity(seconds: Double) async {
+        //Definir tipo da atividade
+        let configuration = HKWorkoutConfiguration()
+        configuration.activityType = .running
+        
+        //Criar HKWorkoutBuilder
+        let builder = HKWorkoutBuilder(healthStore: healthStore, configuration: configuration, device: .local())
+        
+        //Definir o inicio e o fim da atividade
+        //TODO: Aqui trocamos a variável pelo tempo total da nossa atividade
+        let startDate = Date().addingTimeInterval(-seconds)
+        let endDate = Date() //Agora
+        
+        
+        do {
+            //Iniciar e terminar a colecao de dados para o builder
+            try await builder.beginCollection(at: startDate)
+            try await builder.endCollection(at: endDate)
+            
+            let workout = try await builder.finishWorkout()
+            
+            print("✅ SUCESSO! Treino de \(workout?.workoutActivityType.name).")
+            
+        } catch {
+            print("❌ ERRO ao usar HKWorkoutBuilder: \(error.localizedDescription)")
+        }
+    }
+}
+
+extension HKWorkoutActivityType {
+    var name: String {
+        switch self {
+        case .running: return "Corrida"
+        default: return "Treino"
+        }
     }
 }
 

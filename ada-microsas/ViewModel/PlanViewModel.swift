@@ -32,7 +32,7 @@ class PlanViewModel: ObservableObject {
     @Published var userLevel: Int = 0 { //Começa em 0 por causa do array, ao mostrar para o jogador adicione + 1.
         //Por exemplo o workout do userLevel 0 é igual ao PRIMEIRO workout(1) para o jogador.
         didSet{
-//            savePlan()
+            savePlan()
         }
     }
     
