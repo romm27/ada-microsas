@@ -29,7 +29,10 @@ struct ActivityView: View {
     @State private var currentRepetition: Int = 1
     @State private var currentActivity: ActivityPhase?
     @State private var nextActivity: ActivityPhase?
+    
     @State private var showCompletionAlert: Bool = false
+    @State private var showAppleFitnessAlert: Bool = false
+    @State private var couldPostOnAppleHealth: Bool = false
     
     @State var showAlert: Bool = false
     @State var showColapseView: Bool = false
@@ -85,14 +88,10 @@ struct ActivityView: View {
                                 //logica de encerrar
                             }
                         }
-
-                        
                     }
                     message: {
                         Text("Se você encerrar agora, vai perder todo o seu progresso. Tem certeza?")
                     }
-                    
-                    
                 }
             }
             .preferredColorScheme(.dark)
@@ -107,10 +106,17 @@ struct ActivityView: View {
             }
             .alert("Parabéns!", isPresented: $showCompletionAlert) {
                 Button("OK") {
-                    dismiss()
+//                    dismiss()
                 }
             } message: {
                 Text("Você concluiu o treino com sucesso!")
+            }
+            .alert(couldPostOnAppleHealth ? "✅ Sucesso - Health " : "❌ Erro - Apple Health", isPresented: $showAppleFitnessAlert) {
+                Button("OK") {
+                    dismiss()
+                }
+            } message: {
+                Text(couldPostOnAppleHealth ? "Sucesso ao sincronizar seu treino." :  "Erro ao sincronizar seu treino. \nHabilite permissões no app 'Health'." )
             }
         }
     }
@@ -153,7 +159,7 @@ struct ActivityView: View {
             let activitySeconds = currentGroup.totalDuration
             Task{
                 await saveRunningActivity(seconds: Double(activitySeconds)) //activity seconds
-                //TODO: mudar a boolean do alert aqui
+                showAppleFitnessAlert = true
             }
             
             return
@@ -223,6 +229,8 @@ struct ActivityView: View {
     
     //MARK: - SAVE > Running Activity
     func saveRunningActivity(seconds: Double) async {
+        couldPostOnAppleHealth = false
+        
         //Definir tipo da atividade
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .running
@@ -243,10 +251,12 @@ struct ActivityView: View {
             
             let workout = try await builder.finishWorkout()
             
-            print("✅ SUCESSO! Treino de \(workout?.workoutActivityType.name).")
+            print("✅ SUCESSO! Treino de \(String(describing: workout?.workoutActivityType.name)).")
+            couldPostOnAppleHealth = true
             
         } catch {
             print("❌ ERRO ao usar HKWorkoutBuilder: \(error.localizedDescription)")
+            couldPostOnAppleHealth = false
         }
     }
 }
