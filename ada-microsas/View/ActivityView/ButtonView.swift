@@ -61,8 +61,8 @@ struct ButtonView: View {
                     Image(systemName: "pause.fill")
                         .font(.system(size: 28))
                         .padding(12)
-                        .background(.roxo)
-                        .foregroundColor(.white)
+                        .background(.brancoGelo)
+                        .foregroundColor(.cinzaClaro)
                         .clipShape(Circle())
                         .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 10)
                 }
@@ -76,8 +76,8 @@ struct ButtonView: View {
                     Image(systemName: "stop.fill")
                         .font(.system(size: 28))
                         .padding(12)
-                        .background(.roxo)
-                        .foregroundColor(.white)
+                        .background(.brancoGelo)
+                        .foregroundColor(.cinzaClaro)
                         .clipShape(Circle())
                         .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 10)
                 }
@@ -124,6 +124,45 @@ struct ButtonView: View {
                         .clipShape(Circle())
                         .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 4)
                 }
+                
+                .padding(.horizontal)
+                
+                Button(action: {
+                    showAlert.toggle()
+                }) {
+                    Image(systemName: "stop.fill")
+                        .font(.system(size: 28))
+                        .padding(12)
+                        .background(.cinzaClaro)
+                        .foregroundColor(.brancoGelo)
+                        .clipShape(Circle())
+                        .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 10)
+                }
+                
+                .alert("Cuidado!", isPresented: $showAlert) {
+                    Button("Voltar", role: .cancel) {
+                        //logica do tempo
+                    }
+                    
+                    NavigationLink(destination: TemporalColapseView()){
+                        Button("Encerrar", role: .destructive) {
+                            //timerViewModel.endTimer()
+                            timerViewModel.pauseTimer()
+                            timerViewModel.endTimer()
+                            showColapseView.toggle()
+                            
+                            //dismiss()
+                            //logica de encerrar
+                        }
+                    }
+                    
+                }
+                
+                message: {
+                    Text("Se você encerrar agora, vai perder todo o seu progresso. Tem certeza?")
+                }
+                
+                
             }
         }
         .preferredColorScheme(.dark)

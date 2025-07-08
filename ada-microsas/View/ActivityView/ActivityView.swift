@@ -276,34 +276,79 @@ struct ActivityPhaseView: View {
     let timerText: String
     
     var body: some View {
-        VStack {
-            ZStack {
-                Image(backgroundImageName)
+        
+        ZStack {
+            Image("RestImage")
+                .resizable()
+                .scaledToFill()
+            VStack(spacing: 5) {
+                Spacer()
+                Image(phase.imageAsset)
+                    .padding(8)
+                Text(activityTypeText)
+                    .font(.callout)
+                    .fontWeight(.regular)
+                Text(phase.name)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                Spacer()
+                    ProgressBarView()
+                        .frame(width: 300, height: 300)
+                Spacer()
                 
-                VStack(spacing: 5) {
-                    Image(phase.imageAsset)
-                        .padding(8)
-                    Text(activityTypeText)
-                        .font(.callout)
-                        .fontWeight(.regular)
-                    Text(phase.name)
-                        .font(.title2)
-                        .fontWeight(.bold)
+                HStack(spacing: 12){
+                    Spacer()
+                    VStack(alignment: .leading, spacing: 8){
+                        Text("Tempo")
+                            .font(.system(size: 12))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.cinzaMuitoClaro)
+                        //MARK: MUDAR O TEMPO AGUI
+                        Text("00:21:30")
+                            .font(.system(size: 16))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.brancoGelo)
+                    }
+                    Spacer()
+                    VStack(alignment: .leading, spacing: 8){
+                        Text("Exercício")
+                            .font(.system(size: 12))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.cinzaMuitoClaro)
+                        //TODO: MUDAR O NIVEL AGUI
+                        Text("1/5")
+                            .font(.system(size: 16))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.brancoGelo)
+                    }
+                    Spacer()
+                    VStack(alignment: .leading, spacing: 8){
+                        Text("Progresso")
+                            .font(.system(size: 12))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.cinzaMuitoClaro)
+                        //TODO: MUDAR O NIVEL AGUI
+                        Text("17%")
+                            .font(.system(size: 16))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.brancoGelo)
+                    }
+                    Spacer()
                 }
-                .padding(.top, 48)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 24)
+                .background(.cinzaMedio)
+                .cornerRadius(16)
+                Spacer()
             }
+            .padding(.horizontal, 32)
             
-            Spacer()
-            
-            ProgressBarView()
-                .frame(width: 300, height: 300)
-            
-            Spacer()
-            
-            TotalProgressBarView()
-            
-            Spacer()
         }
+        .ignoresSafeArea(.all)
+        .preferredColorScheme(.dark)
+        
+       
+        
     }
     
     private var backgroundImageName: String {
@@ -382,7 +427,15 @@ struct RestPhaseView: View {
 }
 
 #Preview {
-    ActivityView()
+    
+    let phase = ActivityPhase(
+        name: "Polichinelo",
+        duration: 5,
+        isRest: false,
+        imageAsset: "BelezinhaAquecimento"
+    )
+    
+    ActivityPhaseView(phase: phase, state: .treino, timerText: "00:05")
         .environmentObject(TimerViewModel())
         .environmentObject(PlanViewModel())
 }
