@@ -68,7 +68,7 @@ struct ActivityView: View {
                         showAlert.toggle()
                     } label: {
                         HStack {
-                            Image(systemName: "arrow.backward")
+                            Image(systemName: "chevron.left")
                                 .foregroundColor(.white)
                             Text("Sair")
                                 .foregroundColor(.white)

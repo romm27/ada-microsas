@@ -68,12 +68,12 @@ struct StretchingView: View {
                     dismiss()
                 } label: {
                     HStack {
-                        Image(systemName: "arrow.backward")
+                        Image(systemName: "chevron.left")
                             .foregroundColor(.white)
                         Text("Voltar")
                             .foregroundColor(.white)
                     }
-                    .font(.system(size: 28, weight: .bold))
+                    .font(.system(.body, weight: .bold))
                 }
             }
         }
