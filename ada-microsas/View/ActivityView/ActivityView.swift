@@ -437,6 +437,7 @@ struct RestPhaseView: View {
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.cinzaMuitoClaro)
                             Text("00:00:00")
+                            //MARK: MUDAR O TEMPO AGUI
                                 .font(.system(size: 16))
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.brancoGelo)
@@ -450,6 +451,7 @@ struct RestPhaseView: View {
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.cinzaMuitoClaro)
                             Text("00%")
+                            //MARK: MUDAR O PROGRESSO AGUI
                                 .font(.system(size: 16))
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.brancoGelo)
