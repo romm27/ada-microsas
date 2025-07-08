@@ -212,7 +212,7 @@ struct ActivityView: View {
         guard planViewModel.userLevel < DataTrainingModel.shared.trainingPlans.count else {
             return nil
         }
-        return DataTrainingModel.shared.trainingPlans[planViewModel.userLevel]
+        return DataTrainingModel.shared.trainingPlans[planViewModel.currentIndex]
     }
     
     private func scheduleNotification(title: String, body: String, duration: TimeInterval, soundName: String) {

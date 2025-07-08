@@ -66,35 +66,23 @@ struct DataTrainingModel {
                 PatternGroup(repetitions: 1, isWarmup: false, phases: [Self.trotando(duration: 5), Self.caminhando(duration: 5)])
             ], requiredLevel: 1),
             
-            // TREINO TESTE - DEV MODE
-            WorkoutPlan(patternGroups: [
-                Self.devWarmup,
-                PatternGroup(repetitions: 1, isWarmup: false, phases: [Self.trotando(duration: 5), Self.caminhando(duration: 5)])
-            ], requiredLevel: 1),
-            
-            // TREINO TESTE - DEV MODE
-            WorkoutPlan(patternGroups: [
-                Self.devWarmup,
-                PatternGroup(repetitions: 1, isWarmup: false, phases: [Self.trotando(duration: 5), Self.caminhando(duration: 5)])
-            ], requiredLevel: 1),
-            
             // TREINO 1
 //            WorkoutPlan(patternGroups: [
 //                Self.standardWarmup,
 //                PatternGroup(repetitions: 6, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 180)])
 //            ], requiredLevel: 1),
             
-//            // TREINO 2
-//            WorkoutPlan(patternGroups: [
-//                Self.standardWarmup,
-//                PatternGroup(repetitions: 4, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 120)])
-//            ], requiredLevel: 2),
-//            
-//            // TREINO 3
-//            WorkoutPlan(patternGroups: [
-//                Self.standardWarmup,
-//                PatternGroup(repetitions: 10, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 90)])
-//            ], requiredLevel: 3),
+            // TREINO 2
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 4, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 120)])
+            ], requiredLevel: 2),
+            
+            // TREINO 3
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 10, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 90)])
+            ], requiredLevel: 3),
             
             // TREINO 4
             WorkoutPlan(patternGroups: [

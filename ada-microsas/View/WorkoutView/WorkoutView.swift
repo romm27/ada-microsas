@@ -16,7 +16,8 @@ struct WorkoutView: View {
     let currentIndex: Int
     
     private var workoutPlan: WorkoutPlan {
-        DataTrainingModel.shared.trainingPlans[currentIndex]
+        planViewModel.currentIndex = currentIndex
+         return DataTrainingModel.shared.trainingPlans[currentIndex]
     }
     
     var totalTime: Int {
