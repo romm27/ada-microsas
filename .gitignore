@@ -63,3 +63,5 @@ fastlane/test_output
 ada-microsas/View/.DS_Store
 ada-microsas/.DS_Store
 .DS_Store
+.DS_Store
+ada-microsas.xcodeproj/project.pbxproj
