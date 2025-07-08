@@ -32,10 +32,7 @@ struct ContentView: View {
                     TrailView()
                         .environmentObject(planViewModel)
                         .transition(.opacity)
-                    
                 }
-                
-      
             }
             .ignoresSafeArea(.all) //É AQUIIIIIII
             .onAppear {

@@ -9,71 +9,92 @@ import SwiftUI
 
 struct FinishedView: View {
     var body: some View {
-        ZStack{
-            Image("BackgroundFinished")
-                .resizable()
-                .scaledToFill()
-            
-            VStack{
-                Image("BelezinhaAlongamento")
+        NavigationStack{
+            ZStack{
+                Image("BackgroundFinished")
                     .resizable()
-                    .scaledToFit()
-                    .frame(width: 150)
-                
-                VStack(spacing: 30){
-                    VStack(spacing: 10){
-                        Text("Parabéns!")
-                            .font(.system(size: 24))
-                            .fontWeight(.bold)
-                            .foregroundStyle(.azulBotao)
-                        Text("Você avançou mais um pouco até sua máquina do tempo")
-                        
-                            .font(.system(size: 16))
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.quasePreto)
-                            .multilineTextAlignment(.center)
-                    }
+                    .scaledToFill()
+                VStack(spacing: 36){
+                    Image("BelezinhaAlongamento")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 150)
                     
-                    .padding(.vertical, 16)
-                    HStack(spacing: 8){
-                        Spacer()
-                        VStack(alignment: .leading, spacing: 8){
-                            Text("Tempo")
-                                .font(.system(size: 12))
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.cinzaMuitoClaro)
-                            Text("00:21:30")
+                    VStack(spacing: 16){
+                        VStack(spacing: 16){
+                            Text("Parabéns!")
+                                .font(.system(size: 24))
+                                .fontWeight(.bold)
+                                .foregroundStyle(.azulBotao)
+                            Text("Você avançou mais um pouco até sua máquina do tempo")
+                                .lineSpacing(12)
                                 .font(.system(size: 16))
                                 .fontWeight(.semibold)
-                                .foregroundStyle(.brancoGelo)
+                                .foregroundStyle(.cinzaMedio)
+                                .multilineTextAlignment(.center)
                         }
-                        Spacer()
-                        VStack(alignment: .leading, spacing: 8){
-                            Text("Exercício")
-                                .font(.system(size: 12))
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.cinzaMuitoClaro)
-                            Text("03/24")
-                                .font(.system(size: 16))
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.brancoGelo)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 16)
+                        HStack(spacing: 24){
+                            Spacer()
+                            VStack(alignment: .leading, spacing: 8){
+                                Text("Tempo da Atividade")
+                                    .font(.system(size: 12))
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.cinzaMuitoClaro)
+                                //MARK: MUDAR O TEMPO AGUI
+                                Text("00:21:30")
+                                    .font(.system(size: 16))
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.brancoGelo)
+                            }
+                            Spacer()
+                            VStack(alignment: .leading, spacing: 8){
+                                Text("Nível")
+                                    .font(.system(size: 12))
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.cinzaMuitoClaro)
+                                //TODO: MUDAR O NIVEL AGUI
+                                Text("03/24")
+                                    .font(.system(size: 16))
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.brancoGelo)
+                            }
+                            Spacer()
                         }
-                        Spacer()
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 24)
+                        .background(.cinzaMedio)
+                        .clipShape(.rect(cornerRadii: .init(bottomLeading: 16, bottomTrailing: 16)))
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 24)
-                    .background(.cinzaMedio)
+                    .background(.brancoGelo)
+                    .cornerRadius(16)
+                    .padding(.horizontal, 32)
+                    
+                    VStack{
+                        NavigationLink{
+                            TrailView()
+                        } label: {
+                            HStack{
+                                Spacer()
+                                Text("Continuar")
+                                    .padding(.vertical, 12)
+                                    .foregroundStyle(.quasePreto)
+                                    .font(.system(size: 16))
+                                    .fontWeight(.semibold)
+                                Spacer()
+                            }
+                            .background(.verdeLimaBotao)
+                            .cornerRadius(8)
+                            .padding(.horizontal, 32)
+                        }
+                    }
                 }
-                
-                .background(.brancoGelo)
-                .cornerRadius(16)
+                .padding(.bottom, 120)
             }
-            
-            
+            .ignoresSafeArea(.all)
+            .preferredColorScheme(.dark)
         }
-        .ignoresSafeArea(.all)
-        .preferredColorScheme(.dark)
-        
     }
 }
 

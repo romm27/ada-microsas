@@ -23,8 +23,7 @@ struct ProgressBarView: View {
             Circle()
                 .trim(from: 0, to: totalArc)
                 .stroke(style: StrokeStyle(lineWidth: 35.0, lineCap: .round, lineJoin: .round))
-                .opacity(0.25)
-                .foregroundStyle(.cinzaClaro)
+                .foregroundStyle(.brancoGelo)
                 .rotationEffect(Angle(degrees: 144))
             
             //circle green
@@ -32,18 +31,7 @@ struct ProgressBarView: View {
 //                .trim(from: 0.0, to: CGFloat(min(self.progress, 0.7)))
                 .trim(from: 0, to: CGFloat(timerViewModel.progress) * 0.7)
                 .stroke(style: StrokeStyle(lineWidth: 35.0, lineCap: .round, lineJoin: .round))
-                .foregroundStyle(
-                    LinearGradient(
-                        gradient: Gradient(
-                            colors: [
-                                Color.roxo,
-                                Color.verdeLima
-                            ]
-                        ),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
+                .foregroundStyle(.azulBotao)
                 .animation(.interpolatingSpring, value: timerViewModel.progress)
               
             //degree starts at 12`o
@@ -78,6 +66,7 @@ struct ProgressBarView: View {
                 Text("\(timerViewModel.getFormattedCurrentTimer())")
                     .font(.system(size: 56))
                     .fontWeight(.semibold)
+                    .foregroundStyle(.verdeLima)
                 
            Spacer()
                 
