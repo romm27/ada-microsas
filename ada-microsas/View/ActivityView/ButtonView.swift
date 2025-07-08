@@ -119,8 +119,8 @@ struct ButtonView: View {
                     Image(systemName: "play.fill")
                         .font(.system(size: 28))
                         .padding(12)
-                        .background(.verdeLimaBotao)
-                        .foregroundColor(.quasePreto)
+                        .background(.cinzaClaro)
+                        .foregroundColor(.brancoGelo)
                         .clipShape(Circle())
                         .shadow(color:.black.opacity(0.35), radius: 4, x: 0, y: 4)
                 }

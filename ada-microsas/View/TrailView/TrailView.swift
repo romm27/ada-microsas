@@ -80,12 +80,22 @@ struct TrailView: View {
     private func trailItem(for index: Int, geometry: GeometryProxy) -> some View {
             let position = getRelativePosition(for: index, total: trail.count)
             let workoutColor = trailColors[trailColorPattern[index % trailColorPattern.count]]
+        
+
             
+            
+    
             return NavigationLink {
                 // Changed to navigate to WorkoutView first
-                WorkoutView(currentIndex: index)
-                    .environmentObject(planViewModel)
-                    .environmentObject(timerViewModel)
+                
+                if index == 0 {
+                    TabOnBoardingView()
+                } else {
+                    WorkoutView(currentIndex: index)
+                        .environmentObject(planViewModel)
+                        .environmentObject(timerViewModel)
+                }
+
             } label: {
                 WorkoutTrailDisplay(
                     workoutColor: workoutColor,

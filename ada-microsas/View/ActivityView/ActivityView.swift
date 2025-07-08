@@ -308,7 +308,9 @@ struct RestPhaseView: View {
                     }
                     .font(.headline)
                     .foregroundColor(.white)
-                    .padding(.vertical, 10)    
+                    .padding(.vertical, 10)
+                    
+                    TotalProgressBarView()
                     
 
                 }
