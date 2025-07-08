@@ -85,6 +85,8 @@ struct RestView: View {
                             .padding(.vertical, 10)                        }
                     }
                     
+                    TotalProgressBarView()
+                    
                    
                  
 

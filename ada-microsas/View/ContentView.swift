@@ -22,7 +22,6 @@ struct ContentView: View {
         
         NavigationStack{
             ZStack {
-                
                 if showSplash{
                     SplashScreenView()
                         .transition(.opacity)
@@ -30,7 +29,7 @@ struct ContentView: View {
                 } else {
 
                     
-                    TabOnBoardingView()
+                    TrailView()
                         .environmentObject(planViewModel)
                         .transition(.opacity)
                     

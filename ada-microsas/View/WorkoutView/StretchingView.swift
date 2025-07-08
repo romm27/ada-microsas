@@ -62,6 +62,22 @@ struct StretchingView: View {
             
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    HStack {
+                        Image(systemName: "arrow.backward")
+                            .foregroundColor(.white)
+                        Text("Voltar")
+                            .foregroundColor(.white)
+                    }
+                    .font(.system(size: 28, weight: .bold))
+                }
+            }
+        }
+
         
         .preferredColorScheme(.dark)
     }

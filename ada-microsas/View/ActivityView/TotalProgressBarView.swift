@@ -39,7 +39,7 @@ struct TotalProgressBarView: View {
     //                        .frame(width: (300*fakeProgress), height: 25)
                             .cornerRadius(24)
                             .foregroundStyle(.roxo)
-                            .opacity(0.5)
+                            //.opacity(0.5)
                             .animation(.interpolatingSpring, value: timerViewModel.progress)
                         
                         HStack{
