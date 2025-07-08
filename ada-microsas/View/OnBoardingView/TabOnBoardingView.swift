@@ -44,7 +44,7 @@ struct TabOnBoardingView: View {
                         .resizable()
                         .scaledToFill()
                     
-                    NavigationLink(destination: WorkoutView(currentIndex: 2)){
+                    NavigationLink(destination: WorkoutView(currentIndex: 0)){
                         ZStack{
                             Image(dataModel.cardsList[2].image)
                                 .resizable()
