@@ -177,11 +177,13 @@ struct WorkoutTrailDisplay: View {
                 .foregroundStyle(workoutColor.workoutColor)
                 .frame(width: innerDiameter, height: innerDiameter)
                 .overlay{
-                    if orderInArray == planViewModel.userLevel + 1 {
-                        Image(systemName: "lock.open.fill")
-                            .foregroundStyle(Color.white)
-                            .bold()
-                    } else if orderInArray > planViewModel.userLevel {
+                    //Cadeado Aberto em posição atual + 1x
+//                    if orderInArray == planViewModel.userLevel + 1 {
+//                        Image(systemName: "lock.open.fill")
+//                            .foregroundStyle(Color.white)
+//                            .bold()
+//                    } else
+                    if orderInArray > planViewModel.userLevel {
                         Image(systemName: "lock.fill")
                             .foregroundStyle(Color.white)
                             .bold()
