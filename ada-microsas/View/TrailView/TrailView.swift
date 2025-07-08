@@ -78,39 +78,42 @@ struct TrailView: View {
     }
     
     private func trailItem(for index: Int, geometry: GeometryProxy) -> some View {
-            let position = getRelativePosition(for: index, total: trail.count)
-            let workoutColor = trailColors[trailColorPattern[index % trailColorPattern.count]]
+        let position = getRelativePosition(for: index, total: trail.count)
+        let workoutColor = trailColors[trailColorPattern[index % trailColorPattern.count]]
+//        planViewModel.currentIndex = index
         
-
+        
+        
+        
+        
+        
+        return NavigationLink {
+            // Changed to navigate to WorkoutView first
             
-            
-    
-            return NavigationLink {
-                // Changed to navigate to WorkoutView first
+            if index == 0 {
+                TabOnBoardingView()
+            } else {
+                WorkoutView(currentIndex: index)
+                    .environmentObject(planViewModel)
+                    .environmentObject(timerViewModel)
                 
-                if index == 0 {
-                    TabOnBoardingView()
-                } else {
-                    WorkoutView(currentIndex: index)
-                        .environmentObject(planViewModel)
-                        .environmentObject(timerViewModel)
-                }
-
-            } label: {
-                WorkoutTrailDisplay(
-                    workoutColor: workoutColor,
-                    workoutPlan: trail[index],
-                    imageSize: geometry.size,
-                    orderInArray: index
-                )
             }
-            .environmentObject(planViewModel)
-            .position(
-                x: geometry.size.width * position.x,
-                y: geometry.size.height * position.y
+            
+        } label: {
+            WorkoutTrailDisplay(
+                workoutColor: workoutColor,
+                workoutPlan: trail[index],
+                imageSize: geometry.size,
+                orderInArray: index
             )
         }
-
+        .environmentObject(planViewModel)
+        .position(
+            x: geometry.size.width * position.x,
+            y: geometry.size.height * position.y
+        )
+    }
+    
     private func getRelativePosition(for index: Int, total: Int) -> CGPoint {
         let topMargin: Double = 0.0275
         let bottomMargin: Double = 0.03
@@ -178,11 +181,11 @@ struct WorkoutTrailDisplay: View {
                 .frame(width: innerDiameter, height: innerDiameter)
                 .overlay{
                     //Cadeado Aberto em posição atual + 1x
-//                    if orderInArray == planViewModel.userLevel + 1 {
-//                        Image(systemName: "lock.open.fill")
-//                            .foregroundStyle(Color.white)
-//                            .bold()
-//                    } else
+                    //                    if orderInArray == planViewModel.userLevel + 1 {
+                    //                        Image(systemName: "lock.open.fill")
+                    //                            .foregroundStyle(Color.white)
+                    //                            .bold()
+                    //                    } else
                     if orderInArray > planViewModel.userLevel {
                         Image(systemName: "lock.fill")
                             .foregroundStyle(Color.white)
