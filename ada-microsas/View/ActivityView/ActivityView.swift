@@ -375,49 +375,94 @@ struct RestPhaseView: View {
                 .resizable()
                 .scaledToFill()
             
-            VStack(spacing: 25) {
-                
-                if let nextPhase = nextPhase {
-                    VStack(spacing: 5) {
-                        Text("Próxima Atividade")
-                            .font(.system(size: 16))
-                            .fontWeight(.semibold)
-                        Text(nextPhase.name)
-                            .font(.system(size: 14))
-                            .foregroundStyle(.white)
+            VStack(spacing: 40){
+                VStack(spacing: 56){
+                    VStack(spacing: 20){
+                        Image(phase.imageAsset)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 150)
+                        
+                        VStack(spacing: 10){
+                            Text(phase.name)
+                                .font(.system(size: 34))
+                                .fontWeight(.bold)
+                                .foregroundStyle(.white)
+                            
+                            Text(timerText)
+                                .font(.system(size: 58))
+                                .fontWeight(.regular)
+                                .foregroundStyle(.verdeLima)
+                        }
+                        
+                        VStack(spacing: 10){
+                            if let nextPhase = nextPhase {
+                                VStack(spacing: 5) {
+                                    Text("Próxima Atividade")
+                                        .font(.system(size: 16))
+                                        .fontWeight(.semibold)
+                                    Text(nextPhase.name)
+                                        .font(.system(size: 14))
+                                        .foregroundStyle(.white)
+                                }
+                            }
+                        }
                     }
-                }
-                
-                Image(phase.imageAsset)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 130)
-                
-                VStack(spacing: 25) {
-                    Text(phase.name)
-                        .font(.system(size: 30))
-                        .fontWeight(.bold)
-                        .foregroundStyle(.white)
-                    
-                    Text(timerText)
-                        .font(.system(size: 35))
-                        .fontWeight(.regular)
-                        .foregroundStyle(.verdeLima)
                     
                     ButtonView()
                         .padding(.trailing, 12)
-                    
-                    Button("Pular") {
-                        onSkip() // Dispara o callback para a ActivityView
-                    }
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding(.vertical, 10)
-                    
-                    TotalProgressBarView()
-                    
-
                 }
+                
+                VStack{
+                    Button{
+                        onSkip()
+                    }
+                    label: {
+                        Text("Pular")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.verdeLima)
+                            .padding(.vertical, 10)
+                        
+                    }
+                    
+                }
+                
+                ZStack{
+                    HStack(spacing: 60){
+                        
+                        VStack(alignment: .leading){
+                            Text("Tempo")
+                                .font(.system(size: 12))
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.cinzaMuitoClaro)
+                            Text("00:00:00")
+                                .font(.system(size: 16))
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.brancoGelo)
+                        }
+                        .padding(.leading, 20)
+                        
+                        
+                        VStack(alignment: .leading){
+                            Text("Progresso")
+                                .font(.system(size: 12))
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.cinzaMuitoClaro)
+                            Text("00%")
+                                .font(.system(size: 16))
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.brancoGelo)
+                        }
+                        .padding(.trailing)
+                    }
+                    .padding(24)
+                    .padding(.horizontal, 20)
+                }
+                .background(.cinzaMedio)
+                .cornerRadius(16)
+
+                
             }
         }
         .ignoresSafeArea(.all)
