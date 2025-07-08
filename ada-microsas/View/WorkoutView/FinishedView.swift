@@ -92,6 +92,7 @@ struct FinishedView: View {
                 }
                 .padding(.bottom, 120)
             }
+            .navigationBarBackButtonHidden(true)
             .ignoresSafeArea(.all)
             .preferredColorScheme(.dark)
         }
