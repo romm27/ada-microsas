@@ -11,6 +11,7 @@ struct WorkoutView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
+
     
     let currentIndex: Int
     
@@ -21,6 +22,8 @@ struct WorkoutView: View {
     var totalTime: Int {
         workoutPlan.totalDurationMinutes
     }
+    
+
     
     var body: some View {
         NavigationStack {
@@ -148,6 +151,8 @@ struct WorkoutView: View {
                     .shadow(radius: 10)
                     .zIndex(1) // Ensure it's above background
                     
+                    let buttonEnabled = planViewModel.userLevel >= currentIndex
+                    
                     // Start button
                     NavigationLink {
                         StretchingView()
@@ -156,16 +161,22 @@ struct WorkoutView: View {
                     } label: {
                         HStack {
                             Spacer()
-                            Text("Começar a Correr")
+                            if !buttonEnabled {
+                                Image(systemName: "lock")
+                                    .foregroundStyle(.white)
+                                    
+                            }
+                            Text(buttonEnabled ? "Começar a Correr" : "Treino Bloqueado")
                                 .padding(.vertical, 12)
                                 .foregroundColor(.white)
                                 .font(.system(size: 16, weight: .semibold))
                             Spacer()
                         }
-                        .background(Color.roxo)
+                        .background(buttonEnabled ? Color.roxo : Color.cinzaClaro)
                         .cornerRadius(8)
                     }
                     .zIndex(1)
+                    .disabled(!buttonEnabled)
                     
                     Spacer()
                 }

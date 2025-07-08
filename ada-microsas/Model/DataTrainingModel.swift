@@ -9,81 +9,202 @@ import Foundation
 
 struct DataTrainingModel {
     static let shared = DataTrainingModel()
+
     
-    //DEBUG TOSCO D++++ REAVALIAR SEGUNDA!
-    static let restActivityPhase: ActivityPhase = ActivityPhase(
-        name: "Descanso",
-        duration: 5,
-        isRest: true,
-        imageAsset: "BelezinhaDescanso"
+    // Warmup Exercises
+    static let polichinelo30s = ActivityPhase(name: "Polichinelo", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento")
+    static let saltoPontaPe30s = ActivityPhase(name: "Salto na Ponta do Pé", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento")
+    static let corridaParada30s = ActivityPhase(name: "Corrida Parada", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento")
+    static let agachamento30s = ActivityPhase(name: "Agachamento", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento")
+    static let panturrilha30s = ActivityPhase(name: "Panturrilha em Pé", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento")
+
+    // Main Training Exercises
+    static func trotando(duration: Int) -> ActivityPhase {
+        ActivityPhase(name: "Trotando", duration: duration, isRest: false, imageAsset: "BelezinhaTreino")
+    }
+    
+    static func caminhando(duration: Int) -> ActivityPhase {
+        ActivityPhase(name: "Caminhando", duration: duration, isRest: false, imageAsset: "BelezinhaDescanso")
+    }
+    
+    // Rest Phases
+    static let rest30s = ActivityPhase(name: "Recuperando", duration: 30, isRest: true, imageAsset: "BelezinhaDescanso")
+    static let rest60s = ActivityPhase(name: "Recuperando", duration: 60, isRest: true, imageAsset: "BelezinhaDescanso")
+    static func parado(duration: Int) -> ActivityPhase {
+        ActivityPhase(name: "Recuperação Parado", duration: duration, isRest: true, imageAsset: "BelezinhaDescanso")
+    }
+
+    // MARK: - Reusable Pattern Groups (Warmups)
+
+    static let standardWarmup = PatternGroup(
+        repetitions: 2,
+        isWarmup: true,
+        phases: [polichinelo30s, rest30s, saltoPontaPe30s, rest30s, corridaParada30s, rest30s]
     )
     
-    static let debugWorkoutPlan: WorkoutPlan = WorkoutPlan(
-        patternGroups: [
-            PatternGroup(
-                repetitions: 2,
-                isWarmup: true,
-                phases: [
-                    ActivityPhase(
-                        name: "Polichinelo",
-                        duration: 5,
-                        isRest: false,
-                        imageAsset: "BelezinhaAquecimento"
-                    ),
-                    restActivityPhase,
-                    ActivityPhase(
-                        name: "Salto na Ponta do Pé",
-                        duration: 5,
-                        isRest: false,
-                        imageAsset: "BelezinhaAquecimento"
-                    ),
-                    restActivityPhase,
-                    ActivityPhase(
-                        name: "Correr Parado",
-                        duration: 5,
-                        isRest: false,
-                        imageAsset: "BelezinhaAquecimento"
-                    ),
-                    restActivityPhase
-                ]
-            ),
-            
-            // Main training group (repeats 2 times)
-            PatternGroup(
-                repetitions: 2,
-                isWarmup: false,
-                phases: [
-                    ActivityPhase(
-                        name: "Trote",
-                        duration: 5,
-                        isRest: false,
-                        imageAsset: "BelezinhaTreino"
-                    ),
-                    ActivityPhase(
-                        name: "Corrida",
-                        duration: 5,
-                        isRest: false,
-                        imageAsset: "BelezinhaTreino"
-                    )
-                ]
-            )
-        ],
-        requiredLevel: 1
+    static let advancedWarmup = PatternGroup(
+        repetitions: 2,
+        isWarmup: true,
+        phases: [agachamento30s, rest30s, polichinelo30s, rest30s, saltoPontaPe30s, rest30s, corridaParada30s, rest30s, panturrilha30s, rest60s]
     )
+    
+    // MARK: - Main Data Source
     
     var trainingPlans: [WorkoutPlan] = []
     
     init() {
-        for _ in 1...24 {
-            trainingPlans.append(DataTrainingModel.debugWorkoutPlan)
-        }
+        trainingPlans = [
+            // TREINO 1
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 6, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 180)])
+            ], requiredLevel: 1),
+            
+            // TREINO 2
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 4, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 120)])
+            ], requiredLevel: 2),
+            
+            // TREINO 3
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 10, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 90)])
+            ], requiredLevel: 3),
+            
+            // TREINO 4
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 5, isWarmup: false, phases: [Self.trotando(duration: 60), Self.caminhando(duration: 180)])
+            ], requiredLevel: 4),
+
+            // TREINO 5
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 6, isWarmup: false, phases: [Self.trotando(duration: 60), Self.caminhando(duration: 180)])
+            ], requiredLevel: 5),
+
+            // TREINO 6
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 16, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 60)])
+            ], requiredLevel: 6),
+            
+            // TREINO 7
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 7, isWarmup: false, phases: [Self.trotando(duration: 60), Self.caminhando(duration: 120)])
+            ], requiredLevel: 7),
+            
+            // TREINO 8
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 8, isWarmup: false, phases: [Self.trotando(duration: 60), Self.caminhando(duration: 120)])
+            ], requiredLevel: 8),
+
+            // TREINO 9
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 8, isWarmup: false, phases: [Self.trotando(duration: 60), Self.caminhando(duration: 180)])
+            ], requiredLevel: 9),
+
+            // TREINO 10
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 12, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 30)])
+            ], requiredLevel: 10),
+
+            // TREINO 11
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 15, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 30)])
+            ], requiredLevel: 11),
+
+            // TREINO 12
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 5, isWarmup: false, phases: [Self.trotando(duration: 90), Self.caminhando(duration: 150)])
+            ], requiredLevel: 12),
+
+            // TREINO 13
+            WorkoutPlan(patternGroups: [
+                Self.advancedWarmup,
+                PatternGroup(repetitions: 7, isWarmup: false, phases: [Self.trotando(duration: 90), Self.caminhando(duration: 150)])
+            ], requiredLevel: 13),
+
+            // TREINO 14
+            WorkoutPlan(patternGroups: [
+                Self.advancedWarmup,
+                PatternGroup(repetitions: 4, isWarmup: false, phases: [Self.trotando(duration: 90), Self.caminhando(duration: 120)])
+            ], requiredLevel: 14),
+
+            // TREINO 15
+            WorkoutPlan(patternGroups: [
+                Self.advancedWarmup,
+                PatternGroup(repetitions: 5, isWarmup: false, phases: [Self.trotando(duration: 90), Self.caminhando(duration: 120)])
+            ], requiredLevel: 15),
+
+            // TREINO 16
+            WorkoutPlan(patternGroups: [
+                Self.advancedWarmup,
+                PatternGroup(repetitions: 5, isWarmup: false, phases: [Self.trotando(duration: 120), Self.caminhando(duration: 240)])
+            ], requiredLevel: 16),
+
+            // TREINO 17
+            WorkoutPlan(patternGroups: [
+                Self.advancedWarmup,
+                PatternGroup(repetitions: 6, isWarmup: false, phases: [Self.trotando(duration: 120), Self.caminhando(duration: 240)])
+            ], requiredLevel: 17),
+
+            // TREINO 18
+            WorkoutPlan(patternGroups: [
+                Self.advancedWarmup,
+                PatternGroup(repetitions: 6, isWarmup: false, phases: [Self.trotando(duration: 120), Self.caminhando(duration: 180)])
+            ], requiredLevel: 18),
+
+            // TREINO 19
+            WorkoutPlan(patternGroups: [
+                Self.advancedWarmup,
+                PatternGroup(repetitions: 5, isWarmup: false, phases: [Self.trotando(duration: 180), Self.parado(duration: 180)])
+            ], requiredLevel: 19),
+
+            // TREINO 20
+            WorkoutPlan(patternGroups: [
+                Self.advancedWarmup,
+                PatternGroup(repetitions: 5, isWarmup: false, phases: [Self.trotando(duration: 180), Self.parado(duration: 120)])
+            ], requiredLevel: 20),
+            
+            // TREINO 21
+            WorkoutPlan(patternGroups: [
+                Self.advancedWarmup,
+                PatternGroup(repetitions: 7, isWarmup: false, phases: [Self.trotando(duration: 180), Self.parado(duration: 120)])
+            ], requiredLevel: 21),
+            
+            // TREINO 22
+            WorkoutPlan(patternGroups: [
+                Self.advancedWarmup,
+                PatternGroup(repetitions: 5, isWarmup: false, phases: [Self.trotando(duration: 180), Self.caminhando(duration: 180)])
+            ], requiredLevel: 22),
+            
+            // TREINO 23
+            WorkoutPlan(patternGroups: [
+                Self.advancedWarmup,
+                PatternGroup(repetitions: 3, isWarmup: false, phases: [Self.trotando(duration: 240), Self.caminhando(duration: 180)])
+            ], requiredLevel: 23),
+            
+            // TREINO 24
+            WorkoutPlan(patternGroups: [
+                Self.advancedWarmup,
+                PatternGroup(repetitions: 5, isWarmup: false, phases: [Self.trotando(duration: 240), Self.caminhando(duration: 180)])
+            ], requiredLevel: 24),
+        ]
     }
 }
 
 struct ActivityPhase: Identifiable {
     let id = UUID()
     let name: String
-    let duration: Int
+    let duration: Int // Duration in seconds
     let isRest: Bool
     let imageAsset: String
 }
@@ -95,7 +216,8 @@ struct PatternGroup: Identifiable {
     let phases: [ActivityPhase]
     
     var totalDuration: Int {
-        phases.reduce(0) { $0 + $1.duration } * repetitions
+        let singleRepDuration = phases.reduce(0) { $0 + $1.duration }
+        return singleRepDuration * repetitions
     }
 }
 
@@ -105,7 +227,8 @@ struct WorkoutPlan: Identifiable {
     let requiredLevel: Int
     
     var totalDurationMinutes: Int {
-        patternGroups.reduce(0) { $0 + $1.totalDuration } / 60
+        let totalSeconds = patternGroups.reduce(0) { $0 + $1.totalDuration }
+        return totalSeconds / 60
     }
     
     var allPhases: [ActivityPhase] {
