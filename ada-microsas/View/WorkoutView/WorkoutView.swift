@@ -11,6 +11,7 @@ struct WorkoutView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
+    @EnvironmentObject var router: Router
 
     
     let currentIndex: Int
@@ -27,7 +28,6 @@ struct WorkoutView: View {
 
     
     var body: some View {
-        NavigationStack {
             ZStack {
                 Color.quasePreto
                     .edgesIgnoringSafeArea(.all)
@@ -159,6 +159,7 @@ struct WorkoutView: View {
                         StretchingView()
                             .environmentObject(planViewModel)
                             .environmentObject(timerViewModel)
+                            .environmentObject(router)
                     } label: {
                         HStack {
                             Spacer()
@@ -199,9 +200,6 @@ struct WorkoutView: View {
                     }
                 }
             }
-            .preferredColorScheme(.dark)
-            .ignoresSafeArea(.all)
-        }
     }
 }
 
@@ -210,5 +208,6 @@ struct WorkoutView_Previews: PreviewProvider {
         WorkoutView(currentIndex: 0)
             .environmentObject(TimerViewModel())
             .environmentObject(PlanViewModel())
+            .environmentObject(Router())
     }
 }

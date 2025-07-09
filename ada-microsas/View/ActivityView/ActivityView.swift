@@ -21,6 +21,7 @@ struct ActivityView: View {
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
     @EnvironmentObject var healthStore: HKHealthStore
+    @EnvironmentObject var router: Router
     
     
     @State private var state: StateActivity = .aquecimento
@@ -53,6 +54,7 @@ struct ActivityView: View {
                                 proceedToNextPhase() // Avança para a próxima fase
                             }
                         )
+                        .environmentObject(router)
                     } else {
                         ActivityPhaseView(
                             phase: currentActivity,
@@ -60,6 +62,7 @@ struct ActivityView: View {
                             timerText: timerViewModel.getFormattedCurrentTimer(),
                             currentPhaseIndex: currentPhaseIndex
                         )
+                        .environmentObject(router)
                     }
                 }
             }
@@ -81,15 +84,16 @@ struct ActivityView: View {
                         Button("Voltar", role: .cancel) {
                             //logica do tempo
                         }
-                        NavigationLink(destination: TemporalColapseView()){
-                            Button("Encerrar", role: .destructive) {
-                                //timerViewModel.endTimer()
-                                timerViewModel.pauseTimer()
-                                timerViewModel.endTimer()
-                                showColapseView.toggle()
-                                //logica de encerrar
-                            }
+                        
+                        Button("Encerrar", role: .destructive) {
+                            //timerViewModel.endTimer()
+                            timerViewModel.pauseTimer()
+                            timerViewModel.endTimer()
+                            showColapseView.toggle()
+                            router.popToRoot()
+                            //logica de encerrar
                         }
+                        
                     }
                     message: {
                         Text("Se você encerrar agora, vai perder todo o seu progresso. Tem certeza?")
@@ -108,14 +112,16 @@ struct ActivityView: View {
             }
             .alert("Parabéns!", isPresented: $showCompletionAlert) {
                 Button("OK") {
-//                    dismiss()
+                    //                    dismiss()
+                    router.popToRoot()
                 }
             } message: {
                 Text("Você concluiu o treino com sucesso!")
             }
             .alert(couldPostOnAppleHealth ? "✅ Sucesso - Health " : "❌ Erro - Apple Health", isPresented: $showAppleFitnessAlert) {
                 Button("OK") {
-                    dismiss()
+                    //dismiss()
+                    router.popToRoot()
                 }
             } message: {
                 Text(couldPostOnAppleHealth ? "Sucesso ao sincronizar seu treino." :  "Erro ao sincronizar seu treino. \nHabilite permissões no app 'Health'." )
@@ -286,6 +292,7 @@ struct ActivityPhaseView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
+    @EnvironmentObject var router: Router
     
     var body: some View {
         
@@ -301,7 +308,7 @@ struct ActivityPhaseView: View {
                         .scaleEffect(1.0)
                         .padding(8)
                         .padding(.leading, 38)
-                        
+                    
                 } else {
                     // Fallback se não houver uma cena SpriteKit definida
                     Image(phase.imageAsset)
@@ -314,8 +321,8 @@ struct ActivityPhaseView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 Spacer()
-                    ProgressBarView()
-                        .frame(width: 300, height: 300)
+                ProgressBarView()
+                    .frame(width: 300, height: 300)
                 Spacer()
                 
                 HStack(spacing: 12){
@@ -367,13 +374,13 @@ struct ActivityPhaseView: View {
         .ignoresSafeArea(.all)
         .preferredColorScheme(.dark)
         
-       
+        
         
     }
-//    
-//    private var backgroundImageName: String {
-//        state == .treino ? "BackgroundTreino" : "BackgroundAquecimento"
-//    }
+    //
+    //    private var backgroundImageName: String {
+    //        state == .treino ? "BackgroundTreino" : "BackgroundAquecimento"
+    //    }
     
     private var activityTypeText: String {
         state == .treino ? "Treino" : "Aquecendo"
@@ -386,6 +393,7 @@ struct RestPhaseView: View {
     let timerText: String
     let onSkip: () -> Void
     
+    @EnvironmentObject var router: Router
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
@@ -393,7 +401,7 @@ struct RestPhaseView: View {
     var body: some View {
         ZStack{
             
-//            Color.cinzaEscuro.edgesIgnoringSafeArea(.all)
+            //            Color.cinzaEscuro.edgesIgnoringSafeArea(.all)
             
             Image("RestImage")
                 .resizable()
@@ -444,21 +452,22 @@ struct RestPhaseView: View {
                     }
                     
                     ButtonView()
+                        .environmentObject(router)
                         .padding(.trailing, 12)
                 }
                 
-//                matei por hora. Dudu :)
+                //                matei por hora. Dudu :)
                 VStack{
-//                    Button{
-//                        onSkip()
-//                    }
-//                    label: {
-                        Text(" ")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.verdeLima)
-                            .padding(.vertical, 10)
-//                    }
+                    //                    Button{
+                    //                        onSkip()
+                    //                    }
+                    //                    label: {
+                    Text(" ")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.verdeLima)
+                        .padding(.vertical, 10)
+                    //                    }
                 }
                 
                 HStack(spacing: 12){
@@ -502,7 +511,7 @@ struct RestPhaseView: View {
                 .background(.cinzaMedio)
                 .cornerRadius(16)
                 .padding(.horizontal, 32)
-
+                
                 
             }
         }
@@ -525,4 +534,5 @@ struct RestPhaseView: View {
     ActivityPhaseView(phase: phase, state: .treino, timerText: "00:05", currentPhaseIndex: 1)
         .environmentObject(TimerViewModel())
         .environmentObject(PlanViewModel())
+        .environmentObject(Router())
 }

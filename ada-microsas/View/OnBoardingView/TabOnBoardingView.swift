@@ -27,6 +27,7 @@ struct TabOnBoardingView: View {
     
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
+    @EnvironmentObject var router: Router
     
     let dataModel = DataOnBoardingModel()
     @State private var navigateToHome = false
@@ -55,6 +56,7 @@ struct TabOnBoardingView: View {
                     }
                     .environmentObject(planViewModel)
                     .environmentObject(timerViewModel)
+                    .environmentObject(router)
                     
     
                 }
@@ -92,4 +94,5 @@ struct TabOnBoardingView: View {
     TabOnBoardingView()
         .environmentObject(TimerViewModel())
         .environmentObject(PlanViewModel())
+        .environmentObject(Router())
 }

@@ -13,12 +13,12 @@ struct StretchingView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
+    @EnvironmentObject var router: Router
     
+    //DEEP SEEK, THIS IS THE LINE THAT IS NOT COMPILING
     let stretchingScene = Stretching()
     
     var body: some View {
-        NavigationStack{
-            
             ZStack{
                 
                 Image("StretchingImage")
@@ -42,6 +42,9 @@ struct StretchingView: View {
                     
                     NavigationLink{
                         ActivityView()
+                            .environmentObject(planViewModel)
+                            .environmentObject(timerViewModel)
+                            .environmentObject(router)
                     } label: {
                         HStack{
                             Spacer()
@@ -60,36 +63,30 @@ struct StretchingView: View {
                 }
                 .padding(.horizontal, 32)
             }
-            
-            
+            .foregroundStyle(.white)
             .ignoresSafeArea(.all)
-            
-        }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(.white)
-                        Text("Voltar")
-                            .foregroundColor(.white)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        //dismiss()
+                        router.popToRoot()
+                    } label: {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.white)
+                            Text("Voltar")
+                                .foregroundColor(.white)
+                        }
+                        .font(.system(.body, weight: .bold))
                     }
-                    .font(.system(.body, weight: .bold))
                 }
             }
-        }
-
-        
-        .preferredColorScheme(.dark)
     }
-    
 }
 
 #Preview{
     StretchingView()
         .environmentObject(TimerViewModel())
         .environmentObject(PlanViewModel())
+        .environmentObject(Router())
 }

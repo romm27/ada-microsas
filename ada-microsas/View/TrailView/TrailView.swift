@@ -9,6 +9,8 @@ import SwiftUI
 import UserNotifications
 
 struct TrailView: View {
+    @EnvironmentObject var router: Router
+    
     @EnvironmentObject var planViewModel: PlanViewModel
     @EnvironmentObject var timerViewModel: TimerViewModel
     let trail: [WorkoutPlan] = DataTrainingModel.shared.trainingPlans
@@ -23,7 +25,7 @@ struct TrailView: View {
     let trailColorPattern = [0,0,0, 1, 1 ,1, 2, 2 ,2, 3 ,3 ,3]
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $router.path) {
             trailContentView
         }
         .navigationBarBackButtonHidden(true)
@@ -96,6 +98,7 @@ struct TrailView: View {
                 WorkoutView(currentIndex: index)
                     .environmentObject(planViewModel)
                     .environmentObject(timerViewModel)
+                    .environmentObject(router)
                 
             }
             
@@ -218,4 +221,5 @@ struct WorkoutColor {
     TrailView()
         .environmentObject(PlanViewModel())
         .environmentObject(TimerViewModel())
+        .environmentObject(Router())
 }

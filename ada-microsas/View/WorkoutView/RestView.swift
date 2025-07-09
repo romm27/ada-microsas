@@ -11,6 +11,7 @@ struct RestView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
+    @EnvironmentObject var router: Router
     @State private var currentCounter: Int = 0
     
     let currentIndex: Int
@@ -75,6 +76,7 @@ struct RestView: View {
                     }
                     
                     ButtonView()
+                        .environmentObject(router)
                         .padding(.trailing, 12)
                 }
                 
@@ -151,4 +153,5 @@ struct RestView: View {
     RestView(currentIndex: 0)
         .environmentObject(TimerViewModel())
         .environmentObject(PlanViewModel())
+        .environmentObject(Router())
 }

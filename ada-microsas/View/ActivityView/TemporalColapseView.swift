@@ -8,16 +8,17 @@
 import SwiftUI
     
 struct TemporalColapseView: View {
-    var body: some View {
-        NavigationStack{
-            ZStack{
+    @EnvironmentObject var router: Router
+    
+    var body: some View {            ZStack{
                 Image("Temporal")
                     .resizable()
                     .scaledToFill()
                 
                 VStack{
-                    NavigationLink{
-                        TrailView()
+                    Button{
+                        print(router)
+                        router.popToRoot()
                     } label: {
                         HStack{
                             Spacer()
@@ -37,13 +38,12 @@ struct TemporalColapseView: View {
                 .padding(.horizontal, 32)
 
             }
-            .navigationBarBackButtonHidden(true)
-        }
-        .ignoresSafeArea(.all)
-        .preferredColorScheme(.dark)
-    }
+            .navigationBarBackButtonHidden(true)    }
 }
 
 #Preview {
-    TemporalColapseView()
+    NavigationStack {
+        TemporalColapseView()
+            .environmentObject(Router())
+    }
 }

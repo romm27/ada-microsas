@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ButtonView: View {
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var router: Router
     
     @EnvironmentObject var timerViewModel: TimerViewModel
     
@@ -87,17 +88,23 @@ struct ButtonView: View {
                         //logica do tempo
                     }
                     
-                    NavigationLink(destination: TemporalColapseView()){
-                        Button("Encerrar", role: .destructive) {
-                            //timerViewModel.endTimer()
-                            timerViewModel.pauseTimer()
-                            timerViewModel.endTimer()
-                            showColapseView.toggle()
-                            
-                            //dismiss()
-                            //logica de encerrar
-                        }
-                    }
+//                    NavigationLink(destination: TemporalColapseView().environmentObject(router)){
+//                        Button("Encerrar", role: .destructive) {
+//                            //timerViewModel.endTimer()
+//                            timerViewModel.pauseTimer()
+//                            timerViewModel.endTimer()
+//                            showColapseView.toggle()
+//                            
+//                            //dismiss()
+//                            //logica de encerrar
+//                        }
+//                    }
+                    
+                    Button("Encerrar", role: .destructive) {
+                                            timerViewModel.pauseTimer()
+                                            timerViewModel.endTimer()
+                                            router.popToRoot()
+                                        }
                     
                 }
                 

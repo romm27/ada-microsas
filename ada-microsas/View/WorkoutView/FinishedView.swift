@@ -10,6 +10,7 @@ import SwiftUI
 struct FinishedView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
+    @EnvironmentObject var router: Router
     
     var body: some View {
         NavigationStack{
@@ -105,4 +106,6 @@ struct FinishedView: View {
 
 #Preview {
     FinishedView()
+        .environmentObject(TimerViewModel())
+        .environmentObject(Router())
 }

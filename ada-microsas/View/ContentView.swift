@@ -14,6 +14,8 @@ struct ContentView: View {
     
     @State private var showSplash = true
     
+    @StateObject private var router = Router()
+    
     init(){
         
     }
@@ -28,6 +30,7 @@ struct ContentView: View {
                 } else {
                     TrailView()
                         .environmentObject(planViewModel)
+                        .environmentObject(router)
                         .transition(.opacity)
                 }
             }
@@ -46,4 +49,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(TimerViewModel()).environmentObject(PlanViewModel())
+        .environmentObject(Router())
 }

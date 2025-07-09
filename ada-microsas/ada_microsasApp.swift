@@ -25,6 +25,7 @@ struct ada_microsasApp: App {
     
     @StateObject private var timerViewModel = TimerViewModel()
     @StateObject private var planViewModel = PlanViewModel()
+
     
     private let healthStore: HKHealthStore
     
