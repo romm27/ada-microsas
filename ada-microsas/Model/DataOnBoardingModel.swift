@@ -16,15 +16,15 @@ struct Card: Identifiable{
 struct DataOnBoardingModel{
     let cardsList: [Card] = [
         Card(
-            image: "Background01"
+            image: "ob01"
         ),
         
         Card(
-            image: "Background02"
+            image: "ob02"
         ),
         
         Card(
-            image: "Background03"
+            image: "ob03"
         )
     ]
 }
