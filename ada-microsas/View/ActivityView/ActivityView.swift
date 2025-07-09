@@ -57,7 +57,8 @@ struct ActivityView: View {
                         ActivityPhaseView(
                             phase: currentActivity,
                             state: state,
-                            timerText: timerViewModel.getFormattedCurrentTimer()
+                            timerText: timerViewModel.getFormattedCurrentTimer(),
+                            currentPhaseIndex: currentPhaseIndex
                         )
                     }
                 }
@@ -155,7 +156,10 @@ struct ActivityView: View {
         } else {
             // Workout complete
             planViewModel.userLevel += 1
+            
             showCompletionAlert = true
+            
+            //MARK: agui vai a tela FinishedView
             
             let activitySeconds = currentGroup.totalDuration
             Task{
@@ -196,6 +200,7 @@ struct ActivityView: View {
         
         // Start timer
         timerViewModel.setTimerConfig(seconds: currentActivity?.duration ?? 0)
+        timerViewModel.setTotalActivityDuration(duration: workout.patternGroups[0].totalDuration + workout.patternGroups[1].totalDuration)
         timerViewModel.startTimer()
         
         // Schedule notification for non-rest activities
@@ -271,10 +276,16 @@ extension HKWorkoutActivityType {
     }
 }
 
+//MARK: ActivityPhaseView
 struct ActivityPhaseView: View {
     let phase: ActivityPhase
     let state: StateActivity
     let timerText: String
+    let currentPhaseIndex: Int
+    
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var timerViewModel: TimerViewModel
+    @EnvironmentObject var planViewModel: PlanViewModel
     
     var body: some View {
         
@@ -314,8 +325,7 @@ struct ActivityPhaseView: View {
                             .font(.system(size: 12))
                             .fontWeight(.semibold)
                             .foregroundStyle(.cinzaMuitoClaro)
-                        //MARK: MUDAR O TEMPO AGUI
-                        Text("00:21:30")
+                        Text("\(timerViewModel.getFormattedCurrentTotalTimer())")
                             .font(.system(size: 16))
                             .fontWeight(.semibold)
                             .foregroundStyle(.brancoGelo)
@@ -326,8 +336,7 @@ struct ActivityPhaseView: View {
                             .font(.system(size: 12))
                             .fontWeight(.semibold)
                             .foregroundStyle(.cinzaMuitoClaro)
-                        //TODO: MUDAR O NIVEL AGUI
-                        Text("1/5")
+                        Text("\(timerViewModel.phaseIndex)/\(DataTrainingModel.shared.trainingPlans[planViewModel.currentIndex].allPhases.count)")
                             .font(.system(size: 16))
                             .fontWeight(.semibold)
                             .foregroundStyle(.brancoGelo)
@@ -339,7 +348,7 @@ struct ActivityPhaseView: View {
                             .fontWeight(.semibold)
                             .foregroundStyle(.cinzaMuitoClaro)
                         //TODO: MUDAR O NIVEL AGUI
-                        Text("17%")
+                        Text("\(Int(timerViewModel.totalProgress*100))%")
                             .font(.system(size: 16))
                             .fontWeight(.semibold)
                             .foregroundStyle(.brancoGelo)
@@ -376,6 +385,10 @@ struct RestPhaseView: View {
     let nextPhase: ActivityPhase?
     let timerText: String
     let onSkip: () -> Void
+    
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var timerViewModel: TimerViewModel
+    @EnvironmentObject var planViewModel: PlanViewModel
     
     var body: some View {
         ZStack{
@@ -433,56 +446,61 @@ struct RestPhaseView: View {
                         .padding(.trailing, 12)
                 }
                 
+//                matei por hora. Dudu :)
                 VStack{
-                    Button{
-                        onSkip()
-                    }
-                    label: {
-                        Text("Pular")
+//                    Button{
+//                        onSkip()
+//                    }
+//                    label: {
+                        Text(" ")
                             .font(.title3)
                             .fontWeight(.semibold)
                             .foregroundColor(.verdeLima)
                             .padding(.vertical, 10)
-                        
-                    }
-                    
+//                    }
                 }
                 
-                ZStack{
-                    HStack(spacing: 60){
-                        
-                        VStack(alignment: .leading){
-                            Text("Tempo")
-                                .font(.system(size: 12))
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.cinzaMuitoClaro)
-                            Text("00:00:00")
-                            //MARK: MUDAR O TEMPO AGUI
-                                .font(.system(size: 16))
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.brancoGelo)
-                        }
-                        .padding(.leading, 20)
-                        
-                        
-                        VStack(alignment: .leading){
-                            Text("Progresso")
-                                .font(.system(size: 12))
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.cinzaMuitoClaro)
-                            Text("00%")
-                            //MARK: MUDAR O PROGRESSO AGUI
-                                .font(.system(size: 16))
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.brancoGelo)
-                        }
-                        .padding(.trailing)
+                HStack(spacing: 12){
+                    Spacer()
+                    VStack(alignment: .leading, spacing: 8){
+                        Text("Tempo")
+                            .font(.system(size: 12))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.cinzaMuitoClaro)
+                        Text("\(timerViewModel.getFormattedCurrentTotalTimer())")
+                            .font(.system(size: 16))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.brancoGelo)
                     }
-                    .padding(24)
-                    .padding(.horizontal, 20)
+                    Spacer()
+                    VStack(alignment: .leading, spacing: 8){
+                        Text("Exercício")
+                            .font(.system(size: 12))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.cinzaMuitoClaro)
+                        Text("\(timerViewModel.phaseIndex)/\(DataTrainingModel.shared.trainingPlans[planViewModel.currentIndex].allPhases.count)")
+                            .font(.system(size: 16))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.brancoGelo)
+                    }
+                    Spacer()
+                    VStack(alignment: .leading, spacing: 8){
+                        Text("Progresso")
+                            .font(.system(size: 12))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.cinzaMuitoClaro)
+                        Text("\(Int(timerViewModel.totalProgress*100))%")
+                            .font(.system(size: 16))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.brancoGelo)
+                    }
+                    Spacer()
                 }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 24)
                 .background(.cinzaMedio)
                 .cornerRadius(16)
+                .padding(.horizontal, 32)
 
                 
             }
@@ -503,7 +521,7 @@ struct RestPhaseView: View {
         spriteKitSceneType: Polichinelo.self
     )
     
-    ActivityPhaseView(phase: phase, state: .treino, timerText: "00:05")
+    ActivityPhaseView(phase: phase, state: .treino, timerText: "00:05", currentPhaseIndex: 1)
         .environmentObject(TimerViewModel())
         .environmentObject(PlanViewModel())
 }

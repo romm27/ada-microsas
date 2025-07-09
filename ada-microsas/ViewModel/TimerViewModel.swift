@@ -27,6 +27,13 @@ class TimerViewModel: ObservableObject {
     @Published var progress: Double = 0.0
     @Published var isFinished: Bool = false
     
+    //começa tudo zerado
+    @Published var currentTotalTimer: Int = 0 //nosso controle do tempo total
+    var maxTotalTimer: Int = 0
+    @Published var totalProgress: Double = 0.0
+    
+    @Published var phaseIndex: Int = 0
+    
     //gemini: Add properties to store the timer's state when the app is backgrounded.
     var backgroundEntryTime: Date?
     
@@ -36,8 +43,13 @@ class TimerViewModel: ObservableObject {
         return String(format: "%02d:%02d", minutes, seconds)
     }
     
-    private var timer: Timer? //o timer, em si
+    var formattedCurrentTotalTimer: String {
+        let minutes = currentTotalTimer / 60
+        let seconds = currentTotalTimer % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
     
+    private var timer: Timer? //o timer, em si
     
     //GETTERS
     func getCurrentTimer() -> Int {
@@ -46,6 +58,9 @@ class TimerViewModel: ObservableObject {
     
     func getFormattedCurrentTimer() -> String {
         return formattedCurrentTimer
+    }
+    func getFormattedCurrentTotalTimer() -> String {
+        return formattedCurrentTotalTimer
     }
     
     func getTimerStatus() -> TimerStatus {
@@ -59,9 +74,16 @@ class TimerViewModel: ObservableObject {
     func setTimerConfig(seconds: Int) {
         currentTimer = seconds
         maxTimer = seconds
+        
+        phaseIndex += 1
+        
         isFinished = false
         //gemini: Reset the background time whenever a new timer is configured.
         backgroundEntryTime = nil
+    }
+    
+    func setTotalActivityDuration(duration: Int){
+        maxTotalTimer = duration
     }
     
     func startTimer() {
@@ -86,12 +108,16 @@ class TimerViewModel: ObservableObject {
             self.endTimer()
             
         } else {
-            print("Tempo em execução: \(self.currentTimer)")
-            print("Progresso: \(self.progress)")
-            print("Max: \(self.maxTimer)")
+//            print("Tempo em execução: \(self.currentTimer)")
+//            print("Progresso: \(self.progress)")
+            print("Progresso: \(self.totalProgress)")
+//            print("Max: \(self.maxTimer)")
 
             self.currentTimer -= 1 //a execução do timer, de fato
             self.progress = 1.0 - (Double(self.currentTimer) / Double(self.maxTimer)) //o progresso sendo atualizado
+            
+            self.currentTotalTimer += 1
+            self.totalProgress = Double(self.currentTotalTimer) / Double(self.maxTotalTimer)
         }
     }
     
@@ -132,10 +158,17 @@ class TimerViewModel: ObservableObject {
             currentTimer -= timeElapsed
             //gemini: Update the progress bar to reflect the new time.
             self.progress = 1.0 - (Double(self.currentTimer) / Double(self.maxTimer))
+            self.totalProgress = Double(self.currentTotalTimer) / Double(self.maxTotalTimer)
         }
 
         //gemini: Clear the background entry time after syncing.
         self.backgroundEntryTime = nil
+    }
+    
+    func allTheOnesFinished(){
+        currentTotalTimer = 0
+        maxTotalTimer = 0
+        phaseIndex = 0
     }
 }
 

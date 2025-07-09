@@ -68,7 +68,7 @@ struct WorkoutView: View {
                                         .scaledToFit()
                                         .frame(width: 90)
                                         .offset(y: -120)
-                                    Text("\(totalTime)'")
+                                    Text("\(totalTime) min")
                                         .font(.system(size: 16, weight: .bold))
                                         .foregroundColor(.white)
                                         .offset(y: -120)
