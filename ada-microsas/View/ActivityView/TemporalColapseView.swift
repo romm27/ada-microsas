@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TemporalColapseView: View {
+    @EnvironmentObject var planViewModel: PlanViewModel
     @EnvironmentObject var timerViewModel: TimerViewModel
     var body: some View {
         ZStack {
@@ -34,6 +35,9 @@ struct TemporalColapseView: View {
                         .background(.verdeLimaBotao)
                         .cornerRadius(8)
                     }
+                    .environmentObject(planViewModel)
+                    .environmentObject(timerViewModel)
+
                 }
             }
             .padding(.top, 100)

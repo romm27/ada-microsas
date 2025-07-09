@@ -5,22 +5,13 @@
 //  Created by Giovanni Galarda Strasser on 09/07/25.
 //
 
-// MARK: - FILENAME: ada-microsas/ada-microsas/ViewModel/NotificationManager.swift
-
 import UserNotifications
 
 /// A singleton class to manage all local notification logic for the app.
-/// This class handles requesting permission, scheduling notifications for an entire workout,
-/// and canceling/rescheduling them when the workout is interrupted (paused, stopped, or completed).
 class NotificationManager {
-    /// The shared singleton instance of the manager.
     static let shared = NotificationManager()
-    
-    /// Private initializer to enforce the singleton pattern.
     private init() {}
 
-    /// Requests user authorization to send notifications.
-    /// This should be called once when the app is likely to need notifications, such as on the main screen's appearance.
     func requestAuthorization() {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
@@ -32,88 +23,131 @@ class NotificationManager {
         }
     }
     
-    /// Schedules all notifications for a workout at the very beginning.
-    /// This should be called only when a new workout starts.
-    /// - Parameter workout: The `WorkoutPlan` containing all phases for the session.
+    /// Schedules notifications for all phase transitions in a workout plan
     func scheduleWorkoutNotifications(for workout: WorkoutPlan) {
-        scheduleNotifications(for: workout.allPhases, initialPhaseRemainingTime: nil, isResuming: false)
+        // Schedule for all phases starting from the beginning
+        scheduleNotifications(for: workout.allPhases, initialPhaseRemainingTime: nil)
     }
 
-    /// Re-schedules notifications when a workout is resumed after being paused.
-    /// This is critical because the original timeline is void after a pause.
-    /// It calculates new trigger times based on the remaining time in the current phase and the full duration of all subsequent phases.
-    /// - Parameter remainingPhases: An array of `ActivityPhase` including the current (partially completed) one and all subsequent ones.
-    /// - Parameter currentTime: The time left on the timer for the *current* phase when it was paused.
+    /// Reschedules notifications when resuming a workout, accounting for time already spent in current phase
     func rescheduleNotificationsOnResume(remainingPhases: [ActivityPhase], currentTime: Int) {
-        scheduleNotifications(for: remainingPhases, initialPhaseRemainingTime: currentTime, isResuming: true)
+        // Re-schedule for the remaining phases with the current phase's remaining time
+        scheduleNotifications(for: remainingPhases, initialPhaseRemainingTime: currentTime)
     }
 
-    /// Private helper function that contains the core scheduling logic. It's used for both
-    /// initial scheduling and re-scheduling on resume.
+    /// Core scheduling logic that handles both new workouts and resumed workouts
     /// - Parameters:
-    ///   - phases: The list of phases to schedule notifications for.
-    ///   - initialPhaseRemainingTime: If resuming, this is the time left in the first phase of the `phases` array. If `nil`, the full duration is used.
-    ///   - isResuming: A boolean flag for logging purposes.
-    private func scheduleNotifications(for phases: [ActivityPhase], initialPhaseRemainingTime: Int?, isResuming: Bool) {
-        // Always clear previous notifications before scheduling new ones to prevent duplicates.
-        cancelAllNotifications()
-        
-        guard !phases.isEmpty else { return }
+    ///   - phases: The activity phases to schedule notifications for
+    ///   - initialPhaseRemainingTime: For resumed workouts, the remaining time in seconds for the current phase
+    private func scheduleNotifications(for phases: [ActivityPhase], initialPhaseRemainingTime: Int?) {
+            // Always clear old notifications first to avoid duplicates
+            cancelAllNotifications()
+            
+            // Need at least 2 phases to schedule transitions between them
+            guard phases.count > 1 else {
+                print("⚠️ Not enough phases to schedule transitions (need at least 2)")
+                return
+            }
+            
+            print("\n📋 STARTING NOTIFICATION SCHEDULING FOR \(phases.count) PHASES")
+            print("--------------------------------------------------")
 
-        var cumulativeTime: TimeInterval = 0
-        
-        // **This is the key logic for handling resume.**
-        // For the very first phase in our list, use its remaining time if provided (on resume).
-        // Otherwise (on a fresh start), use its full duration.
-        if let remainingTime = initialPhaseRemainingTime {
-            cumulativeTime = TimeInterval(remainingTime)
-        } else {
-            cumulativeTime = TimeInterval(phases.first?.duration ?? 0)
+            // Track the total delay from "now" when each notification should fire
+            var cumulativeDelay: TimeInterval = 0
+            
+            // Handle first phase duration - use remaining time if resuming, otherwise full duration
+            if let remainingTime = initialPhaseRemainingTime {
+                cumulativeDelay += TimeInterval(remainingTime)
+                print("⏱️ Using remaining time for first phase: \(remainingTime)s")
+            } else {
+                cumulativeDelay += TimeInterval(phases[0].duration)
+                print("⏱️ Using full duration for first phase: \(phases[0].duration)s")
+            }
+            
+            // Schedule notifications for each phase transition
+            for i in 0..<(phases.count - 1) {
+                let nextPhase = phases[i + 1]
+                let currentPhase = phases[i]
+                
+                // Create notification content
+                let content = UNMutableNotificationContent()
+                content.title = "\(currentPhase.name) concluído!"
+                content.body = "Próxima etapa: \(nextPhase.name)"
+                content.sound = .default // Use default sound for reliability
+                
+                // Create trigger with cumulative delay
+                let trigger = UNTimeIntervalNotificationTrigger(
+                    timeInterval: cumulativeDelay,
+                    repeats: false
+                )
+                
+                // Generate unique identifier
+                let requestId = "workout_phase_\(UUID().uuidString)"
+                let request = UNNotificationRequest(
+                    identifier: requestId,
+                    content: content,
+                    trigger: trigger
+                )
+                
+                // Schedule the notification
+                UNUserNotificationCenter.current().add(request)
+                
+                // Enhanced debugging
+                print("\n🔔 SCHEDULED NOTIFICATION #\(i+1)")
+                print("   - For transition: \(currentPhase.name) → \(nextPhase.name)")
+                print("   - Triggering in: \(cumulativeDelay) seconds")
+                print("   - ID: \(requestId)")
+                
+                // CRITICAL FIX: Add duration of the CURRENT phase to cumulative delay AFTER scheduling
+                cumulativeDelay += TimeInterval(currentPhase.duration)
+                print("⏱️ Added \(currentPhase.duration)s for '\(currentPhase.name)' → New cumulative delay: \(cumulativeDelay)s")
+            }
+            
+            print("\n--------------------------------------------------")
+            print("✅ SUCCESS: Scheduled \(phases.count - 1) phase transition notifications")
+            print("⏱️ Final cumulative delay: \(cumulativeDelay) seconds")
+            print("--------------------------------------------------\n")
+            
+            // Debug: Print all pending notifications
+            printPendingNotifications()
         }
 
-        // Schedule the notification for the end of the *first* phase in the list.
-        // This notification will announce the start of the second phase.
-        if phases.count > 1 {
-            let nextPhase = phases[1]
-            scheduleSingleNotification(after: cumulativeTime, announcing: nextPhase)
-        }
-        
-        // Now, loop through the *rest* of the phases to schedule their notifications.
-        // We start at index 1 because we've already handled the first phase's timing.
-        for index in 1..<phases.count - 1 {
-            cumulativeTime += TimeInterval(phases[index].duration)
-            let nextPhase = phases[index + 1]
-            scheduleSingleNotification(after: cumulativeTime, announcing: nextPhase)
-        }
-        
-        let action = isResuming ? "Rescheduled" : "Scheduled"
-        // The number of notifications is always one less than the number of phases.
-        let count = max(0, phases.count - 1)
-        print("✅ \(action) \(count) notifications.")
-    }
-    
-    /// Private helper to create and schedule a single notification, avoiding code duplication.
-    private func scheduleSingleNotification(after delay: TimeInterval, announcing nextPhase: ActivityPhase) {
-        let content = UNMutableNotificationContent()
-        content.title = "Etapa concluída!"
-        content.body = "Prepare-se para: \(nextPhase.name)."
-        content.sound = UNNotificationSound(named: UNNotificationSoundName("finish_sound.caf"))
-
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: delay, repeats: false)
-        // Using a unique identifier prevents any potential conflicts.
-        let request = UNNotificationRequest(identifier: "workout_phase_\(UUID().uuidString)", content: content, trigger: trigger)
-
-        UNUserNotificationCenter.current().add(request) { error in
-             if let error = error {
-                 print("❌ Error scheduling notification for phase '\(nextPhase.name)': \(error.localizedDescription)")
-             }
-        }
-    }
-    
-    /// Cancels all pending notifications that have been scheduled by this app.
-    /// This should be called when a workout is paused, manually stopped/canceled, or successfully completed.
     func cancelAllNotifications() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         print("🗑️ All pending notifications have been canceled.")
     }
+    
+    // Debug helper to list all pending notifications
+    func printPendingNotifications() {
+        UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
+            print("\n📋 PENDING NOTIFICATIONS (\(requests.count))")
+            requests.forEach { request in
+                if let trigger = request.trigger as? UNTimeIntervalNotificationTrigger {
+                    let triggerTime = Date().addingTimeInterval(trigger.timeInterval)
+                    let formatter = DateFormatter()
+                    formatter.timeStyle = .medium
+                    formatter.dateStyle = .short
+                    
+                    print("""
+                      - ID: \(request.identifier)
+                        Title: \(request.content.title)
+                        Body: \(request.content.body)
+                        Trigger: \(trigger.timeInterval)s from now
+                        Trigger at: \(formatter.string(from: triggerTime))
+                      """)
+                }
+            }
+        }
+    }
 }
+
+class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
+    static let shared = NotificationDelegate()
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound, .list])
+    }
+}
+

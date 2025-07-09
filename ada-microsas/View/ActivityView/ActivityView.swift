@@ -94,6 +94,8 @@ struct ActivityView: View {
                                 //logica de encerrar
                             }
                         }
+                        .environmentObject(planViewModel)
+                        .environmentObject(timerViewModel)
                     }
                     message: {
                         Text("Se você encerrar agora, vai perder todo o seu progresso. Tem certeza?")
@@ -241,16 +243,6 @@ struct ActivityView: View {
         timerViewModel.setTimerConfig(seconds: currentActivity?.duration ?? 0)
         timerViewModel.setTotalActivityDuration(duration: workout.patternGroups[0].totalDuration + workout.patternGroups[1].totalDuration)
         timerViewModel.startTimer()
-        
-        // Schedule notification for non-rest activities
-        if let currentActivity = currentActivity, !currentActivity.isRest {
-            scheduleNotification(
-                title: "Intervalo Concluído!",
-                body: "Você completou: \(currentActivity.name).",
-                duration: TimeInterval(currentActivity.duration),
-                soundName: "finish_sound.caf"
-            )
-        }
     }
     
     private func currentWorkout() -> WorkoutPlan? {
@@ -260,19 +252,6 @@ struct ActivityView: View {
         return DataTrainingModel.shared.trainingPlans[planViewModel.currentIndex]
     }
     
-    private func scheduleNotification(title: String, body: String, duration: TimeInterval, soundName: String) {
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = UNNotificationSound(named: UNNotificationSoundName(soundName))
-        
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: duration, repeats: false)
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request)
-    }
-    
-    //MARK: - SAVE > Running Activity
     func saveRunningActivity(seconds: Double) async {
         couldPostOnAppleHealth = false
         

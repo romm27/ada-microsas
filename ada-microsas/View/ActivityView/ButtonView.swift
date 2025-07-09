@@ -176,5 +176,5 @@ struct ButtonView: View {
 }
 
 #Preview {
-    ButtonView()
+    ButtonView(onResume:{})
 }
