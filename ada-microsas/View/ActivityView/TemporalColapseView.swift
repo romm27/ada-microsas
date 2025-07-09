@@ -8,34 +8,37 @@
 import SwiftUI
     
 struct TemporalColapseView: View {
+    @EnvironmentObject var timerViewModel: TimerViewModel
     var body: some View {
-        NavigationStack{
-            ZStack{
+        NavigationStack {
+            ZStack {
                 Image("Temporal")
                     .resizable()
                     .scaledToFill()
                 
-                VStack{
-                    NavigationLink{
-                        TrailView()
+                VStack {
+                    Button {
+                        timerViewModel.pauseTimer()
+                        timerViewModel.endTimer()
+                        timerViewModel.allTheOnesFinished()
                     } label: {
-                        HStack{
-                            Spacer()
-                            Text("Voltar no Tempo")
-                                .padding(.vertical, 12)
-                                .foregroundStyle(.quasePreto)
-                                .font(.system(size: 16))
-                                .fontWeight(.semibold)
-                            Spacer()
+                        NavigationLink(destination: TrailView()) {
+                            HStack {
+                                Spacer()
+                                Text("Voltar no Tempo")
+                                    .padding(.vertical, 12)
+                                    .foregroundStyle(.quasePreto)
+                                    .font(.system(size: 16))
+                                    .fontWeight(.semibold)
+                                Spacer()
+                            }
+                            .background(.verdeLimaBotao)
+                            .cornerRadius(8)
                         }
-                        .background(.verdeLimaBotao)
-                        .cornerRadius(8)
-                        
                     }
                 }
                 .padding(.top, 100)
                 .padding(.horizontal, 32)
-
             }
             .navigationBarBackButtonHidden(true)
         }

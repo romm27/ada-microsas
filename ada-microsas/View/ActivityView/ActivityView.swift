@@ -114,8 +114,14 @@ struct ActivityView: View {
                 Text("Você concluiu o treino com sucesso!")
             }
             .alert(couldPostOnAppleHealth ? "✅ Sucesso - Health " : "❌ Erro - Apple Health", isPresented: $showAppleFitnessAlert) {
-                Button("OK") {
-                    dismiss()
+                NavigationLink{
+                    FinishedView()
+                }
+                label: {
+                    Button("OK") {
+                        dismiss()
+                    }
+
                 }
             } message: {
                 Text(couldPostOnAppleHealth ? "Sucesso ao sincronizar seu treino." :  "Erro ao sincronizar seu treino. \nHabilite permissões no app 'Health'." )

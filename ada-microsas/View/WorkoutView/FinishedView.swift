@@ -76,6 +76,8 @@ struct FinishedView: View {
                     
                     VStack{
                         NavigationLink{
+                            timerViewModel.pauseTimer()
+                            timerViewModel.endTimer()
                             timerViewModel.allTheOnesFinished()
                             return TrailView()
                         } label: {

@@ -291,7 +291,7 @@
 				CODE_SIGN_ENTITLEMENTS = "ada-microsas/ada-microsas.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7793RDG5Q6;
+				DEVELOPMENT_TEAM = BUA573Y626;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "ada-microsas/Info.plist";
@@ -312,7 +312,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.DuduBertol.Boost;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gios.Boost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -332,7 +332,7 @@
 				CODE_SIGN_ENTITLEMENTS = "ada-microsas/ada-microsas.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7793RDG5Q6;
+				DEVELOPMENT_TEAM = BUA573Y626;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "ada-microsas/Info.plist";
@@ -353,7 +353,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.DuduBertol.Boost;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gios.Boost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

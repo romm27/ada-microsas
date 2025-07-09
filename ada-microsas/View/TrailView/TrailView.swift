@@ -27,6 +27,8 @@ struct TrailView: View {
             trailContentView
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear{
+        }
     }
     
     private var trailContentView: some View {
