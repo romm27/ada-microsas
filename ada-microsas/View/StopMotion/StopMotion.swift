@@ -29,6 +29,8 @@ class Stretching: SKScene{
         belezinhaAlongamentoTexturas.append(SKTexture(imageNamed: "alongamento01"))
         belezinhaAlongamentoTexturas.append(SKTexture(imageNamed: "alongamento02"))
         belezinhaAlongamentoTexturas.append(SKTexture(imageNamed: "alongamento03"))
+        belezinhaAlongamentoTexturas.append(SKTexture(imageNamed: "alongamento02"))
+        belezinhaAlongamentoTexturas.append(SKTexture(imageNamed: "alongamento01"))
                 
         }
     
@@ -52,11 +54,11 @@ class Stretching: SKScene{
 class Polichinelo: SKScene{
     var belezinhaNode: SKSpriteNode!
     var belezinhaPolichineloTexturas01: [SKTexture] = []
-    var belezinhaPolichineloTexturas02: [SKTexture] = []
+//    var belezinhaPolichineloTexturas02: [SKTexture] = []
     override func didMove(to view: SKView) {
             backgroundColor = .clear
             carregarTexturasBelezinha01()
-            carregarTexturasBelezinha02()
+//            carregarTexturasBelezinha02()
 
         if let primeiraTextura = belezinhaPolichineloTexturas01.first {
             belezinhaNode = SKSpriteNode(texture: primeiraTextura)
@@ -66,14 +68,14 @@ class Polichinelo: SKScene{
 //          animarBelezinha(node: belezinhaNode)
             animarSalto(node: belezinhaNode)
                 }
-        if let primeiraTextura = belezinhaPolichineloTexturas02.first {
-            belezinhaNode = SKSpriteNode(texture: primeiraTextura)
-            belezinhaNode.position = CGPoint(x: frame.midX, y: frame.midY)
-            belezinhaNode.setScale(0.25)
-            addChild(belezinhaNode)
-//          animarBelezinha(node: belezinhaNode)
-            animarSalto(node: belezinhaNode)
-                }
+//        if let primeiraTextura = belezinhaPolichineloTexturas02.first {
+//            belezinhaNode = SKSpriteNode(texture: primeiraTextura)
+//            belezinhaNode.position = CGPoint(x: frame.midX, y: frame.midY)
+//            belezinhaNode.setScale(0.25)
+//            addChild(belezinhaNode)
+////          animarBelezinha(node: belezinhaNode)
+//            animarSalto(node: belezinhaNode)
+//                }
         }
     
     func carregarTexturasBelezinha01() {
@@ -84,19 +86,25 @@ class Polichinelo: SKScene{
         belezinhaPolichineloTexturas01.append(SKTexture(imageNamed: "polichinelo05"))
         belezinhaPolichineloTexturas01.append(SKTexture(imageNamed: "polichinelo06"))
         belezinhaPolichineloTexturas01.append(SKTexture(imageNamed: "polichinelo07"))
+        belezinhaPolichineloTexturas01.append(SKTexture(imageNamed: "polichinelo06"))
+        belezinhaPolichineloTexturas01.append(SKTexture(imageNamed: "polichinelo05"))
+        belezinhaPolichineloTexturas01.append(SKTexture(imageNamed: "polichinelo04"))
+        belezinhaPolichineloTexturas01.append(SKTexture(imageNamed: "polichinelo03"))
+        belezinhaPolichineloTexturas01.append(SKTexture(imageNamed: "polichinelo02"))
+        belezinhaPolichineloTexturas01.append(SKTexture(imageNamed: "polichinelo01"))
       }
     
-    func carregarTexturasBelezinha02() {
-        belezinhaPolichineloTexturas02.append(SKTexture(imageNamed: "polichinelo06"))
-        belezinhaPolichineloTexturas02.append(SKTexture(imageNamed: "polichinelo05"))
-        belezinhaPolichineloTexturas02.append(SKTexture(imageNamed: "polichinelo04"))
-        belezinhaPolichineloTexturas02.append(SKTexture(imageNamed: "polichinelo03"))
-        belezinhaPolichineloTexturas02.append(SKTexture(imageNamed: "polichinelo02"))
-        belezinhaPolichineloTexturas02.append(SKTexture(imageNamed: "polichinelo01"))
-        }
+//    func carregarTexturasBelezinha02() {
+//        belezinhaPolichineloTexturas02.append(SKTexture(imageNamed: "polichinelo06"))
+//        belezinhaPolichineloTexturas02.append(SKTexture(imageNamed: "polichinelo05"))
+//        belezinhaPolichineloTexturas02.append(SKTexture(imageNamed: "polichinelo04"))
+//        belezinhaPolichineloTexturas02.append(SKTexture(imageNamed: "polichinelo03"))
+//        belezinhaPolichineloTexturas02.append(SKTexture(imageNamed: "polichinelo02"))
+//        belezinhaPolichineloTexturas02.append(SKTexture(imageNamed: "polichinelo01"))
+//        }
     
     func animarSalto(node: SKSpriteNode) {
-        let alturaDoSalto: CGFloat = 30.0 // Ajuste este valor para controlar a altura do salto
+        let alturaDoSalto: CGFloat = 10.0 // Ajuste este valor para controlar a altura do salto
         let duracaoSubida: TimeInterval = 0.5 // Duração da subida
         let duracaoDescida: TimeInterval = 0.5 // Duração da descida
         
@@ -113,9 +121,9 @@ class Polichinelo: SKScene{
         
         // Ação para a animação das texturas (se houver mais de uma para o salto)
         let animacaoTexturas01 = SKAction.animate(with: belezinhaPolichineloTexturas01, timePerFrame: 0.2) // Ajuste o timePerFrame conforme suas texturas
-        let animacaoTexturas02 = SKAction.animate(with: belezinhaPolichineloTexturas02, timePerFrame: 0.2)
+//        let animacaoTexturas02 = SKAction.animate(with: belezinhaPolichineloTexturas02, timePerFrame: 0.2)
         // Agrupar as ações de movimento e textura para que ocorram simultaneamente
-        let grupoDeAcoes = SKAction.group([animacaoTexturas01, sequenciaSalto, animacaoTexturas02])
+        let grupoDeAcoes = SKAction.group([animacaoTexturas01, sequenciaSalto/*, animacaoTexturas02*/])
         
         // Repetir a sequência indefinidamente
         let repetirSalto = SKAction.repeatForever(grupoDeAcoes)
@@ -319,7 +327,7 @@ class Caminhar: SKScene{
                     belezinhaNode.position = CGPoint(x: frame.midX, y: frame.midY)
                     belezinhaNode.setScale(0.25)
                     addChild(belezinhaNode)
-                    animarBelezinha(node: belezinhaNode)
+                    animarBelezinhaCaminhar(node: belezinhaNode)
                 }
         }
     
@@ -335,8 +343,8 @@ class Caminhar: SKScene{
         belezinhaCaminharTexturas.append(SKTexture(imageNamed: "caminhar09"))
         }
     
-    func animarBelezinha(node: SKSpriteNode) {
-            let animacao = SKAction.animate(with: belezinhaCaminharTexturas, timePerFrame: 0.1)
+    func animarBelezinhaCaminhar(node: SKSpriteNode) {
+            let animacao = SKAction.animate(with: belezinhaCaminharTexturas, timePerFrame: 0.15)
             
             let repetirAnimacao = SKAction.repeatForever(animacao)
             
@@ -351,34 +359,34 @@ class Caminhar: SKScene{
 //CORRIDA
 class Corrida: SKScene{
     var belezinhaNode: SKSpriteNode!
-    var belezinhaCaminharTexturas: [SKTexture] = []
+    var belezinhaCorridaTexturas: [SKTexture] = []
     override func didMove(to view: SKView) {
             backgroundColor = .clear
             carregarTexturasBelezinha()
 
-        if let primeiraTextura = belezinhaCaminharTexturas.first {
+        if let primeiraTextura = belezinhaCorridaTexturas.first {
                     belezinhaNode = SKSpriteNode(texture: primeiraTextura)
                     belezinhaNode.position = CGPoint(x: frame.midX, y: frame.midY)
                     belezinhaNode.setScale(0.25)
                     addChild(belezinhaNode)
-                    animarBelezinha(node: belezinhaNode)
+                    animarBelezinhaCorrida(node: belezinhaNode)
                 }
         }
     
     func carregarTexturasBelezinha() {
-        belezinhaCaminharTexturas.append(SKTexture(imageNamed: "caminhar01"))
-        belezinhaCaminharTexturas.append(SKTexture(imageNamed: "caminhar02"))
-        belezinhaCaminharTexturas.append(SKTexture(imageNamed: "caminhar03"))
-        belezinhaCaminharTexturas.append(SKTexture(imageNamed: "caminhar04"))
-        belezinhaCaminharTexturas.append(SKTexture(imageNamed: "caminhar05"))
-        belezinhaCaminharTexturas.append(SKTexture(imageNamed: "caminhar06"))
-        belezinhaCaminharTexturas.append(SKTexture(imageNamed: "caminhar07"))
-        belezinhaCaminharTexturas.append(SKTexture(imageNamed: "caminhar08"))
-        belezinhaCaminharTexturas.append(SKTexture(imageNamed: "caminhar09"))
+        belezinhaCorridaTexturas.append(SKTexture(imageNamed: "caminhar01"))
+        belezinhaCorridaTexturas.append(SKTexture(imageNamed: "caminhar02"))
+        belezinhaCorridaTexturas.append(SKTexture(imageNamed: "caminhar03"))
+        belezinhaCorridaTexturas.append(SKTexture(imageNamed: "caminhar04"))
+        belezinhaCorridaTexturas.append(SKTexture(imageNamed: "caminhar05"))
+        belezinhaCorridaTexturas.append(SKTexture(imageNamed: "caminhar06"))
+        belezinhaCorridaTexturas.append(SKTexture(imageNamed: "caminhar07"))
+        belezinhaCorridaTexturas.append(SKTexture(imageNamed: "caminhar08"))
+        belezinhaCorridaTexturas.append(SKTexture(imageNamed: "caminhar09"))
         }
     
-    func animarBelezinha(node: SKSpriteNode) {
-            let animacao = SKAction.animate(with: belezinhaCaminharTexturas, timePerFrame: 0.05)
+    func animarBelezinhaCorrida(node: SKSpriteNode) {
+            let animacao = SKAction.animate(with: belezinhaCorridaTexturas, timePerFrame: 0.05)
             
             let repetirAnimacao = SKAction.repeatForever(animacao)
             
@@ -389,4 +397,6 @@ class Corrida: SKScene{
             self.scaleMode = .resizeFill
         }
 }
+
+
 

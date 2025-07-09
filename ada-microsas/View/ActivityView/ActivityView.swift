@@ -286,8 +286,8 @@ struct ActivityPhaseView: View {
                 Spacer()
                 if let sceneType = phase.spriteKitSceneType {
                     SpriteView(scene: sceneType.init(), options: [.ignoresSiblingOrder, .allowsTransparency])
-                        .frame(width: 250, height: 250) // Ajuste o tamanho conforme necessário
-                        .scaleEffect(1.0) // Ajuste a escala conforme necessário
+                        .frame(width: 250, height: 250)
+                        .scaleEffect(1.0)
                         .padding(8)
                         .padding(.leading, 38)
                         
@@ -391,7 +391,8 @@ struct RestPhaseView: View {
                     VStack(spacing: 20){
                         if let sceneType = phase.spriteKitSceneType {
                             SpriteView(scene: sceneType.init(), options: [.ignoresSiblingOrder, .allowsTransparency])
-                                .frame(width: 150, height: 150) // Ajuste o tamanho conforme necessário
+                                .frame(width: 250, height: 250)
+                                .scaleEffect(1.0)
                                 .padding(8)
                                 .padding(.leading, 30)
                         } else {

@@ -56,8 +56,23 @@ struct TestCaminhar: View {
     }
 }
 
+//CAMINHAR
+struct TestAlongamento: View {
+    let alongamentoScene = Stretching()
+    var body: some View {
+        ZStack{
+            Color.blue
+            SpriteView(scene: alongamentoScene, options: [.allowsTransparency])
+                .frame(width: 200, height: 200)
+                .scaledToFit()
+                .padding(.leading, 45)
+        }
+        
+    }
+}
+
 
 
 #Preview {
-    TestCaminhar()
+    TestPolichinelo()
 }
