@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import SpriteKit
 
 struct StretchingView: View {
     
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
+    
+    let stretchingScene = Stretching()
     
     var body: some View {
         NavigationStack{
@@ -23,10 +26,11 @@ struct StretchingView: View {
                     .scaledToFill()
                 
                 VStack(spacing: 35){
-                    Image("BelezinhaAlongamento")
-                        .resizable()
+                    SpriteView(scene: stretchingScene)
+                        .frame(width: 200, height: 200)
                         .scaledToFit()
-                        .frame(width: 150)
+                        .padding(.leading, 45)
+                        
                     
                     VStack(spacing: 10){
                         Text("Alongamento")

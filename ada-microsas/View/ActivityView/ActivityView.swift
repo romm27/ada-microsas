@@ -8,6 +8,7 @@
 import SwiftUI
 import UserNotifications
 import HealthKit
+import _SpriteKit_SwiftUI
 
 enum StateActivity {
     case treino
@@ -283,8 +284,16 @@ struct ActivityPhaseView: View {
                 .scaledToFill()
             VStack(spacing: 5) {
                 Spacer()
-                Image(phase.imageAsset)
-                    .padding(8)
+                if let sceneType = phase.spriteKitSceneType {
+                    SpriteView(scene: sceneType.init(), options: [.ignoresSiblingOrder])
+                        .frame(width: 250, height: 250) // Ajuste o tamanho conforme necessário
+                        .scaleEffect(1.0) // Ajuste a escala conforme necessário
+                        .padding(8)
+                } else {
+                    // Fallback se não houver uma cena SpriteKit definida
+                    Image(phase.imageAsset)
+                        .padding(8)
+                }
                 Text(activityTypeText)
                     .font(.callout)
                     .fontWeight(.regular)
@@ -378,10 +387,17 @@ struct RestPhaseView: View {
             VStack(spacing: 40){
                 VStack(spacing: 56){
                     VStack(spacing: 20){
-                        Image(phase.imageAsset)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 150)
+                        if let sceneType = phase.spriteKitSceneType {
+                            SpriteView(scene: sceneType.init(), options: [.ignoresSiblingOrder])
+                                .frame(width: 150, height: 150) // Ajuste o tamanho conforme necessário
+                                .padding(8)
+                        } else {
+                            // Fallback se não houver uma cena SpriteKit definida
+                            Image(phase.imageAsset)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 150)
+                        }
                         
                         VStack(spacing: 10){
                             Text(phase.name)
@@ -479,7 +495,8 @@ struct RestPhaseView: View {
         name: "Polichinelo",
         duration: 5,
         isRest: false,
-        imageAsset: "BelezinhaAquecimento"
+        imageAsset: "BelezinhaAquecimento",
+        spriteKitSceneType: Polichinelo.self
     )
     
     ActivityPhaseView(phase: phase, state: .treino, timerText: "00:05")
