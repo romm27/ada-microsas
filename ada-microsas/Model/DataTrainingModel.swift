@@ -6,25 +6,26 @@
 //
 
 import Foundation
+import SpriteKit
 
 struct DataTrainingModel {
     static let shared = DataTrainingModel()
 
     
     // Warmup Exercises
-    static let polichinelo30s = ActivityPhase(name: "Polichinelo", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento")
-    static let saltoPontaPe30s = ActivityPhase(name: "Salto na Ponta do Pé", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento")
-    static let corridaParada30s = ActivityPhase(name: "Corrida Parada", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento")
-    static let agachamento30s = ActivityPhase(name: "Agachamento", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento")
-    static let panturrilha30s = ActivityPhase(name: "Panturrilha em Pé", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento")
+    static let polichinelo30s = ActivityPhase(name: "Polichinelo", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Polichinelo.self)
+    static let saltoPontaPe30s = ActivityPhase(name: "Salto na Ponta do Pé", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Salto.self)
+    static let corridaParada30s = ActivityPhase(name: "Corrida Parada", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Caminhar.self)
+    static let agachamento30s = ActivityPhase(name: "Agachamento", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Agachamento.self)
+    static let panturrilha30s = ActivityPhase(name: "Panturrilha em Pé", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Salto.self)
 
     // Main Training Exercises
     static func trotando(duration: Int) -> ActivityPhase {
-        ActivityPhase(name: "Trotando", duration: duration, isRest: false, imageAsset: "BelezinhaTreino")
+        ActivityPhase(name: "Trotando", duration: duration, isRest: false, imageAsset: "BelezinhaTreino", spriteKitSceneType: Caminhar.self)
     }
     
     static func caminhando(duration: Int) -> ActivityPhase {
-        ActivityPhase(name: "Caminhando", duration: duration, isRest: false, imageAsset: "BelezinhaDescanso")
+        ActivityPhase(name: "Caminhando", duration: duration, isRest: false, imageAsset: "BelezinhaDescanso", spriteKitSceneType: Caminhar.self)
     }
     
     // Rest Phases
@@ -219,6 +220,15 @@ struct ActivityPhase: Identifiable {
     let duration: Int // Duration in seconds
     let isRest: Bool
     let imageAsset: String
+    let spriteKitSceneType: SKScene.Type?
+    
+    init(name: String, duration: Int, isRest: Bool, imageAsset: String, spriteKitSceneType: SKScene.Type? = nil) {
+            self.name = name
+            self.duration = duration
+            self.isRest = isRest
+            self.imageAsset = imageAsset
+            self.spriteKitSceneType = spriteKitSceneType
+        }
 }
 
 struct PatternGroup: Identifiable {
