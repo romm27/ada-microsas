@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct FinishedView: View {
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var timerViewModel: TimerViewModel
+    
     var body: some View {
         NavigationStack{
             ZStack{
@@ -73,7 +76,8 @@ struct FinishedView: View {
                     
                     VStack{
                         NavigationLink{
-                            TrailView()
+                            timerViewModel.allTheOnesFinished()
+                            return TrailView()
                         } label: {
                             HStack{
                                 Spacer()
