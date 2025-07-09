@@ -25,16 +25,13 @@ struct ContentView: View {
                 if showSplash{
                     SplashScreenView()
                         .transition(.opacity)
-                    
                 } else {
-
-                    
                     TrailView()
                         .environmentObject(planViewModel)
                         .transition(.opacity)
                 }
             }
-            .ignoresSafeArea(.all) //É AQUIIIIIII
+            .ignoresSafeArea(.all)
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     withAnimation{

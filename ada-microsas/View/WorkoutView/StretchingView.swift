@@ -26,7 +26,7 @@ struct StretchingView: View {
                     .scaledToFill()
                 
                 VStack(spacing: 35){
-                    SpriteView(scene: stretchingScene)
+                    SpriteView(scene: stretchingScene, options: [.allowsTransparency])
                         .frame(width: 200, height: 200)
                         .scaledToFit()
                         .padding(.leading, 45)

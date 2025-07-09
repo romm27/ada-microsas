@@ -45,10 +45,14 @@ struct TestSalto: View {
 struct TestCaminhar: View {
     let caminharScene = Caminhar()
     var body: some View {
-        SpriteView(scene: caminharScene)
-            .frame(width: 200, height: 200)
-            .scaledToFit()
-            .padding(.leading, 45)
+        ZStack{
+            Color.blue
+            SpriteView(scene: caminharScene, options: [.allowsTransparency])
+                .frame(width: 200, height: 200)
+                .scaledToFit()
+                .padding(.leading, 45)
+        }
+        
     }
 }
 
