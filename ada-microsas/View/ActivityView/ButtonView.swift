@@ -12,6 +12,9 @@ struct ButtonView: View {
     
     @EnvironmentObject var timerViewModel: TimerViewModel
     
+
+    var onResume: () -> Void
+    
     
     enum PlayerState{
         case play
@@ -55,6 +58,7 @@ struct ButtonView: View {
                 Button(action: {
                     //logica do tempo
                     timerViewModel.pauseTimer()
+                    NotificationManager.shared.cancelAllNotifications()
                     state = .pause
                     
                 }) {
@@ -114,6 +118,7 @@ struct ButtonView: View {
                     withAnimation {
                         timerViewModel.startTimer()
                         state = .play
+                        onResume()
                     }
                 }) {
                     Image(systemName: "play.fill")
@@ -171,5 +176,5 @@ struct ButtonView: View {
 }
 
 #Preview {
-    ButtonView()
+    ButtonView(onResume:{})
 }

@@ -13,7 +13,9 @@ struct RestView: View {
     @EnvironmentObject var planViewModel: PlanViewModel
     @State private var currentCounter: Int = 0
     
+    
     let currentIndex: Int
+    var onResume: () -> Void
     
     private var workoutPlan: WorkoutPlan {
         DataTrainingModel.shared.trainingPlans[currentIndex]
@@ -74,7 +76,7 @@ struct RestView: View {
                         }
                     }
                     
-                    ButtonView()
+                    ButtonView(onResume: onResume)
                         .padding(.trailing, 12)
                 }
                 
@@ -148,7 +150,7 @@ struct RestView: View {
 }
 
 #Preview {
-    RestView(currentIndex: 0)
+    RestView(currentIndex: 0, onResume:{})
         .environmentObject(TimerViewModel())
         .environmentObject(PlanViewModel())
 }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class TimerViewModel: ObservableObject {
     
@@ -17,6 +18,10 @@ class TimerViewModel: ObservableObject {
     enum TrainState {
         case training
         case resting
+    }
+    
+    init(){
+        print("INICIALIZADO O PROCEDIMENTO DE RETIRAÇAO DO PIPI")
     }
     
     @Published var timerStatus: TimerStatus = .paused //estado do timer
@@ -36,6 +41,9 @@ class TimerViewModel: ObservableObject {
     
     //gemini: Add properties to store the timer's state when the app is backgrounded.
     var backgroundEntryTime: Date?
+    
+    // Add this background task identifier
+    private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     
     var formattedCurrentTimer: String {
         let minutes = currentTimer / 60
@@ -89,9 +97,14 @@ class TimerViewModel: ObservableObject {
     func startTimer() {
         print("Timer iniciado!")
         timerStatus = .running
+        backgroundTask = UIApplication.shared.beginBackgroundTask {
+                    UIApplication.shared.endBackgroundTask(self.backgroundTask)
+                    self.backgroundTask = .invalid
+        }
         
         //isso inicia um timer (a checagem para parar ele vai no #selector)
         //timer intervalado de 1 seg, mas a checagem do tempo é nossa e manual (currentTimer)
+        self.timer?.invalidate()
         self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(handleTimeExecution), userInfo: nil, repeats: true)
     }
     
@@ -123,6 +136,11 @@ class TimerViewModel: ObservableObject {
     
     func endTimer() {
         print("Tempo encerrado!")
+        
+        if backgroundTask != .invalid {
+                    UIApplication.shared.endBackgroundTask(backgroundTask)
+                    backgroundTask = .invalid
+        }
         
         self.timer?.invalidate() //isso para o timer
         isFinished = true

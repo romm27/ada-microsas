@@ -9,22 +9,13 @@ import SwiftUI
 import UserNotifications
 import HealthKit
 
-//gemini: This delegate class is correct and already handles foreground notifications.
-class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
-    static let shared = NotificationDelegate()
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                willPresent notification: UNNotification,
-                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.banner, .sound, .list])
-    }
-}
-
 @main
 struct ada_microsasApp: App {
     
     @StateObject private var timerViewModel = TimerViewModel()
     @StateObject private var planViewModel = PlanViewModel()
+    
+    private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     
     private let healthStore: HKHealthStore
     
@@ -57,6 +48,11 @@ struct ada_microsasApp: App {
                 .environmentObject(timerViewModel)
                 .environmentObject(planViewModel)
                 .environmentObject(healthStore)
+                .onReceive(timer) { _ in
+                    let center = UNUserNotificationCenter.current()
+                    center.removeAllDeliveredNotifications()
+                    print("APAGADAS AS NOTIFICAÇŌES")
+                }
         }
         //gemini: Add a handler to react to scene phase changes.
         .onChange(of: scenePhase) { newPhase in
