@@ -51,7 +51,7 @@ struct TrailView: View {
                 .scrollIndicators(.hidden)
                 .onAppear {
                     proxy.scrollTo("bottomAnchor")
-                    requestNotificationPermission()
+                    NotificationManager.shared.requestAuthorization()
                 }
             }
         }
@@ -147,15 +147,6 @@ struct TrailView: View {
         let finalY = topMargin + (relativeY * verticalCanvasHeight)
         
         return CGPoint(x: finalX, y: finalY)
-    }
-    
-    func requestNotificationPermission() {
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if granted {
-                print("Notification Permission Granted!")
-            }
-        }
     }
 }
 

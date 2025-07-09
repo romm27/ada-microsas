@@ -12,6 +12,8 @@ struct ProgressBarView: View {
     @Environment(\.dismiss) var dismiss
     
     @EnvironmentObject var timerViewModel: TimerViewModel
+    
+    var onResume: () -> Void
 
     // Define o tamanho total do arco (70% do círculo)
     private let totalArc: CGFloat = 0.7
@@ -70,7 +72,7 @@ struct ProgressBarView: View {
                 
            Spacer()
                 
-                ButtonView()
+                ButtonView(onResume: onResume)
                 
             }
           
@@ -79,6 +81,6 @@ struct ProgressBarView: View {
 }
 
 #Preview {
-    ProgressBarView()
+    ProgressBarView(onResume: {})
         .environmentObject(TimerViewModel())
 }

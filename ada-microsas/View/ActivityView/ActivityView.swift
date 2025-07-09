@@ -37,7 +37,7 @@ struct ActivityView: View {
     
     @State var showAlert: Bool = false
     @State var showColapseView: Bool = false
-    
+        
     var body: some View {
         
         NavigationStack {
@@ -51,14 +51,17 @@ struct ActivityView: View {
                             onSkip: { // <--- AQUI: O QUE ACONTECE QUANDO "PULAR" É CLICADO
                                 timerViewModel.endTimer() // Para o timer do descanso
                                 proceedToNextPhase() // Avança para a próxima fase
-                            }
+                                
+                            },
+                            onResume: self.handleWorkoutResume //<--- aqui acontece quando volta a tocar
                         )
                     } else {
                         ActivityPhaseView(
                             phase: currentActivity,
                             state: state,
                             timerText: timerViewModel.getFormattedCurrentTimer(),
-                            currentPhaseIndex: currentPhaseIndex
+                            currentPhaseIndex: currentPhaseIndex,
+                            onResume: self.handleWorkoutResume
                         )
                     }
                 }
@@ -136,6 +139,8 @@ struct ActivityView: View {
             return
         }
         
+        NotificationManager.shared.scheduleWorkoutNotifications(for: workout)
+        
         currentGroupIndex = 0
         currentPhaseIndex = 0
         currentRepetition = 1
@@ -164,6 +169,8 @@ struct ActivityView: View {
             // Workout complete
             planViewModel.userLevel += 1
             
+            NotificationManager.shared.cancelAllNotifications()
+            
             showCompletionAlert = true
             
             //MARK: agui vai a tela FinishedView
@@ -179,6 +186,31 @@ struct ActivityView: View {
         
         loadCurrentPhase()
     }
+    
+    //Permite as notificacoes continuarem rodando certas apos despausar
+    private func handleWorkoutResume() {
+            let timeRemainingInCurrentPhase = timerViewModel.getCurrentTimer()
+            
+            // 2. Restart the timer.
+            timerViewModel.startTimer()
+            
+            // 3. Get the full workout plan.
+            guard let workout = currentWorkout() else { return }
+            let allPhases = workout.allPhases
+            
+            // 4. Determine the list of phases that still need notifications.
+            // This correctly includes the current, partially completed phase.
+            let currentPhaseIndexInWorkout = timerViewModel.phaseIndex - 1
+            guard currentPhaseIndexInWorkout < allPhases.count else { return }
+            let remainingPhases = Array(allPhases.dropFirst(currentPhaseIndexInWorkout))
+
+            // 5. Reschedule notifications with the accurate remaining time.
+            NotificationManager.shared.rescheduleNotificationsOnResume(
+                remainingPhases: remainingPhases,
+                currentTime: timeRemainingInCurrentPhase
+            )
+        }
+
     
     private func loadCurrentPhase() {
         guard let workout = currentWorkout() else {
@@ -290,6 +322,8 @@ struct ActivityPhaseView: View {
     let timerText: String
     let currentPhaseIndex: Int
     
+    var onResume: () -> Void
+    
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
     @EnvironmentObject var planViewModel: PlanViewModel
@@ -321,7 +355,7 @@ struct ActivityPhaseView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 Spacer()
-                    ProgressBarView()
+                    ProgressBarView(onResume: onResume)
                         .frame(width: 300, height: 300)
                 Spacer()
                 
@@ -392,6 +426,8 @@ struct RestPhaseView: View {
     let nextPhase: ActivityPhase?
     let timerText: String
     let onSkip: () -> Void
+    var onResume: () -> Void
+
     
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
@@ -450,7 +486,7 @@ struct RestPhaseView: View {
                         }
                     }
                     
-                    ButtonView()
+                    ButtonView(onResume: onResume)
                         .padding(.trailing, 12)
                 }
                 
@@ -529,7 +565,7 @@ struct RestPhaseView: View {
         spriteKitSceneType: Polichinelo.self
     )
     
-    ActivityPhaseView(phase: phase, state: .treino, timerText: "00:05", currentPhaseIndex: 1)
+    ActivityPhaseView(phase: phase, state: .treino, timerText: "00:05", currentPhaseIndex: 1, onResume: {})
         .environmentObject(TimerViewModel())
         .environmentObject(PlanViewModel())
 }
