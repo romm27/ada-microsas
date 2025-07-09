@@ -25,6 +25,18 @@ struct DataOnBoardingModel{
         
         Card(
             image: "ob03"
+        ),
+        
+        Card(
+            image: "na01"
+        ),
+        
+        Card(
+            image: "na02"
+        ),
+        
+        Card(
+            image: "na03"
         )
     ]
 }

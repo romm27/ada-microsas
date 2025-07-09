@@ -26,7 +26,7 @@ struct ContentView: View {
                     SplashScreenView()
                         .transition(.opacity)
                 } else {
-                    TrailView()
+                    NarrativeView()
                         .environmentObject(planViewModel)
                         .transition(.opacity)
                 }

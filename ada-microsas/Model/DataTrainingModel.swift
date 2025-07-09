@@ -63,7 +63,7 @@ struct DataTrainingModel {
         trainingPlans = [
             // TREINO TESTE - DEV MODE
             WorkoutPlan(patternGroups: [
-                Self.advancedWarmup,
+                Self.devWarmup,
                 PatternGroup(repetitions: 1, isWarmup: false, phases: [Self.trotando(duration: 5), Self.caminhando(duration: 5)])
             ], requiredLevel: 1),
             

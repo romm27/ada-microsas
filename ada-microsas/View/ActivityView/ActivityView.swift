@@ -75,7 +75,8 @@ struct ActivityView: View {
                             Text("Sair")
                                 .foregroundColor(.white)
                         }
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.body)
+                        .fontWeight(.bold)
                     }
                     .alert("Cuidado!", isPresented: $showAlert) {
                         Button("Voltar", role: .cancel) {

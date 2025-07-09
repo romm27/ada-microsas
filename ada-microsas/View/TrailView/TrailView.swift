@@ -23,12 +23,8 @@ struct TrailView: View {
     let trailColorPattern = [0,0,0, 1, 1 ,1, 2, 2 ,2, 3 ,3 ,3]
     
     var body: some View {
-        NavigationStack {
-            trailContentView
-        }
-        .navigationBarBackButtonHidden(true)
-        .onAppear{
-        }
+        trailContentView
+            .navigationBarBackButtonHidden(true)
     }
     
     private var trailContentView: some View {
