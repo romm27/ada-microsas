@@ -13,15 +13,15 @@ struct DataTrainingModel {
 
     
     // Warmup Exercises
-    static let polichinelo30s = ActivityPhase(name: "Polichinelo", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Polichinelo.self)
-    static let saltoPontaPe30s = ActivityPhase(name: "Salto na Ponta do Pé", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Salto.self)
-    static let corridaParada30s = ActivityPhase(name: "Corrida Parada", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Caminhar.self)
-    static let agachamento30s = ActivityPhase(name: "Agachamento", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Agachamento.self)
-    static let panturrilha30s = ActivityPhase(name: "Panturrilha em Pé", duration: 30, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Salto.self)
+    static let polichinelo30s = ActivityPhase(name: "Polichinelo", duration: 5, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Polichinelo.self)
+    static let saltoPontaPe30s = ActivityPhase(name: "Salto na Ponta do Pé", duration: 5, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Salto.self)
+    static let corridaParada30s = ActivityPhase(name: "Corrida Parada", duration: 5, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Corrida.self)
+    static let agachamento30s = ActivityPhase(name: "Agachamento", duration: 5, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Agachamento.self)
+    static let panturrilha30s = ActivityPhase(name: "Panturrilha em Pé", duration: 5, isRest: false, imageAsset: "BelezinhaAquecimento", spriteKitSceneType: Panturrilha.self)
 
     // Main Training Exercises
     static func trotando(duration: Int) -> ActivityPhase {
-        ActivityPhase(name: "Trotando", duration: duration, isRest: false, imageAsset: "BelezinhaTreino", spriteKitSceneType: Caminhar.self)
+        ActivityPhase(name: "Trotando", duration: duration, isRest: false, imageAsset: "BelezinhaTreino", spriteKitSceneType: Corrida.self)
     }
     
     static func caminhando(duration: Int) -> ActivityPhase {
@@ -29,8 +29,8 @@ struct DataTrainingModel {
     }
     
     // Rest Phases
-    static let rest30s = ActivityPhase(name: "Recuperando", duration: 30, isRest: true, imageAsset: "BelezinhaDescanso")
-    static let rest60s = ActivityPhase(name: "Recuperando", duration: 60, isRest: true, imageAsset: "BelezinhaDescanso")
+    static let rest30s = ActivityPhase(name: "Recuperando", duration: 5, isRest: true, imageAsset: "BelezinhaDescanso")
+    static let rest60s = ActivityPhase(name: "Recuperando", duration: 5, isRest: true, imageAsset: "BelezinhaDescanso")
     static func parado(duration: Int) -> ActivityPhase {
         ActivityPhase(name: "Recuperação Parado", duration: duration, isRest: true, imageAsset: "BelezinhaDescanso")
     }
@@ -63,7 +63,7 @@ struct DataTrainingModel {
         trainingPlans = [
             // TREINO TESTE - DEV MODE
             WorkoutPlan(patternGroups: [
-                Self.devWarmup,
+                Self.advancedWarmup,
                 PatternGroup(repetitions: 1, isWarmup: false, phases: [Self.trotando(duration: 5), Self.caminhando(duration: 5)])
             ], requiredLevel: 1),
             

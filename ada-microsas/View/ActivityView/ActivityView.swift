@@ -281,14 +281,16 @@ struct ActivityPhaseView: View {
         ZStack {
             Image("RestImage")
                 .resizable()
-                .scaledToFill()
+                .scaledToFit()
             VStack(spacing: 5) {
                 Spacer()
                 if let sceneType = phase.spriteKitSceneType {
-                    SpriteView(scene: sceneType.init(), options: [.ignoresSiblingOrder])
+                    SpriteView(scene: sceneType.init(), options: [.ignoresSiblingOrder, .allowsTransparency])
                         .frame(width: 250, height: 250) // Ajuste o tamanho conforme necessário
                         .scaleEffect(1.0) // Ajuste a escala conforme necessário
                         .padding(8)
+                        .padding(.leading, 38)
+                        
                 } else {
                     // Fallback se não houver uma cena SpriteKit definida
                     Image(phase.imageAsset)
@@ -359,10 +361,10 @@ struct ActivityPhaseView: View {
        
         
     }
-    
-    private var backgroundImageName: String {
-        state == .treino ? "BackgroundTreino" : "BackgroundAquecimento"
-    }
+//    
+//    private var backgroundImageName: String {
+//        state == .treino ? "BackgroundTreino" : "BackgroundAquecimento"
+//    }
     
     private var activityTypeText: String {
         state == .treino ? "Treino" : "Aquecendo"
@@ -378,7 +380,7 @@ struct RestPhaseView: View {
     var body: some View {
         ZStack{
             
-            Color.cinzaEscuro.edgesIgnoringSafeArea(.all)
+//            Color.cinzaEscuro.edgesIgnoringSafeArea(.all)
             
             Image("RestImage")
                 .resizable()
@@ -388,15 +390,17 @@ struct RestPhaseView: View {
                 VStack(spacing: 56){
                     VStack(spacing: 20){
                         if let sceneType = phase.spriteKitSceneType {
-                            SpriteView(scene: sceneType.init(), options: [.ignoresSiblingOrder])
+                            SpriteView(scene: sceneType.init(), options: [.ignoresSiblingOrder, .allowsTransparency])
                                 .frame(width: 150, height: 150) // Ajuste o tamanho conforme necessário
                                 .padding(8)
+                                .padding(.leading, 30)
                         } else {
                             // Fallback se não houver uma cena SpriteKit definida
                             Image(phase.imageAsset)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 150)
+                                .frame(width: 180)
+                                .padding(.trailing, 30)
                         }
                         
                         VStack(spacing: 10){
