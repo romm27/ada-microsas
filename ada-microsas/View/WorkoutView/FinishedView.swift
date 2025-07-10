@@ -10,6 +10,7 @@ import SwiftUI
 struct FinishedView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var timerViewModel: TimerViewModel
+    @EnvironmentObject var planViewModel: PlanViewModel
     
     var body: some View {
         ZStack{
@@ -44,8 +45,7 @@ struct FinishedView: View {
                                 .font(.system(size: 12))
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.cinzaMuitoClaro)
-                            //MARK: MUDAR O TEMPO AGUI
-                            Text("00:21:30")
+                            Text("\(timerViewModel.getFormattedCurrentTotalTimer())")
                                 .font(.system(size: 16))
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.brancoGelo)
@@ -56,8 +56,7 @@ struct FinishedView: View {
                                 .font(.system(size: 12))
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.cinzaMuitoClaro)
-                            //TODO: MUDAR O NIVEL AGUI
-                            Text("03/24")
+                            Text("\(planViewModel.currentIndex)/24")
                                 .font(.system(size: 16))
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.brancoGelo)
@@ -112,4 +111,5 @@ struct FinishedView: View {
 #Preview {
     FinishedView()
         .environmentObject(TimerViewModel())
+        .environmentObject(PlanViewModel())
 }

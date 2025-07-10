@@ -169,13 +169,13 @@ struct ActivityView: View {
             currentRepetition = 1
         } else {
             // Workout complete
-            planViewModel.userLevel += 1
+            if planViewModel.userLevel == planViewModel.currentIndex{ //só aumenta se o level que eu to é um level não antigo 
+                planViewModel.userLevel += 1
+            }
             
             NotificationManager.shared.cancelAllNotifications()
             
             showCompletionAlert = true
-            
-            //MARK: agui vai a tela FinishedView
             
             let activitySeconds = currentGroup.totalDuration
             Task{
