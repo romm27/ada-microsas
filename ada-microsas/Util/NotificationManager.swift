@@ -26,13 +26,13 @@ class NotificationManager {
     /// Schedules notifications for all phase transitions in a workout plan
     func scheduleWorkoutNotifications(for workout: WorkoutPlan) {
         // Schedule for all phases starting from the beginning
-        scheduleNotifications(for: workout.allPhases, initialPhaseRemainingTime: nil)
+        //scheduleNotifications(for: workout.allPhases, initialPhaseRemainingTime: nil)
     }
 
     /// Reschedules notifications when resuming a workout, accounting for time already spent in current phase
     func rescheduleNotificationsOnResume(remainingPhases: [ActivityPhase], currentTime: Int) {
         // Re-schedule for the remaining phases with the current phase's remaining time
-        scheduleNotifications(for: remainingPhases, initialPhaseRemainingTime: currentTime)
+        //scheduleNotifications(for: remainingPhases, initialPhaseRemainingTime: currentTime)
     }
 
     /// Core scheduling logic that handles both new workouts and resumed workouts

@@ -21,7 +21,7 @@ class TimerViewModel: ObservableObject {
     }
     
     init(){
-        print("INICIALIZADO O PROCEDIMENTO DE RETIRAÇAO DO PIPI")
+        print("INICIALIZADO")
     }
     
     @Published var timerStatus: TimerStatus = .paused //estado do timer
