@@ -143,6 +143,7 @@ class TimerViewModel: ObservableObject {
         }
         
         self.timer?.invalidate() //isso para o timer
+        
         isFinished = true
         timerStatus = .paused
         resetTimer()
@@ -153,6 +154,7 @@ class TimerViewModel: ObservableObject {
         
         currentTimer = 0
         maxTimer = 0
+        
         //gemini: Reset the background time when the timer is fully reset.
         backgroundEntryTime = nil
     }
@@ -184,6 +186,7 @@ class TimerViewModel: ObservableObject {
     }
     
     func allTheOnesFinished(){
+        print("LIMPA TUDOOOO")
         currentTotalTimer = 0
         maxTotalTimer = 0
         phaseIndex = 0

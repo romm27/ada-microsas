@@ -93,8 +93,7 @@ struct ButtonView: View {
                     
                     NavigationLink(destination: TemporalColapseView()){
                         Button("Encerrar", role: .destructive) {
-                            //timerViewModel.endTimer()
-                            timerViewModel.pauseTimer()
+                            timerViewModel.allTheOnesFinished()
                             timerViewModel.endTimer()
                             showColapseView.toggle()
                             
@@ -151,8 +150,7 @@ struct ButtonView: View {
                     
                     NavigationLink(destination: TemporalColapseView()){
                         Button("Encerrar", role: .destructive) {
-                            //timerViewModel.endTimer()
-                            timerViewModel.pauseTimer()
+                            timerViewModel.allTheOnesFinished()
                             timerViewModel.endTimer()
                             showColapseView.toggle()
                             

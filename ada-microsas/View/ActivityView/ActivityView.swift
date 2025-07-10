@@ -40,7 +40,7 @@ struct ActivityView: View {
         
     var body: some View {
         
-        NavigationStack {
+        NavigationStack{
             Group {
                 if let currentActivity = currentActivity {
                     if currentActivity.isRest {
@@ -87,11 +87,10 @@ struct ActivityView: View {
                         }
                         NavigationLink(destination: TemporalColapseView()){
                             Button("Encerrar", role: .destructive) {
-                                //timerViewModel.endTimer()
-                                timerViewModel.pauseTimer()
+                                //isso nao ta rodando
+                                timerViewModel.allTheOnesFinished()
                                 timerViewModel.endTimer()
                                 showColapseView.toggle()
-                                //logica de encerrar
                             }
                         }
                         .environmentObject(planViewModel)

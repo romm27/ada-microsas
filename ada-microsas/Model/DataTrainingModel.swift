@@ -61,17 +61,17 @@ struct DataTrainingModel {
     
     init() {
         trainingPlans = [
-            // TREINO TESTE - DEV MODE
-            WorkoutPlan(patternGroups: [
-                Self.devWarmup,
-                PatternGroup(repetitions: 1, isWarmup: false, phases: [Self.trotando(duration: 5), Self.caminhando(duration: 5), Self.trotando(duration: 5), Self.caminhando(duration: 5)])
-            ], requiredLevel: 1),
+//            // TREINO TESTE - DEV MODE
+//            WorkoutPlan(patternGroups: [
+//                Self.devWarmup,
+//                PatternGroup(repetitions: 1, isWarmup: false, phases: [Self.trotando(duration: 5), Self.caminhando(duration: 5), Self.trotando(duration: 5), Self.caminhando(duration: 5)])
+//            ], requiredLevel: 1),
             
             // TREINO 1
-//            WorkoutPlan(patternGroups: [
-//                Self.standardWarmup,
-//                PatternGroup(repetitions: 6, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 180)])
-//            ], requiredLevel: 1),
+            WorkoutPlan(patternGroups: [
+                Self.standardWarmup,
+                PatternGroup(repetitions: 6, isWarmup: false, phases: [Self.trotando(duration: 30), Self.caminhando(duration: 180)])
+            ], requiredLevel: 1),
             
             // TREINO 2
             WorkoutPlan(patternGroups: [

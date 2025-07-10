@@ -65,6 +65,8 @@ struct TrailView: View {
                 .onAppear {
                     proxy.scrollTo("bottomAnchor")
                     NotificationManager.shared.requestAuthorization()
+                    
+                    timerViewModel.allTheOnesFinished()
                 }
             }
         }

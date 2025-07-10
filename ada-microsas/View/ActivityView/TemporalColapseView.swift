@@ -18,9 +18,9 @@ struct TemporalColapseView: View {
             
             VStack {
                 Button {
+                    timerViewModel.allTheOnesFinished()
                     timerViewModel.pauseTimer()
                     timerViewModel.endTimer()
-                    timerViewModel.allTheOnesFinished()
                 } label: {
                     NavigationLink(destination: TrailView()) {
                         HStack {

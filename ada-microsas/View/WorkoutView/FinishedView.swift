@@ -56,7 +56,7 @@ struct FinishedView: View {
                                 .font(.system(size: 12))
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.cinzaMuitoClaro)
-                            Text("\(planViewModel.currentIndex)/24")
+                            Text("\(planViewModel.currentIndex+1)/24")
                                 .font(.system(size: 16))
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.brancoGelo)

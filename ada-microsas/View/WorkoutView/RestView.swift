@@ -145,6 +145,7 @@ struct RestView: View {
         
         let nextPhase = activePhases[currentCounter]
         timerViewModel.setTimerConfig(seconds: nextPhase.duration)
+        timerViewModel.setTotalActivityDuration(duration: nextPhase.duration)
         timerViewModel.startTimer()
     }
 }
