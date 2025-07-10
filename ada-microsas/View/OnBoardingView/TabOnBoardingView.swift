@@ -49,6 +49,7 @@ struct TabOnBoardingView: View {
                         .resizable()
                         .scaledToFill()
                         .ignoresSafeArea(.all)
+                        .offset(y: -30)
                     
                     VStack{
                         Spacer()
@@ -61,7 +62,7 @@ struct TabOnBoardingView: View {
                                 .fontWeight(.semibold)
                             Spacer()
                         }
-                        .background(.verdeLimaBotao)
+                        .background(.verdeLima)
                         .cornerRadius(8)
                         .padding(.horizontal, 32)
                     }

@@ -87,7 +87,7 @@ struct FinishedView: View {
                                 .fontWeight(.semibold)
                             Spacer()
                         }
-                        .background(.verdeLimaBotao)
+                        .background(.verdeLima)
                         .cornerRadius(8)
                         .padding(.horizontal, 32)
                     }
