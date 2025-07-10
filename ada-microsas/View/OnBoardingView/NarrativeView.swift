@@ -45,7 +45,7 @@ struct NarrativeView: View {
                                 .fontWeight(.semibold)
                             Spacer()
                         }
-                        .background(.verdeLimaBotao)
+                        .background(.verdeLima)
                         .cornerRadius(8)
                         
                     }

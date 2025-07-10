@@ -32,7 +32,7 @@ struct TemporalColapseView: View {
                                 .fontWeight(.semibold)
                             Spacer()
                         }
-                        .background(.verdeLimaBotao)
+                        .background(.verdeLima)
                         .cornerRadius(8)
                     }
                     .environmentObject(planViewModel)

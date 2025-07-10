@@ -51,7 +51,7 @@ struct TrailView: View {
                             .padding(.bottom, 48)
                             .padding(.horizontal, 36)
                         VStack{
-                            Image("TrailUp")
+                            Image("TrailUp4x")
                                 .resizable()
                                 .scaledToFit()
                                 .offset(y: -430) //xunxo
