@@ -38,8 +38,11 @@ struct WorkoutView: View {
                 .offset(y: 150)
                 .zIndex(0) // Ensure it stays behind content
             
-            VStack(spacing: 48) {
+            VStack(alignment: .leading, spacing: 48) {
                 Spacer()
+                
+                Text("Treino \(currentIndex+1)/24")
+                    .font(.system(size: 28, weight: .bold))
                 
                 // Warmup tip box - make sure this is visible
                 ZStack {
@@ -52,7 +55,6 @@ struct WorkoutView: View {
                             .foregroundColor(.white)
                     }
                 }
-                .padding(.top, 60)
                 .font(.system(size: 12, weight: .regular))
                 .zIndex(1) // Bring to front
                 

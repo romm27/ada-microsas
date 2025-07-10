@@ -44,8 +44,21 @@ struct TrailView: View {
         VStack {
             ScrollViewReader { proxy in
                 ScrollView {
-                    trailImageWithOverlay
-                        .padding(.vertical, 48)
+                    Spacer()
+                        .frame(height: 200)//xunxo
+                    ZStack{
+                        trailImageWithOverlay
+                            .padding(.bottom, 48)
+                            .padding(.horizontal, 36)
+                        VStack{
+                            Image("TrailUp")
+                                .resizable()
+                                .scaledToFit()
+                                .offset(y: -430) //xunxo
+                                .zIndex(2)
+                            Spacer()
+                        }
+                    }
                     Spacer().id("bottomAnchor")
                 }
                 .scrollIndicators(.hidden)
@@ -55,7 +68,7 @@ struct TrailView: View {
                 }
             }
         }
-        .padding(.horizontal, 36)
+        
     }
     
     private var trailImageWithOverlay: some View {
