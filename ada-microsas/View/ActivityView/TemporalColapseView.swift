@@ -40,7 +40,7 @@ struct TemporalColapseView: View {
 
                 }
             }
-            .padding(.top, 100)
+            .padding(.top, 220)
             .padding(.horizontal, 32)
         }
         .navigationBarBackButtonHidden(true)
@@ -51,4 +51,6 @@ struct TemporalColapseView: View {
 
 #Preview {
     TemporalColapseView()
+        .environmentObject(PlanViewModel())
+        .environmentObject(TimerViewModel())
 }
