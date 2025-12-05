@@ -43,18 +43,18 @@ struct TabOnBoardingView: View {
                 .scaledToFill()
                 .ignoresSafeArea(.all)
             
-            NavigationLink(destination: WorkoutView(currentIndex: 0)){
-                ZStack{
-                    Image(dataModel.cardsList[2].image)
-                        .resizable()
-                        .scaledToFill()
-                        .ignoresSafeArea(.all)
-                        .offset(y: -30)
-                    
-                    VStack{
-                        Spacer()
+            ZStack{
+                Image(dataModel.cardsList[2].image)
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea(.all)
+                
+                VStack{
+                    Spacer()
+                    NavigationLink(destination: WorkoutView(currentIndex: 0)){
                         HStack{
                             Spacer()
+                            
                             Text("Continuar")
                                 .padding(.vertical, 12)
                                 .foregroundStyle(.quasePreto)
@@ -64,15 +64,15 @@ struct TabOnBoardingView: View {
                         }
                         .background(.verdeLima)
                         .cornerRadius(8)
+                        .padding(.bottom, 80)
                         .padding(.horizontal, 32)
                     }
-                    .padding(.bottom, 100)
-                    
                 }
             }
-            .environmentObject(planViewModel)
-            .environmentObject(timerViewModel)
+            .offset(y: -100)
         }
+        .environmentObject(planViewModel)
+        .environmentObject(timerViewModel)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
@@ -103,7 +103,7 @@ struct TabOnBoardingView: View {
 #Preview {
     ContentView()
         .environmentObject(TimerViewModel()).environmentObject(PlanViewModel())
-//    TabOnBoardingView()
-//        .environmentObject(TimerViewModel())
-//        .environmentObject(PlanViewModel())
+    //    TabOnBoardingView()
+    //        .environmentObject(TimerViewModel())
+    //        .environmentObject(PlanViewModel())
 }

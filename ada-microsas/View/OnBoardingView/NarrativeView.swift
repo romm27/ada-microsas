@@ -50,7 +50,7 @@ struct NarrativeView: View {
                         
                     }
                     .padding(.horizontal, 32)
-                    .padding(.bottom, 100)
+                    .padding(.bottom, 120)
                     
                 }
                 .environmentObject(planViewModel)
